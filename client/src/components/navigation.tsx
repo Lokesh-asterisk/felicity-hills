@@ -29,16 +29,16 @@ export default function Navigation() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
             <button 
-              onClick={() => scrollToSection('plots')} 
-              className="text-gray-700 hover:text-primary transition-colors"
-            >
-              Plots
-            </button>
-            <button 
               onClick={() => scrollToSection('amenities')} 
               className="text-gray-700 hover:text-primary transition-colors"
             >
               Amenities
+            </button>
+            <button 
+              onClick={() => scrollToSection('plots')} 
+              className="text-gray-700 hover:text-primary transition-colors"
+            >
+              Plots
             </button>
             <button 
               onClick={() => scrollToSection('videos')} 
@@ -88,16 +88,16 @@ export default function Navigation() {
         {isMenuOpen && (
           <div className="md:hidden pb-4 space-y-2">
             <button 
-              onClick={() => scrollToSection('plots')}
-              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
-            >
-              Plots
-            </button>
-            <button 
               onClick={() => scrollToSection('amenities')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Amenities
+            </button>
+            <button 
+              onClick={() => scrollToSection('plots')}
+              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
+            >
+              Plots
             </button>
             <button 
               onClick={() => scrollToSection('videos')}
