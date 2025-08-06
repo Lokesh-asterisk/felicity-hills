@@ -1,16 +1,28 @@
 import { useState } from "react";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import logoImage from "@assets/website logo1_1754473813433.png";
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [location] = useLocation();
 
   const scrollToSection = (sectionId: string) => {
+    // If we're not on the home page, navigate there first
+    if (location !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+    
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    setIsMenuOpen(false);
+  };
+
+  const handleNavigation = (path: string) => {
     setIsMenuOpen(false);
   };
 
@@ -39,18 +51,12 @@ export default function Navigation() {
             >
               Amenities
             </button>
-            <button 
-              onClick={() => scrollToSection('videos')} 
-              className="text-gray-700 hover:text-primary transition-colors"
-            >
+            <Link href="/videos" className="text-gray-700 hover:text-primary transition-colors">
               Videos
-            </button>
-            <button 
-              onClick={() => scrollToSection('brochures')} 
-              className="text-gray-700 hover:text-primary transition-colors"
-            >
+            </Link>
+            <Link href="/brochures" className="text-gray-700 hover:text-primary transition-colors">
               Brochures
-            </button>
+            </Link>
             <button 
               onClick={() => scrollToSection('calculator')} 
               className="text-gray-700 hover:text-primary transition-colors"
@@ -92,18 +98,20 @@ export default function Navigation() {
             >
               Amenities
             </button>
-            <button 
-              onClick={() => scrollToSection('videos')}
+            <Link 
+              href="/videos"
+              onClick={() => handleNavigation('/videos')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Videos
-            </button>
-            <button 
-              onClick={() => scrollToSection('brochures')}
+            </Link>
+            <Link 
+              href="/brochures"
+              onClick={() => handleNavigation('/brochures')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Brochures
-            </button>
+            </Link>
             <button 
               onClick={() => scrollToSection('calculator')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
