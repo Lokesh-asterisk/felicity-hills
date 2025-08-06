@@ -96,11 +96,11 @@ export default function ContactSection() {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-br from-primary to-secondary">
+    <section id="contact" className="py-20 bg-gradient-to-br from-green-50 to-teal-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 animate-fade-in-up">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Contact Us</h2>
-          <p className="text-xl text-green-100">Book your site visit today</p>
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Contact Us</h2>
+          <p className="text-xl text-gray-600">Book your site visit today</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
@@ -211,29 +211,29 @@ export default function ContactSection() {
 
           {/* Contact Information */}
           <div className="space-y-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <Card className="bg-white shadow-lg border-gray-200">
               <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
                 <div className="space-y-6">
                   {contactInfo.map((info, index) => (
                     <div key={info.title} className="flex items-center">
-                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mr-4">
-                        <info.icon className="text-white w-6 h-6" />
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mr-4">
+                        <info.icon className="text-primary w-6 h-6" />
                       </div>
                       <div>
-                        <div className="text-white font-semibold">{info.title}</div>
+                        <div className="text-gray-900 font-semibold">{info.title}</div>
                         {info.link ? (
                           <a 
                             href={info.link} 
-                            className="text-green-100 hover:text-white transition-colors"
+                            className="text-primary hover:text-secondary transition-colors"
                             {...(info.link.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                           >
                             {info.primary}
                           </a>
                         ) : (
-                          <div className="text-green-100">{info.primary}</div>
+                          <div className="text-gray-700">{info.primary}</div>
                         )}
-                        <div className="text-green-200 text-sm">{info.secondary}</div>
+                        <div className="text-gray-500 text-sm">{info.secondary}</div>
                       </div>
                     </div>
                   ))}
@@ -242,11 +242,11 @@ export default function ContactSection() {
             </Card>
 
             {/* Quick Contact Buttons */}
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <Card className="bg-white shadow-lg border-gray-200">
               <CardContent className="p-8">
-                <h3 className="text-xl font-bold text-white mb-4">Quick Contact</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Contact</h3>
                 <div className="space-y-4">
-                  <Button asChild className="w-full bg-white text-primary hover:bg-gray-100" size="lg">
+                  <Button asChild className="w-full bg-primary text-white hover:bg-secondary" size="lg">
                     <a href="tel:+918588834221">
                       <Phone className="w-5 h-5 mr-2" />
                       Call Now
