@@ -147,6 +147,29 @@ export default function InvestmentCalculator() {
                     <Calculator className="w-5 h-5 mr-2" />
                     Calculate
                   </Button>
+
+                  {/* Results Display - moved here from investment benefits section */}
+                  {result && (
+                    <Card className="shadow-lg animate-fade-in mt-6">
+                      <CardContent className="p-6">
+                        <h4 className="font-bold text-gray-900 mb-4">Investment Summary</h4>
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span>Total Investment:</span>
+                            <span className="font-semibold">{formatCurrency(result.totalInvestment)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Expected Value:</span>
+                            <span className="font-semibold text-green-600">{formatCurrency(result.expectedValue)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Estimated Returns:</span>
+                            <span className="font-semibold text-primary">{formatCurrency(result.estimatedReturns)}</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
 
@@ -165,29 +188,6 @@ export default function InvestmentCalculator() {
                     </div>
                   ))}
                 </div>
-
-                {/* Results Display */}
-                {result && (
-                  <Card className="shadow-lg animate-fade-in">
-                    <CardContent className="p-6">
-                      <h4 className="font-bold text-gray-900 mb-4">Investment Summary</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span>Total Investment:</span>
-                          <span className="font-semibold">{formatCurrency(result.totalInvestment)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Expected Value:</span>
-                          <span className="font-semibold text-green-600">{formatCurrency(result.expectedValue)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Estimated Returns:</span>
-                          <span className="font-semibold text-primary">{formatCurrency(result.estimatedReturns)}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
               </div>
             </div>
           </CardContent>
