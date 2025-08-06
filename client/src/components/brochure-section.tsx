@@ -51,8 +51,8 @@ export default function BrochureSection() {
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {brochures?.slice(0, 2).map((brochure, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {brochures?.map((brochure, index) => (
             <Card 
               key={brochure.id}
               className="shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up border-0 bg-gradient-to-br from-green-50 to-teal-50"
@@ -93,23 +93,20 @@ export default function BrochureSection() {
         <Card className="mt-12 bg-gradient-to-r from-primary to-secondary animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <CardContent className="p-8 text-center">
             <h3 className="text-2xl font-bold text-white mb-4">
-              Explore All Brochures
+              Need More Information?
             </h3>
             <p className="text-green-100 mb-6">
-              Visit our dedicated brochures page to download all available project documents, pricing details, and legal documentation
+              Our team is ready to provide personalized assistance and answer all your questions
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                onClick={() => window.location.href = '/brochures'}
-                className="bg-white text-primary hover:bg-gray-100" 
-                size="lg"
-              >
-                <Download className="w-5 h-5 mr-2" />
-                View All Brochures
+              <Button asChild className="bg-white text-primary hover:bg-gray-100" size="lg">
+                <a href="tel:+918588834221">
+                  Call +91 85888 34221
+                </a>
               </Button>
               <Button asChild className="bg-green-500 text-white hover:bg-green-600" size="lg">
                 <a 
-                  href="https://wa.me/918588834221?text=Hello%2C%20I%20need%20brochure%20information%20about%20Khushalipur%20project" 
+                  href="https://wa.me/918588834221?text=Hello%2C%20I%20downloaded%20your%20brochure%20and%20need%20more%20information" 
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
