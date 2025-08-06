@@ -19,11 +19,16 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <img 
-              src={logoImage} 
-              alt="Felicity Hills Logo" 
-              className="h-12 w-auto"
-            />
+            <a 
+              href="/" 
+              className="cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <img 
+                src={logoImage} 
+                alt="Felicity Hills Logo" 
+                className="h-12 w-auto"
+              />
+            </a>
           </div>
           
           {/* Desktop Menu */}
