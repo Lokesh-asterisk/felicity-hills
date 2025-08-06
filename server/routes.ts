@@ -2,9 +2,24 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertSiteVisitSchema } from "@shared/schema";
+import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { z } from "zod";
+import express from "express";
+import path from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Serve static files (PDFs and HTML brochures)
+  app.use('/pdfs', express.static(path.join(process.cwd(), 'public', 'pdfs')));
+  app.use('/brochures', express.static(path.join(process.cwd(), 'public', 'brochures')));
+  
+  // Initialize brochures with PDFs on startup
+  try {
+    await setupBrochuresWithPdfs();
+    console.log("Brochures with PDFs initialized successfully");
+  } catch (error) {
+    console.error("Failed to initialize brochures:", error);
+  }
   
   // Get all plots
   app.get("/api/plots", async (_req, res) => {
