@@ -40,12 +40,6 @@ export default function Navigation() {
               Amenities
             </button>
             <button 
-              onClick={() => scrollToSection('plots')} 
-              className="text-gray-700 hover:text-primary transition-colors"
-            >
-              Plots
-            </button>
-            <button 
               onClick={() => scrollToSection('videos')} 
               className="text-gray-700 hover:text-primary transition-colors"
             >
@@ -97,12 +91,6 @@ export default function Navigation() {
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Amenities
-            </button>
-            <button 
-              onClick={() => scrollToSection('plots')}
-              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
-            >
-              Plots
             </button>
             <button 
               onClick={() => scrollToSection('videos')}

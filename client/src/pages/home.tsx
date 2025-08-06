@@ -3,7 +3,7 @@ import HeroSection from "../components/hero-section";
 import LocationAdvantages from "../components/location-advantages";
 import ComparisonTable from "../components/comparison-table";
 import AmenitiesSection from "../components/amenities-section";
-import PlotSelection from "../components/plot-selection";
+
 import VideoSection from "../components/video-section";
 import BrochureSection from "../components/brochure-section";
 import InvestmentCalculator from "../components/investment-calculator";
@@ -20,7 +20,7 @@ export default function Home() {
       <LocationAdvantages />
       <ComparisonTable />
       <AmenitiesSection />
-      <PlotSelection />
+
       <VideoSection />
       <BrochureSection />
       <InvestmentCalculator />

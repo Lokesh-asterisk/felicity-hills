@@ -4,8 +4,8 @@ import logoImage from "@assets/website logo1_1754473813433.png";
 
 export default function Footer() {
   const quickLinks = [
-    { name: "Plot Selection", href: "#plots" },
     { name: "Amenities", href: "#amenities" },
+    { name: "Videos", href: "#videos" },
     { name: "Calculator", href: "#calculator" },
     { name: "Testimonials", href: "#testimonials" }
   ];
