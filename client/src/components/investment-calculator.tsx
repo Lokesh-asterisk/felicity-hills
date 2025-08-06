@@ -166,6 +166,10 @@ export default function InvestmentCalculator() {
                             <span>Estimated Returns:</span>
                             <span className="font-semibold text-primary">{formatCurrency(result.estimatedReturns)}</span>
                           </div>
+                          <div className="flex justify-between">
+                            <span>Benefit Percentage:</span>
+                            <span className="font-semibold text-green-600">{((result.estimatedReturns / result.totalInvestment) * 100).toFixed(1)}%</span>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
