@@ -1,14 +1,16 @@
-import Navigation from "@/components/navigation";
-import HeroSection from "@/components/hero-section";
-import LocationAdvantages from "@/components/location-advantages";
-import ComparisonTable from "@/components/comparison-table";
-import AmenitiesSection from "@/components/amenities-section";
-import PlotSelection from "@/components/plot-selection";
-import InvestmentCalculator from "@/components/investment-calculator";
-import TestimonialsSection from "@/components/testimonials-section";
-import FAQSection from "@/components/faq-section";
-import ContactSection from "@/components/contact-section";
-import Footer from "@/components/footer";
+import Navigation from "../components/navigation";
+import HeroSection from "../components/hero-section";
+import LocationAdvantages from "../components/location-advantages";
+import ComparisonTable from "../components/comparison-table";
+import AmenitiesSection from "../components/amenities-section";
+import PlotSelection from "../components/plot-selection";
+import VideoSection from "../components/video-section";
+import BrochureSection from "../components/brochure-section";
+import InvestmentCalculator from "../components/investment-calculator";
+import TestimonialsSection from "../components/testimonials-section";
+import FAQSection from "../components/faq-section";
+import ContactSection from "../components/contact-section";
+import Footer from "../components/footer";
 
 export default function Home() {
   return (
@@ -19,6 +21,8 @@ export default function Home() {
       <ComparisonTable />
       <AmenitiesSection />
       <PlotSelection />
+      <VideoSection />
+      <BrochureSection />
       <InvestmentCalculator />
       <TestimonialsSection />
       <FAQSection />

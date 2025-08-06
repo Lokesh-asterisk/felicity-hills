@@ -80,13 +80,13 @@ export default function PlotSelection() {
               {plots?.map((plot, index) => (
                 <Card 
                   key={plot.id}
-                  className={`${getPlotStatusColor(plot.available, plot.category)} border-2 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105`}
+                  className={`${getPlotStatusColor(plot.available ?? true, plot.category)} border-2 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105`}
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-bold text-gray-900">{plot.plotNumber}</span>
-                      {getStatusBadge(plot.available, plot.category)}
+                      {getStatusBadge(plot.available ?? true, plot.category)}
                     </div>
                     <div className="text-sm space-y-1">
                       <div><span className="font-medium">{plot.size} गज</span></div>

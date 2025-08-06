@@ -41,6 +41,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get brochures
+  app.get("/api/brochures", async (_req, res) => {
+    try {
+      const brochures = await storage.getBrochures();
+      res.json(brochures);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch brochures" });
+    }
+  });
+
+  // Get videos
+  app.get("/api/videos", async (_req, res) => {
+    try {
+      const videos = await storage.getVideos();
+      res.json(videos);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch videos" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
