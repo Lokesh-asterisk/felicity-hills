@@ -51,6 +51,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Track brochure download
+  app.post("/api/brochures/:id/download", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { userName, userEmail, userPhone } = req.body;
+
+      if (!userName || !userEmail) {
+        return res.status(400).json({ message: "Name and email are required" });
+      }
+
+      const brochure = await storage.getBrochure(id);
+      if (!brochure) {
+        return res.status(404).json({ message: "Brochure not found" });
+      }
+
+      // Track the download
+      await storage.createBrochureDownload({
+        brochureId: id,
+        userName,
+        userEmail,
+        userPhone: userPhone || null,
+        ipAddress: req.ip || req.connection.remoteAddress,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json({ 
+        success: true, 
+        downloadUrl: brochure.downloadUrl,
+        message: "Download tracked successfully" 
+      });
+    } catch (error) {
+      console.error("Error tracking brochure download:", error);
+      res.status(500).json({ message: "Failed to track download" });
+    }
+  });
+
+  // Admin routes for brochure management
+  app.get("/api/admin/brochure-downloads", async (req, res) => {
+    try {
+      const downloads = await storage.getBrochureDownloads();
+      res.json(downloads);
+    } catch (error) {
+      console.error("Error fetching brochure downloads:", error);
+      res.status(500).json({ message: "Failed to fetch downloads" });
+    }
+  });
+
+  app.get("/api/admin/brochure-stats", async (req, res) => {
+    try {
+      const stats = await storage.getBrochureDownloadStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching brochure stats:", error);
+      res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
   // Get videos
   app.get("/api/videos", async (_req, res) => {
     try {

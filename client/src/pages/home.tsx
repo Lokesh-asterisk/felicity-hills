@@ -5,7 +5,6 @@ import ComparisonTable from "../components/comparison-table";
 import AmenitiesSection from "../components/amenities-section";
 
 import VideoSection from "../components/video-section";
-import BrochureSection from "../components/brochure-section";
 import InvestmentCalculator from "../components/investment-calculator";
 import TestimonialsSection from "../components/testimonials-section";
 import FAQSection from "../components/faq-section";
@@ -22,7 +21,6 @@ export default function Home() {
       <AmenitiesSection />
 
       <VideoSection />
-      <BrochureSection />
       <InvestmentCalculator />
       <TestimonialsSection />
       <FAQSection />

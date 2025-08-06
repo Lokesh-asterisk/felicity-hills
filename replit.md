@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack React application for Khushalipur - a real estate landing page focused on agricultural land investment near Dehradun. The application showcases available plots, amenities, investment calculators, testimonials, and provides site visit booking functionality. It's built as a single-page application with a modern UI design using shadcn/ui components and Tailwind CSS.
+This is a full-stack React application for Khushalipur - a real estate landing page focused on agricultural land investment near Dehradun. The application showcases amenities, investment calculators, testimonials, and provides site visit booking functionality. It features a comprehensive brochure management system with download tracking, admin analytics dashboard, and dedicated pages for videos and documentation. Built with a modern UI design using shadcn/ui components and Tailwind CSS.
 
 # User Preferences
 
@@ -24,15 +24,20 @@ Preferred communication style: Simple, everyday language.
 - **Error Handling**: Centralized error handling middleware with proper HTTP status codes
 
 ## Database Design
-- **Schema**: Defined using Drizzle ORM with PostgreSQL dialect
-- **Tables**: Three main entities - plots, siteVisits, and testimonials
+- **Schema**: Defined using Drizzle ORM with PostgreSQL dialect connected to Neon Database
+- **Tables**: Six main entities - plots, siteVisits, testimonials, brochures, videos, brochureDownloads, users
 - **Validation**: Zod schemas for runtime type validation matching database schema
-- **Current Implementation**: MemStorage class with sample data for development
+- **Current Implementation**: DatabaseStorage class with PostgreSQL persistence and comprehensive brochure download tracking
 
 ## API Structure
 - `GET /api/plots` - Retrieve all available plots with pricing and features
 - `GET /api/testimonials` - Fetch customer testimonials and success stories  
 - `POST /api/site-visits` - Create new site visit booking with form validation
+- `GET /api/brochures` - Retrieve all available brochures for download
+- `POST /api/brochures/:id/download` - Track brochure downloads with user details
+- `GET /api/admin/brochure-downloads` - Admin endpoint for download tracking data
+- `GET /api/admin/brochure-stats` - Admin endpoint for download analytics and statistics
+- `GET /api/videos` - Fetch project videos and testimonials
 
 ## Component Architecture
 - **Layout**: Modular component structure with Navigation, Hero, and Footer

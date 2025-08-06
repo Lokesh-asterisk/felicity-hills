@@ -1,235 +1,339 @@
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Download, FileText, Loader2, ArrowLeft, Calendar } from "lucide-react";
-import Navigation from "../components/navigation";
-import Footer from "../components/footer";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Download, FileText, Calendar, Database, BarChart3, Users } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Brochure } from "@shared/schema";
 
+const downloadFormSchema = z.object({
+  userName: z.string().min(2, "Name must be at least 2 characters"),
+  userEmail: z.string().email("Please enter a valid email address"),
+  userPhone: z.string().optional(),
+});
+
+type DownloadFormData = z.infer<typeof downloadFormSchema>;
+
 export default function BrochuresPage() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedBrochure, setSelectedBrochure] = useState<Brochure | null>(null);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
   const { data: brochures, isLoading } = useQuery<Brochure[]>({
     queryKey: ["/api/brochures"],
   });
 
-  const handleDownload = (brochure: Brochure) => {
-    // Create a temporary anchor element to trigger download
-    const link = document.createElement('a');
-    link.href = brochure.downloadUrl;
-    link.download = `${brochure.title}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const { data: downloadStats } = useQuery<any>({
+    queryKey: ["/api/admin/brochure-stats"],
+    enabled: showAdminPanel,
+  });
+
+  const { data: downloads } = useQuery<any[]>({
+    queryKey: ["/api/admin/brochure-downloads"],
+    enabled: showAdminPanel,
+  });
+
+  const form = useForm<DownloadFormData>({
+    resolver: zodResolver(downloadFormSchema),
+    defaultValues: {
+      userName: "",
+      userEmail: "",
+      userPhone: "",
+    },
+  });
+
+  const downloadMutation = useMutation({
+    mutationFn: async (data: DownloadFormData & { brochureId: string }) => {
+      return await apiRequest(
+        "POST",
+        `/api/brochures/${data.brochureId}/download`,
+        {
+          userName: data.userName,
+          userEmail: data.userEmail,
+          userPhone: data.userPhone,
+        }
+      );
+    },
+    onSuccess: (response) => {
+      toast({
+        title: "Download Started",
+        description: "Your download request has been processed successfully.",
+      });
+      
+      // Reset form and close dialog
+      form.reset();
+      setSelectedBrochure(null);
+      
+      // Refresh admin data if panel is open
+      if (showAdminPanel) {
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-stats"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-downloads"] });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: "Download Failed",
+        description: "There was an error processing your download request. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: DownloadFormData) => {
+    if (selectedBrochure) {
+      downloadMutation.mutate({
+        ...data,
+        brochureId: selectedBrochure.id,
+      });
+    }
   };
 
-  const goHome = () => {
-    window.location.href = '/';
-  };
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-green-700">Loading brochures...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-50 to-teal-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center animate-fade-in-up">
-            <Button 
-              onClick={goHome}
-              variant="outline" 
-              className="mb-6 border-primary text-primary hover:bg-primary hover:text-white"
+      <section className="bg-gradient-to-r from-green-600 to-teal-600 text-white py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            Project Documentation
+          </h1>
+          <p className="text-xl mb-8 max-w-3xl mx-auto">
+            Download comprehensive brochures, legal documents, and project information 
+            to make an informed investment decision in Khushalipur agricultural plots.
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button
+              onClick={() => setShowAdminPanel(!showAdminPanel)}
+              variant="outline"
+              className="bg-transparent border-white text-white hover:bg-white hover:text-green-600"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+              <BarChart3 className="w-4 h-4 mr-2" />
+              {showAdminPanel ? "Hide Admin Panel" : "View Analytics"}
             </Button>
-            
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Download Brochures
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get comprehensive information about our Khushalipur agricultural land investment project. 
-              Download detailed brochures with plot layouts, pricing, legal documentation, and investment guides.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* Brochures Grid */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <>
-              <div className="text-center mb-16">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Available Brochures ({brochures?.length})
-                </h2>
-                <p className="text-gray-600">
-                  Download PDF brochures with complete project information
-                </p>
-              </div>
+      <div className="container mx-auto px-4 py-12">
+        {/* Admin Panel */}
+        {showAdminPanel && downloadStats && (
+          <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Downloads</CardTitle>
+                <Download className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{downloadStats.totalDownloads}</div>
+                <p className="text-xs text-muted-foreground">All time downloads</p>
+              </CardContent>
+            </Card>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {brochures?.map((brochure, index) => (
-                  <Card 
-                    key={brochure.id}
-                    className="shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up border-0 bg-gradient-to-br from-green-50 to-teal-50 group"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <CardContent className="p-8">
-                      <div className="flex items-center mb-6">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mr-4 group-hover:bg-primary/20 transition-colors">
-                          <FileText className="w-8 h-8 text-primary" />
-                        </div>
-                        <div className="flex flex-col">
-                          <Badge variant="secondary" className="bg-primary/10 text-primary mb-2 w-fit">
-                            PDF • {brochure.fileSize}
-                          </Badge>
-                          {brochure.createdAt && (
-                            <div className="flex items-center text-xs text-gray-500">
-                              <Calendar className="w-3 h-3 mr-1" />
-                              {formatDate(brochure.createdAt)}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <h3 className="font-bold text-xl text-gray-900 mb-4">
-                        {brochure.title}
-                      </h3>
-                      
-                      <p className="text-gray-600 mb-6 leading-relaxed">
-                        {brochure.description}
-                      </p>
-                      
-                      <Button 
-                        onClick={() => handleDownload(brochure)}
-                        className="w-full bg-primary hover:bg-secondary group-hover:scale-105 transition-transform"
-                        size="lg"
-                      >
-                        <Download className="w-5 h-5 mr-2" />
-                        Download PDF
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {brochures?.length === 0 && (
-                <div className="text-center py-16">
-                  <div className="text-6xl mb-4">📄</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    No brochures available
-                  </h3>
-                  <p className="text-gray-600">
-                    Brochures will be available soon. Please check back later.
-                  </p>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Popular Brochures</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {downloadStats.downloadsByBrochure?.length || 0}
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </section>
+                <p className="text-xs text-muted-foreground">Active brochures</p>
+              </CardContent>
+            </Card>
 
-      {/* Features Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              What's Inside Our Brochures
-            </h2>
-            <p className="text-xl text-gray-600">
-              Comprehensive information to help you make informed investment decisions
-            </p>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {downloadStats.recentDownloads?.length || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Recent downloads</p>
+              </CardContent>
+            </Card>
           </div>
+        )}
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: "📍",
-                title: "Location Details",
-                description: "Strategic location near Delhi-Dehradun Expressway with connectivity maps"
-              },
-              {
-                icon: "💰",
-                title: "Pricing & Returns",
-                description: "Detailed pricing structure, expected returns, and investment calculations"
-              },
-              {
-                icon: "📋",
-                title: "Legal Documentation",
-                description: "Complete legal clarity, approvals, and documentation details"
-              },
-              {
-                icon: "🏗️",
-                title: "Plot Layouts",
-                description: "Individual plot specifications, sizes, and infrastructure plans"
-              }
-            ].map((feature, index) => (
-              <Card 
-                key={feature.title}
-                className="shadow-sm hover:shadow-md transition-shadow animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardContent className="p-6 text-center">
-                  <div className="text-4xl mb-4">{feature.icon}</div>
-                  <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        {/* Brochures Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {brochures?.map((brochure) => (
+            <Card key={brochure.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <FileText className="w-8 h-8 text-green-600 mb-2" />
+                  <span className="text-sm text-gray-500">{brochure.fileSize}</span>
+                </div>
+                <CardTitle className="text-xl">{brochure.title}</CardTitle>
+                <CardDescription className="text-gray-600">
+                  {brochure.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="w-full bg-green-600 hover:bg-green-700"
+                      onClick={() => setSelectedBrochure(brochure)}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Now
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Download {brochure.title}</DialogTitle>
+                      <DialogDescription>
+                        Please provide your details to download this brochure. We'll track your download for analytics purposes.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="userName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Full Name *</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter your full name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="userEmail"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email Address *</FormLabel>
+                              <FormControl>
+                                <Input type="email" placeholder="Enter your email" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="userPhone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Phone Number (Optional)</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Enter your phone number" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="flex gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="flex-1"
+                            onClick={() => {
+                              form.reset();
+                              setSelectedBrochure(null);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            type="submit"
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                            disabled={downloadMutation.isPending}
+                          >
+                            {downloadMutation.isPending ? "Processing..." : "Download"}
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </section>
 
-      {/* Additional Info */}
-      <section className="py-20 bg-gradient-to-r from-primary to-secondary">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
+        {/* Downloads Analytics Table */}
+        {showAdminPanel && downloads && (
+          <div className="mt-12">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Downloads</CardTitle>
+                <CardDescription>Track user engagement with your brochures</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-2">User</th>
+                        <th className="text-left p-2">Email</th>
+                        <th className="text-left p-2">Brochure</th>
+                        <th className="text-left p-2">Downloaded</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {downloads.slice(0, 10).map((download: any, index: number) => (
+                        <tr key={index} className="border-b hover:bg-gray-50">
+                          <td className="p-2 font-medium">{download.userName}</td>
+                          <td className="p-2 text-gray-600">{download.userEmail}</td>
+                          <td className="p-2">{download.brochureTitle}</td>
+                          <td className="p-2 text-gray-500">
+                            {new Date(download.downloadedAt).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Call to Action */}
+        <div className="mt-16 text-center bg-white rounded-2xl p-8 shadow-lg">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Need More Information?
           </h2>
-          <p className="text-green-100 mb-8 text-lg">
-            Our team is ready to provide personalized assistance and answer all your questions about our agricultural land investment project
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Our team is ready to answer your questions and provide personalized guidance 
+            for your investment in Khushalipur agricultural plots.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild className="bg-white text-primary hover:bg-gray-100" size="lg">
-              <a href="tel:+918588834221">
-                Call +91 85888 34221
-              </a>
+            <Button size="lg" className="bg-green-600 hover:bg-green-700">
+              Schedule Site Visit
             </Button>
-            <Button asChild className="bg-green-500 text-white hover:bg-green-600" size="lg">
-              <a 
-                href="https://wa.me/918588834221?text=Hello%2C%20I%20downloaded%20your%20brochure%20and%20need%20more%20information" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                WhatsApp Us
-              </a>
-            </Button>
-            <Button 
-              onClick={goHome}
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary" 
-              size="lg"
-            >
-              Book Site Visit
+            <Button size="lg" variant="outline">
+              Contact Sales Team
             </Button>
           </div>
         </div>
-      </section>
-
-      <Footer />
+      </div>
     </div>
   );
 }
