@@ -14,14 +14,14 @@ export default function About() {
   ];
 
   const projects = [
-    { name: "Khushalipur", location: "Dehradun", status: "Active", type: "Agricultural Plots" },
-    { name: "Green Valley", location: "Rishikesh", status: "Active", type: "Residential Plots" },
-    { name: "Hill View Estates", location: "Mussoorie", status: "Active", type: "Premium Villas" },
-    { name: "River Side", location: "Haridwar", status: "Active", type: "Eco-friendly Plots" },
-    { name: "Pine Woods", location: "Nainital", status: "Planning", type: "Hill Station Plots" },
-    { name: "Valley Heights", location: "Dehradun", status: "Active", type: "Luxury Apartments" },
-    { name: "Mountain View", location: "Almora", status: "Planning", type: "Resort Plots" },
-    { name: "Serene Gardens", location: "Haldwani", status: "Active", type: "Gated Community" }
+    { name: "Khushalipur", location: "Dehradun, UK", status: "Active", type: "Agricultural Plots" },
+    { name: "Green Valley", location: "Rishikesh, UK", status: "Active", type: "Residential Plots" },
+    { name: "Hill View Estates", location: "Mussoorie, UK", status: "Active", type: "Premium Villas" },
+    { name: "River Side", location: "Haridwar, UK", status: "Active", type: "Eco-friendly Plots" },
+    { name: "Pine Woods", location: "Shimla, HP", status: "Planning", type: "Hill Station Plots" },
+    { name: "Valley Heights", location: "Manali, HP", status: "Active", type: "Luxury Apartments" },
+    { name: "Mountain View", location: "Dharamshala, HP", status: "Planning", type: "Resort Plots" },
+    { name: "Serene Gardens", location: "Kasauli, HP", status: "Active", type: "Gated Community" }
   ];
 
   const values = [
@@ -58,12 +58,12 @@ export default function About() {
             About Felicity Hills
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Leading real estate developer in Uttarakhand, specializing in premium land investments 
-            and sustainable development projects across hill border areas.
+            Leading real estate developer specializing in premium land investments 
+            and sustainable development projects across hill regions.
           </p>
           <div className="flex items-center justify-center text-lg">
             <MapPin className="w-6 h-6 mr-2" />
-            <span>Serving Uttarakhand & Hill Border Regions</span>
+            <span>Serving Uttarakhand & Himachal Pradesh</span>
           </div>
         </div>
       </section>
@@ -93,14 +93,14 @@ export default function About() {
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
               <div className="space-y-4 text-gray-600">
                 <p>
-                  Founded with a vision to transform land investment opportunities in Uttarakhand, 
-                  Felicity Hills has emerged as a trusted name in real estate development across 
-                  the beautiful hill regions of North India.
+                  Founded with a vision to transform land investment opportunities across hill regions, 
+                  Felicity Hills has emerged as a trusted name in real estate development in 
+                  Uttarakhand and Himachal Pradesh.
                 </p>
                 <p>
                   Our expertise lies in identifying premium locations with high growth potential, 
-                  particularly in agricultural and residential sectors. We focus on areas near 
-                  hill borders where natural beauty meets investment opportunity.
+                  particularly in agricultural and residential sectors. We focus on scenic hill 
+                  areas where natural beauty meets investment opportunity.
                 </p>
                 <p>
                   With over 15 years of experience, we have successfully delivered 8 major projects, 
@@ -115,7 +115,7 @@ export default function About() {
               </div>
             </div>
             <div className="bg-green-600 text-white p-8 rounded-lg">
-              <h3 className="text-2xl font-bold mb-6">Why Choose Uttarakhand?</h3>
+              <h3 className="text-2xl font-bold mb-6">Why Choose Hill Regions?</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <Zap className="w-5 h-5 mr-3 mt-1 flex-shrink-0" />
@@ -171,7 +171,7 @@ export default function About() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Projects Portfolio</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Explore our diverse range of real estate projects across Uttarakhand and hill border areas
+              Explore our diverse range of real estate projects across Uttarakhand and Himachal Pradesh
             </p>
           </div>
           
@@ -214,7 +214,7 @@ export default function About() {
           <h2 className="text-3xl font-bold mb-6">Ready to Invest with Felicity Hills?</h2>
           <p className="text-xl mb-8">
             Join hundreds of satisfied investors who have chosen Felicity Hills for their 
-            land investment journey in Uttarakhand's most promising locations.
+            land investment journey in Uttarakhand and Himachal Pradesh's most promising locations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/">
