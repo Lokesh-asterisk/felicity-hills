@@ -273,14 +273,15 @@ export default function AdminDashboard() {
           <Card className="bg-white dark:bg-gray-800 shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Top Brochures
+                Recent Activities
               </CardTitle>
-              <FileText className="h-4 w-4 text-purple-600" />
+              <Calendar className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats?.topBrochures?.length || 0}
+                {recentActivities.length}
               </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Manual activities tracked</p>
             </CardContent>
           </Card>
         </div>
