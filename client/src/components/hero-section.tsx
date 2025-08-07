@@ -216,20 +216,6 @@ export default function HeroSection() {
                   )}
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4 pt-3 border-t">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {isLoading ? "..." : stats?.totalDownloads || 0}
-                    </div>
-                    <div className="text-xs text-gray-600">Total Downloads</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {isLoading ? "..." : stats?.todayDownloads || 0}
-                    </div>
-                    <div className="text-xs text-gray-600">Today's Downloads</div>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </div>

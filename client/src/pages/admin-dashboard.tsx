@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
-import type { Testimonial } from "@shared/schema";
+import type { Testimonial, Activity } from "@shared/schema";
 import { format, isToday, isYesterday, subDays, startOfDay } from "date-fns";
 import AdminLogin from "@/components/admin-login";
 
@@ -69,7 +69,13 @@ export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [, setLocation] = useLocation();
-  const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([
+  // Get recent activities from database instead of local state
+  const { data: recentActivities = [], refetch: refetchActivities } = useQuery<Activity[]>({
+    queryKey: ["/api/activities"],
+    enabled: isAuthenticated,
+  });
+  
+  const [localActivities, setLocalActivities] = useState<ActivityItem[]>([
     {
       id: "1",
       title: "Site Visit Scheduled",
@@ -291,6 +297,20 @@ export default function AdminDashboard() {
     },
   });
 
+  // Create activity mutation
+  const createActivityMutation = useMutation({
+    mutationFn: async (data: { title: string; description: string; type: string }) => {
+      await apiRequest("POST", "/api/activities", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/activities"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
+      refetchActivities();
+      setNewActivity({ title: "", description: "", type: "other" });
+      setShowAddActivity(false);
+    },
+  });
+
   // Submit testimonial form
   const onTestimonialSubmit = (data: z.infer<typeof testimonialFormSchema>) => {
     if (editingTestimonial) {
@@ -339,24 +359,21 @@ export default function AdminDashboard() {
 
   const handleAddActivity = () => {
     if (newActivity.title && newActivity.description) {
-      const activity: ActivityItem = {
-        id: Date.now().toString(),
+      createActivityMutation.mutate({
         title: newActivity.title,
         description: newActivity.description,
-        date: new Date().toISOString(),
         type: newActivity.type
-      };
-      setRecentActivities([activity, ...recentActivities]);
-      setNewActivity({ title: "", description: "", type: "other" });
-      setShowAddActivity(false);
+      });
     }
   };
 
   const handleDeleteActivity = (id: string) => {
-    setRecentActivities(recentActivities.filter(activity => activity.id !== id));
+    // For now, keep local delete functionality
+    // In production, you might want to add a DELETE API endpoint
+    setLocalActivities(localActivities.filter(activity => activity.id !== id));
   };
 
-  const getActivityIcon = (type: ActivityItem['type']) => {
+  const getActivityIcon = (type: string) => {
     switch (type) {
       case 'visit': return <Calendar className="h-4 w-4" />;
       case 'inquiry': return <Mail className="h-4 w-4" />;
@@ -366,7 +383,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const getActivityColor = (type: ActivityItem['type']) => {
+  const getActivityColor = (type: string) => {
     switch (type) {
       case 'visit': return 'text-blue-600';
       case 'inquiry': return 'text-green-600';
@@ -513,7 +530,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {recentActivities.filter(activity => {
-                  const activityDate = new Date(activity.date);
+                  const activityDate = new Date(activity.createdAt || new Date());
                   return isToday(activityDate) || isYesterday(activityDate);
                 }).length}
               </div>
@@ -641,7 +658,7 @@ export default function AdminDashboard() {
                           <h4 className="font-medium text-gray-900 dark:text-white">{activity.title}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{activity.description}</p>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            {format(new Date(activity.date), "MMM dd, yyyy 'at' h:mm a")}
+                            {format(new Date(activity.createdAt || new Date()), "MMM dd, yyyy 'at' h:mm a")}
                           </p>
                         </div>
                         <Button
