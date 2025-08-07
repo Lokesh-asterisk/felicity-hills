@@ -158,26 +158,48 @@ export default function VideoSection() {
             
             {selectedVideo && (
               <div className="px-6 pb-6">
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    src={selectedVideo.videoUrl}
-                    title={selectedVideo.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute top-0 left-0 w-full h-full rounded-lg"
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-center space-x-4">
-                    <Badge className={getCategoryColor(selectedVideo.category)}>
-                      {getCategoryIcon(selectedVideo.category)} {selectedVideo.category}
-                    </Badge>
-                    <Badge variant="outline">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {selectedVideo.duration}
-                    </Badge>
+                <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                  {/* Alternative: Direct link approach since Google Drive iframe embedding has restrictions */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center p-8">
+                      <div className="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Play className="w-10 h-10 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                        {selectedVideo.title}
+                      </h3>
+                      <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                        {selectedVideo.description}
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                        <Button asChild className="bg-primary text-white hover:bg-secondary" size="lg">
+                          <a 
+                            href={selectedVideo.videoUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <Play className="w-4 h-4 mr-2" />
+                            Watch on Google Drive
+                          </a>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="lg"
+                          onClick={() => navigator.clipboard?.writeText(selectedVideo.videoUrl)}
+                        >
+                          Copy Link
+                        </Button>
+                      </div>
+                      <div className="flex items-center justify-center mt-4 space-x-4">
+                        <Badge className="bg-green-100 text-green-800">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {selectedVideo.duration}
+                        </Badge>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          HD Quality
+                        </Badge>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
