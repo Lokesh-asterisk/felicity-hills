@@ -320,13 +320,14 @@ export default function VideosPage() {
             After watching our videos, book a site visit to experience everything in person
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              onClick={goHome}
-              className="bg-white text-primary hover:bg-gray-100" 
-              size="lg"
-            >
-              Book Site Visit
-            </Button>
+            <Link href="/">
+              <Button 
+                className="bg-white text-primary hover:bg-gray-100" 
+                size="lg"
+              >
+                Book Site Visit
+              </Button>
+            </Link>
             <Button asChild className="bg-green-500 text-white hover:bg-green-600" size="lg">
               <a 
                 href="https://wa.me/918588834221?text=Hello%2C%20I%20watched%20your%20videos%20and%20want%20to%20book%20a%20site%20visit" 
