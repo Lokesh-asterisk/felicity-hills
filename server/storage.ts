@@ -317,6 +317,14 @@ export class DatabaseStorage implements IStorage {
         category: "project"
       },
       {
+        title: "Khushalipur Agricultural Investment Guide",
+        description: "Detailed presentation about agricultural land investment opportunities, returns, and benefits in Khushalipur.",
+        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/view?usp=sharing",
+        thumbnailUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
+        duration: "8:15",
+        category: "project"
+      },
+      {
         title: "Location Advantages & Connectivity",
         description: "Discover why Khushalipur is the perfect location for agricultural land investment with excellent connectivity to Delhi and Dehradun.",
         videoUrl: "https://www.youtube.com/embed/sample-location-video",
