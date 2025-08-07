@@ -291,22 +291,20 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="activity" className="space-y-6">
-          <div className="w-full overflow-x-auto">
-            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 min-w-fit">
-              <TabsTrigger value="activity" className="whitespace-nowrap px-3 py-2 text-sm">
-                Recent Activity
-              </TabsTrigger>
-              <TabsTrigger value="recent" className="whitespace-nowrap px-3 py-2 text-sm">
-                Downloads
-              </TabsTrigger>
-              <TabsTrigger value="popular" className="whitespace-nowrap px-3 py-2 text-sm">
-                Popular Brochures
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="whitespace-nowrap px-3 py-2 text-sm">
-                Analytics
-              </TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="flex flex-wrap justify-center md:justify-start gap-1 w-full h-auto p-1">
+            <TabsTrigger value="activity" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
+              Activity
+            </TabsTrigger>
+            <TabsTrigger value="recent" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
+              Downloads
+            </TabsTrigger>
+            <TabsTrigger value="popular" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
+              Popular
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
+              Analytics
+            </TabsTrigger>
+          </TabsList>
 
           {/* Recent Activity */}
           <TabsContent value="activity" className="space-y-6">
