@@ -30,10 +30,19 @@ export class EmailService {
     try {
       const msg = {
         to: bookingDetails.email,
-        from: this.fromEmail,
+        from: {
+          email: this.fromEmail,
+          name: 'Khushalipur Agricultural Plots'
+        },
+        replyTo: this.fromEmail,
         subject: 'Site Visit Booking Confirmed - Khushalipur Agricultural Plots',
         html: this.getConfirmationEmailHtml(bookingDetails),
-        text: this.getConfirmationEmailText(bookingDetails)
+        text: this.getConfirmationEmailText(bookingDetails),
+        categories: ['booking-confirmation'],
+        customArgs: {
+          'booking_type': 'site_visit',
+          'customer': bookingDetails.name
+        }
       };
 
       await sgMail.send(msg);
@@ -49,10 +58,19 @@ export class EmailService {
     try {
       const msg = {
         to: 'lokesh.mvt@gmail.com',
-        from: this.fromEmail,
-        subject: 'New Site Visit Booking - Khushalipur',
+        from: {
+          email: this.fromEmail,
+          name: 'Khushalipur Site Visits'
+        },
+        replyTo: this.fromEmail,
+        subject: `Khushalipur Site Visit Request from ${bookingDetails.name}`,
         html: this.getAdminAlertHtml(bookingDetails),
-        text: this.getAdminAlertText(bookingDetails)
+        text: this.getAdminAlertText(bookingDetails),
+        categories: ['site-visit-booking'],
+        customArgs: {
+          'booking_type': 'site_visit',
+          'source': 'khushalipur_website'
+        }
       };
 
       await sgMail.send(msg);
@@ -174,47 +192,62 @@ Premium Agricultural Land Investment
       <html>
       <head>
         <meta charset="utf-8">
-        <title>New Site Visit Booking</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Site Visit Booking Request</title>
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: #dc2626; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f8f9fa; padding: 20px; border-radius: 0 0 8px 8px; }
-          .booking-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc2626; }
-          .urgent { background: #fee2e2; padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid #fca5a5; }
-          h1 { margin: 0; font-size: 22px; }
-          h2 { color: #dc2626; margin-top: 0; }
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff; }
+          .header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 25px; text-align: center; border-radius: 12px 12px 0 0; }
+          .content { background: #f8fffe; padding: 25px; border: 1px solid #e0f2f1; border-radius: 0 0 12px 12px; }
+          .booking-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e7eb; }
+          .priority-box { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 18px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #0ea5e9; }
+          .customer-info { margin: 15px 0; padding: 15px; background: #f9fafb; border-radius: 6px; }
+          .action-list { background: #fefefe; padding: 18px; border-radius: 6px; border: 1px solid #e5e7eb; }
+          h1 { margin: 0; font-size: 24px; font-weight: 600; }
+          h2 { color: #059669; margin-top: 0; margin-bottom: 15px; font-size: 18px; font-weight: 600; }
+          .highlight { color: #059669; font-weight: 600; }
+          .contact-link { color: #0ea5e9; text-decoration: none; font-weight: 500; }
+          .footer { margin-top: 25px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 14px; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h1>🚨 New Site Visit Booking Alert</h1>
-            <p>Action Required - Contact Customer</p>
+            <h1>New Site Visit Request</h1>
+            <p style="margin: 0; font-size: 16px; opacity: 0.9;">Khushalipur Agricultural Plots</p>
           </div>
           <div class="content">
-            <div class="urgent">
-              <strong>⚠️ Priority:</strong> Contact within 24 hours to confirm visit details
+            <div class="priority-box">
+              <p style="margin: 0;"><strong>Priority Action:</strong> Please contact this customer within 24 hours to schedule their site visit.</p>
             </div>
             
             <div class="booking-details">
-              <h2>Customer Details</h2>
-              <p><strong>Name:</strong> ${booking.name}</p>
-              <p><strong>Mobile:</strong> ${booking.mobile}</p>
-              <p><strong>Email:</strong> ${booking.email}</p>
-              ${booking.preferredDate ? `<p><strong>Preferred Date:</strong> ${booking.preferredDate}</p>` : ''}
-              ${booking.plotSize ? `<p><strong>Interested Plot Size:</strong> ${booking.plotSize}</p>` : ''}
-              ${booking.budget ? `<p><strong>Budget Range:</strong> ${booking.budget}</p>` : ''}
-              <p><strong>Booking Time:</strong> ${new Date().toLocaleString('en-IN')}</p>
+              <h2>Customer Information</h2>
+              <div class="customer-info">
+                <p><strong>Name:</strong> ${booking.name}</p>
+                <p><strong>Phone:</strong> <a href="tel:${booking.mobile}" class="contact-link">${booking.mobile}</a></p>
+                <p><strong>Email:</strong> <a href="mailto:${booking.email}" class="contact-link">${booking.email}</a></p>
+                ${booking.preferredDate ? `<p><strong>Preferred Visit Date:</strong> <span class="highlight">${booking.preferredDate}</span></p>` : ''}
+                ${booking.plotSize ? `<p><strong>Interested Plot Size:</strong> ${booking.plotSize} sq ft</p>` : ''}
+                ${booking.budget ? `<p><strong>Budget Range:</strong> ₹${booking.budget} lakhs</p>` : ''}
+                <p><strong>Inquiry Received:</strong> ${new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+              </div>
             </div>
 
-            <h2>Next Steps</h2>
-            <ul>
-              <li>Call the customer to confirm visit date and time</li>
-              <li>Provide detailed directions to Khushalipur site</li>
-              <li>Prepare plot information based on their requirements</li>
-              <li>Arrange for site tour and refreshments</li>
-            </ul>
+            <div class="action-list">
+              <h2>Follow-up Checklist</h2>
+              <ul style="margin: 0; padding-left: 20px;">
+                <li>Call customer to confirm availability and schedule visit</li>
+                <li>Share exact location coordinates and directions</li>
+                <li>Prepare relevant plot documentation and pricing sheets</li>
+                <li>Coordinate with site team for tour arrangements</li>
+                <li>Arrange refreshments and welcome setup</li>
+              </ul>
+            </div>
+
+            <div class="footer">
+              <p>This notification was generated automatically from the Khushalipur website booking system.</p>
+            </div>
           </div>
         </div>
       </body>
@@ -224,22 +257,26 @@ Premium Agricultural Land Investment
 
   private getAdminAlertText(booking: BookingDetails): string {
     return `
-NEW SITE VISIT BOOKING ALERT
+KHUSHALIPUR SITE VISIT REQUEST
 
-Customer Details:
-- Name: ${booking.name}
-- Mobile: ${booking.mobile}
-- Email: ${booking.email}
-${booking.preferredDate ? `- Preferred Date: ${booking.preferredDate}\n` : ''}${booking.plotSize ? `- Interested Plot Size: ${booking.plotSize}\n` : ''}${booking.budget ? `- Budget Range: ${booking.budget}\n` : ''}
-- Booking Time: ${new Date().toLocaleString('en-IN')}
+Customer Information:
+Name: ${booking.name}
+Phone: ${booking.mobile}
+Email: ${booking.email}
+${booking.preferredDate ? `Preferred Visit Date: ${booking.preferredDate}\n` : ''}${booking.plotSize ? `Interested Plot Size: ${booking.plotSize} sq ft\n` : ''}${booking.budget ? `Budget Range: ₹${booking.budget} lakhs\n` : ''}
+Inquiry Received: ${new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
 
-ACTION REQUIRED: Contact customer within 24 hours to confirm visit details.
+PRIORITY ACTION REQUIRED:
+Please contact this customer within 24 hours to schedule their site visit.
 
-Next Steps:
-- Call the customer to confirm visit date and time
-- Provide detailed directions to Khushalipur site  
-- Prepare plot information based on their requirements
-- Arrange for site tour and refreshments
+Follow-up Checklist:
+• Call customer to confirm availability and schedule visit
+• Share exact location coordinates and directions  
+• Prepare relevant plot documentation and pricing sheets
+• Coordinate with site team for tour arrangements
+• Arrange refreshments and welcome setup
+
+This notification was generated from the Khushalipur website booking system.
     `;
   }
 }
