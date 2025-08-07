@@ -52,15 +52,6 @@ export default function About() {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Back to Home Button */}
-      <div className="container mx-auto px-4 py-4">
-        <Link href="/">
-          <Button variant="outline" className="inline-flex items-center gap-2 hover:bg-primary hover:text-white transition-all duration-300">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Button>
-        </Link>
-      </div>
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-600 via-teal-600 to-green-700 text-white py-20 overflow-hidden">
