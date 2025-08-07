@@ -1,6 +1,7 @@
 import Navigation from "../components/navigation";
 import HeroSection from "../components/hero-section";
 import LocationAdvantages from "../components/location-advantages";
+import ComparisonTable from "../components/comparison-table";
 import AmenitiesSection from "../components/amenities-section";
 
 import VideoSection from "../components/video-section";
@@ -16,6 +17,7 @@ export default function Home() {
       <Navigation />
       <HeroSection />
       <LocationAdvantages />
+      <ComparisonTable />
       <AmenitiesSection />
 
       <VideoSection />
