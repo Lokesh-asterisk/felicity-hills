@@ -57,6 +57,17 @@ export default function VideosPage() {
     setIsDialogOpen(false);
   };
 
+  // Function to convert Google Drive share URL to embed URL
+  const convertGoogleDriveUrl = (url: string) => {
+    if (url.includes('drive.google.com/file/d/')) {
+      const fileId = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1];
+      if (fileId) {
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+      }
+    }
+    return url;
+  };
+
   const goHome = () => {
     window.location.href = '/';
   };
@@ -236,7 +247,7 @@ export default function VideosPage() {
             <div className="px-6 pb-6">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
-                  src={selectedVideo.videoUrl}
+                  src={convertGoogleDriveUrl(selectedVideo.videoUrl)}
                   title={selectedVideo.title}
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
