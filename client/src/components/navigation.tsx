@@ -69,11 +69,16 @@ export default function Navigation() {
             >
               Reviews
             </button>
+            <Link href="/book-visit">
+              <Button className="bg-green-600 hover:bg-green-700 text-white">
+                Book Visit
+              </Button>
+            </Link>
             <Button 
               onClick={() => scrollToSection('contact')}
               className="bg-primary hover:bg-secondary"
             >
-              Book Visit
+              Contact
             </Button>
           </div>
 
@@ -124,11 +129,19 @@ export default function Navigation() {
             >
               Reviews
             </button>
+            <Link 
+              href="/book-visit"
+              onClick={() => handleNavigation('/book-visit')}
+            >
+              <Button className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white">
+                Book Visit
+              </Button>
+            </Link>
             <Button 
               onClick={() => scrollToSection('contact')}
               className="w-full mt-2 bg-primary hover:bg-secondary"
             >
-              Book Visit
+              Contact
             </Button>
           </div>
         )}

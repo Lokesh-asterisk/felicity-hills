@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertSiteVisitSchema } from "@shared/schema";
 import { setupBrochuresWithPdfs } from "./setupBrochures";
+import { EmailService } from "./emailService";
 import { z } from "zod";
 import express from "express";
 import path from "path";
@@ -46,8 +47,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const siteVisitData = insertSiteVisitSchema.parse(req.body);
       const siteVisit = await storage.createSiteVisit(siteVisitData);
-      res.status(201).json(siteVisit);
+      
+      // Send email notifications
+      const emailService = EmailService.getInstance();
+      
+      // Prepare booking details for emails
+      const bookingDetails = {
+        name: siteVisit.name,
+        email: siteVisit.email || '',
+        mobile: siteVisit.mobile,
+        preferredDate: siteVisit.preferredDate,
+        plotSize: siteVisit.plotSize,
+        budget: siteVisit.budget
+      };
+      
+      // Send confirmation email to user (if email provided)
+      if (siteVisit.email) {
+        const userEmailSent = await emailService.sendBookingConfirmation(bookingDetails);
+        if (!userEmailSent) {
+          console.warn('Failed to send confirmation email to user');
+        }
+      }
+      
+      // Send alert email to admin
+      const adminEmailSent = await emailService.sendAdminAlert(bookingDetails);
+      if (!adminEmailSent) {
+        console.warn('Failed to send alert email to admin');
+      }
+      
+      res.status(201).json({
+        ...siteVisit,
+        emailStatus: {
+          userNotified: siteVisit.email ? true : false,
+          adminNotified: adminEmailSent
+        }
+      });
     } catch (error) {
+      console.error('Site visit booking error:', error);
       if (error instanceof z.ZodError) {
         res.status(400).json({ message: "Invalid data", errors: error.errors });
       } else {
