@@ -258,7 +258,29 @@ export default function VideosPage() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="absolute top-0 left-0 w-full h-full rounded-lg"
+                  onError={() => {
+                    console.error('Video failed to load');
+                  }}
                 />
+                {/* Fallback message */}
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg" style={{ zIndex: -1 }}>
+                  <div className="text-center p-8">
+                    <div className="text-4xl mb-4">🎥</div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Video Loading</h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      If the video doesn't load, please ensure the Google Drive video is set to "Anyone with the link" sharing.
+                    </p>
+                    <Button asChild className="bg-primary text-white hover:bg-secondary" size="sm">
+                      <a 
+                        href={selectedVideo.videoUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        Open in Google Drive
+                      </a>
+                    </Button>
+                  </div>
+                </div>
               </div>
               
               <div className="flex items-center justify-between mt-4">
