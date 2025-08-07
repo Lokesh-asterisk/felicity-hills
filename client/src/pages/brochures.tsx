@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Download, FileText, Calendar, Database, BarChart3, Users } from "lucide-react";
+import { Download, FileText, Calendar } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Brochure } from "@shared/schema";
@@ -25,21 +25,12 @@ export default function BrochuresPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedBrochure, setSelectedBrochure] = useState<Brochure | null>(null);
-  const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   const { data: brochures, isLoading } = useQuery<Brochure[]>({
     queryKey: ["/api/brochures"],
   });
 
-  const { data: downloadStats } = useQuery<any>({
-    queryKey: ["/api/admin/brochure-stats"],
-    enabled: showAdminPanel,
-  });
 
-  const { data: downloads } = useQuery<any[]>({
-    queryKey: ["/api/admin/brochure-downloads"],
-    enabled: showAdminPanel,
-  });
 
   const form = useForm<DownloadFormData>({
     resolver: zodResolver(downloadFormSchema),
@@ -72,11 +63,7 @@ export default function BrochuresPage() {
       form.reset();
       setSelectedBrochure(null);
       
-      // Refresh admin data if panel is open
-      if (showAdminPanel) {
-        queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-stats"] });
-        queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-downloads"] });
-      }
+
     },
     onError: (error) => {
       toast({
@@ -119,62 +106,10 @@ export default function BrochuresPage() {
             Download comprehensive brochures, legal documents, and project information 
             to make an informed investment decision in Khushalipur agricultural plots.
           </p>
-          <div className="flex justify-center gap-4">
-            <Button
-              onClick={() => setShowAdminPanel(!showAdminPanel)}
-              variant="outline"
-              className="bg-transparent border-white text-white hover:bg-white hover:text-green-600"
-            >
-              <BarChart3 className="w-4 h-4 mr-2" />
-              {showAdminPanel ? "Hide Admin Panel" : "View Analytics"}
-            </Button>
-          </div>
         </div>
       </section>
 
       <div className="container mx-auto px-4 py-12">
-        {/* Admin Panel */}
-        {showAdminPanel && downloadStats && (
-          <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Downloads</CardTitle>
-                <Download className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{downloadStats.totalDownloads}</div>
-                <p className="text-xs text-muted-foreground">All time downloads</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Popular Brochures</CardTitle>
-                <FileText className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {downloadStats.downloadsByBrochure?.length || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">Active brochures</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {downloadStats.recentDownloads?.length || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">Recent downloads</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
         {/* Brochures Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {brochures?.map((brochure) => (
@@ -277,43 +212,7 @@ export default function BrochuresPage() {
           ))}
         </div>
 
-        {/* Downloads Analytics Table */}
-        {showAdminPanel && downloads && (
-          <div className="mt-12">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Downloads</CardTitle>
-                <CardDescription>Track user engagement with your brochures</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-2">User</th>
-                        <th className="text-left p-2">Email</th>
-                        <th className="text-left p-2">Brochure</th>
-                        <th className="text-left p-2">Downloaded</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {downloads.slice(0, 10).map((download: any, index: number) => (
-                        <tr key={index} className="border-b hover:bg-gray-50">
-                          <td className="p-2 font-medium">{download.userName}</td>
-                          <td className="p-2 text-gray-600">{download.userEmail}</td>
-                          <td className="p-2">{download.brochureTitle}</td>
-                          <td className="p-2 text-gray-500">
-                            {new Date(download.downloadedAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+
 
         {/* Call to Action */}
         <div className="mt-16 text-center bg-white rounded-2xl p-8 shadow-lg">
