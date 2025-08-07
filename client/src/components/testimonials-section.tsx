@@ -1,13 +1,47 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Heart, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Testimonial } from "@shared/schema";
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function TestimonialsSection() {
   const { data: testimonials, isLoading } = useQuery<Testimonial[]>({
     queryKey: ["/api/testimonials"],
   });
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    align: 'start',
+    slidesToScroll: 1,
+    skipSnaps: false,
+    dragFree: false
+  }, [Autoplay({ delay: 4000, stopOnInteraction: true })]);
+  const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const onSelect = useCallback((emblaApi: any) => {
+    setPrevBtnDisabled(!emblaApi.canScrollPrev());
+    setNextBtnDisabled(!emblaApi.canScrollNext());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect(emblaApi);
+    emblaApi.on('reInit', onSelect);
+    emblaApi.on('select', onSelect);
+  }, [emblaApi, onSelect]);
 
   const formatCurrency = (amount: number) => {
     return '₹' + (amount / 100000).toFixed(1) + ' लाख';
@@ -53,51 +87,77 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials?.map((testimonial, index) => (
-            <Card 
-              key={testimonial.id}
-              className="shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  <div className={`w-12 h-12 ${getAvatarColor(index)} rounded-full flex items-center justify-center font-bold text-xl`}>
-                    {getInitials(testimonial.name)}
-                  </div>
-                  <div className="ml-4">
-                    <div className="font-bold text-gray-900">{testimonial.name}</div>
-                    <div className="text-gray-600">{testimonial.location}</div>
-                  </div>
-                </div>
-                
-                <blockquote className="text-gray-700 mb-6 italic relative">
-                  <span className="text-4xl text-primary opacity-20 absolute -top-2 -left-2">"</span>
-                  {testimonial.review}
-                  <span className="text-4xl text-primary opacity-20 absolute -bottom-4 -right-2">"</span>
-                </blockquote>
-                
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="text-gray-500">Investment</div>
-                    <div className="font-semibold text-primary">{formatCurrency(testimonial.investment)}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500">Returns</div>
-                    <div className="font-semibold text-green-600">{testimonial.returns}%</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500">Plot Size</div>
-                    <div className="font-semibold">{testimonial.plotSize} गज</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500">Duration</div>
-                    <div className="font-semibold">{testimonial.duration}</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        {/* Carousel Navigation */}
+        <div className="flex justify-center gap-4 mb-8">
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={scrollPrev}
+            disabled={prevBtnDisabled}
+            className="rounded-full"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={scrollNext}
+            disabled={nextBtnDisabled}
+            className="rounded-full"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Carousel Container */}
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex gap-6">
+            {testimonials?.map((testimonial, index) => (
+              <div 
+                key={testimonial.id}
+                className="flex-none w-full md:w-1/2 lg:w-1/3 min-w-0"
+              >
+                <Card className="shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                  <CardContent className="p-8">
+                    <div className="flex items-center mb-4">
+                      <div className={`w-12 h-12 ${getAvatarColor(index)} rounded-full flex items-center justify-center font-bold text-xl`}>
+                        {getInitials(testimonial.name)}
+                      </div>
+                      <div className="ml-4">
+                        <div className="font-bold text-gray-900">{testimonial.name}</div>
+                        <div className="text-gray-600">{testimonial.location}</div>
+                      </div>
+                    </div>
+                    
+                    <blockquote className="text-gray-700 mb-6 italic relative">
+                      <span className="text-4xl text-primary opacity-20 absolute -top-2 -left-2">"</span>
+                      {testimonial.review}
+                      <span className="text-4xl text-primary opacity-20 absolute -bottom-4 -right-2">"</span>
+                    </blockquote>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div className="text-gray-500">Investment</div>
+                        <div className="font-semibold text-primary">{formatCurrency(testimonial.investment)}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">Returns</div>
+                        <div className="font-semibold text-green-600">{testimonial.returns}%</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">Plot Size</div>
+                        <div className="font-semibold">{testimonial.plotSize} गज</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">Duration</div>
+                        <div className="font-semibold">{testimonial.duration}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="text-center mt-12 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
