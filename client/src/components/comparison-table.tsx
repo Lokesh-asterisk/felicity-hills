@@ -91,33 +91,65 @@ export default function ComparisonTable() {
                 </tr>
                 
                 <tr className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">EMI Facility</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">Water Facility</td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                      <span className="text-green-600 font-semibold">Available</span>
+                      <span className="text-green-600 font-semibold">Tube Well + Canal</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <XCircle className="w-5 h-5 text-red-500 mr-2" />
-                      <span className="text-red-500">Limited</span>
+                      <span className="text-red-500">Limited/Seasonal</span>
                     </div>
                   </td>
                 </tr>
                 
                 <tr className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">Development Status</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">Soil Quality</td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                      <span className="text-green-600 font-semibold">Ready Infrastructure</span>
+                      <span className="text-green-600 font-semibold">Fertile Agricultural Land</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <XCircle className="w-5 h-5 text-red-500 mr-2" />
-                      <span className="text-red-500">Under Development</span>
+                      <span className="text-red-500">Mixed Quality</span>
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-gray-900">Road Connectivity</td>
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                      <span className="text-green-600 font-semibold">Main Road Access</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <XCircle className="w-5 h-5 text-red-500 mr-2" />
+                      <span className="text-red-500">Interior/Kachcha Road</span>
+                    </div>
+                  </td>
+                </tr>
+                
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-gray-900">Expert Guidance</td>
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                      <span className="text-green-600 font-semibold">Free Site Visit & Support</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <XCircle className="w-5 h-5 text-red-500 mr-2" />
+                      <span className="text-red-500">Limited Assistance</span>
                     </div>
                   </td>
                 </tr>
