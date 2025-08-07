@@ -94,8 +94,8 @@ export default function HeroSection() {
                 className="rounded-2xl shadow-2xl w-full"
               />
               {/* Image Caption */}
-              <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-                <p className="text-sm font-medium text-gray-800 text-center">
+              <div className="absolute bottom-4 left-4 right-4 p-3">
+                <p className="text-sm font-medium text-white text-center drop-shadow-lg">
                   Khushalipur Agricultural Plots - Real site showing entrance gates and development
                 </p>
               </div>
