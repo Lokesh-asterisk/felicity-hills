@@ -36,65 +36,65 @@ export default function RecentActivitySection() {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {activitiesLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <Card key={i} className="animate-pulse">
-                  <CardContent className="p-6">
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-gray-200 rounded-full mr-4"></div>
+            <Card className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full mr-3"></div>
                       <div className="flex-1">
-                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-200 rounded mb-1"></div>
+                        <div className="h-2 bg-gray-200 rounded w-3/4"></div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           ) : recentActivities.length > 0 ? (
-            <div className="space-y-4">
-              {recentActivities.map((activity, index) => {
-                const getActivityIcon = (type: string) => {
-                  switch (type) {
-                    case 'visit': return { icon: Calendar, color: 'blue' };
-                    case 'sale': return { icon: TrendingUp, color: 'green' };
-                    case 'inquiry': return { icon: Users, color: 'purple' };
-                    case 'meeting': return { icon: Users, color: 'orange' };
-                    default: return { icon: Clock, color: 'gray' };
-                  }
-                };
-                const { icon: Icon, color } = getActivityIcon(activity.type);
-                
-                return (
-                  <Card 
-                    key={activity.id} 
-                    className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-in-up"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-center">
-                        <div className={`w-12 h-12 bg-${color}-100 rounded-full flex items-center justify-center mr-4`}>
-                          <Icon className={`w-6 h-6 text-${color}-600`} />
+            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <CardContent className="p-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {recentActivities.map((activity, index) => {
+                    const getActivityIcon = (type: string) => {
+                      switch (type) {
+                        case 'visit': return { icon: Calendar, color: 'blue' };
+                        case 'sale': return { icon: TrendingUp, color: 'green' };
+                        case 'inquiry': return { icon: Users, color: 'purple' };
+                        case 'meeting': return { icon: Users, color: 'orange' };
+                        default: return { icon: Clock, color: 'gray' };
+                      }
+                    };
+                    const { icon: Icon, color } = getActivityIcon(activity.type);
+                    
+                    return (
+                      <div 
+                        key={activity.id} 
+                        className="flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200 animate-fade-in-up"
+                        style={{ animationDelay: `${index * 0.05}s` }}
+                      >
+                        <div className={`w-10 h-10 bg-${color}-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
+                          <Icon className={`w-5 h-5 text-${color}-600`} />
                         </div>
-                        <div className="flex-1">
-                          <div className="font-semibold text-lg text-gray-900 mb-1">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm text-gray-900 truncate">
                             {activity.title}
                           </div>
-                          <div className="text-gray-600 mb-2">
+                          <div className="text-xs text-gray-600 truncate">
                             {activity.description}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-xs text-gray-500 mt-1">
                             {activity.createdAt ? formatRelativeTime(new Date(activity.createdAt)) : 'Recently'}
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
           ) : (
             <Card className="text-center py-12">
               <CardContent>
