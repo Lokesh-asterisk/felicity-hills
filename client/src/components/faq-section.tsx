@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, Shield, DollarSign, FileText, TrendingUp, Calendar, Phone } from "lucide-react";
+import { ChevronDown, Shield, DollarSign, FileText, TrendingUp, Calendar, Phone, MapPin, Banknote, Home, Clock } from "lucide-react";
 
 export default function FAQSection() {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
@@ -44,6 +44,30 @@ export default function FAQSection() {
       icon: Calendar,
       question: "How to book a site visit?",
       answer: "You can book a site visit by calling us at +91 85888 34221, sending a WhatsApp message, or filling out the contact form below. We arrange free site visits with transportation from Delhi/NCR."
+    },
+    {
+      id: "payment",
+      icon: Banknote,
+      question: "What are the payment options available?",
+      answer: "We accept various payment methods including bank transfers, cheques, and online payments. Payment can be made in installments as per the agreed terms during the booking process."
+    },
+    {
+      id: "location",
+      icon: MapPin,
+      question: "What are the key location advantages of Khushalipur?",
+      answer: "Khushalipur is strategically located near Dehradun with excellent connectivity to major highways, airports, and cities. The area offers clean air, water availability, and proximity to hill stations, making it ideal for both investment and future development."
+    },
+    {
+      id: "usage",
+      icon: Home,
+      question: "Can I build a farmhouse or residence on the plot?",
+      answer: "Yes, these are agricultural plots where you can build farmhouses, engage in organic farming, or develop the land as per local regulations. Many investors use these plots for weekend retreats and agricultural activities."
+    },
+    {
+      id: "timeline",
+      icon: Clock,
+      question: "What is the typical timeline for property handover?",
+      answer: "After completion of payment and documentation, the property handover typically takes 15-30 days. All legal formalities and registration processes are completed during this period with full support from our team."
     }
   ];
 
