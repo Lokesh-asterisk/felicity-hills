@@ -14,8 +14,7 @@ export default function Footer() {
   const investmentInfo = [
     "Starting: ₹8,100/sq yd",
     "Returns: 15-20% annually",
-    "Plot sizes: 200-800 sq yd",
-    "EMI facility available"
+    "Plot sizes: 200-800 sq yd"
   ];
 
   const contactInfo = [
