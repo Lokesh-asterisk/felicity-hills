@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Download, FileText, Calendar } from "lucide-react";
+import { Download, FileText, Calendar, ArrowLeft, Phone } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 import type { Brochure } from "@shared/schema";
 
 const downloadFormSchema = z.object({
@@ -96,6 +97,16 @@ export default function BrochuresPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+      {/* Back to Home Button */}
+      <div className="container mx-auto px-4 py-4">
+        <Link href="/">
+          <Button variant="outline" className="inline-flex items-center gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-green-600 to-teal-600 text-white py-20">
         <div className="container mx-auto px-4 text-center">
@@ -224,10 +235,19 @@ export default function BrochuresPage() {
             for your investment in Khushalipur agricultural plots.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-green-600 hover:bg-green-700">
-              Schedule Site Visit
-            </Button>
-            <Button size="lg" variant="outline">
+            <Link href="/book-visit">
+              <Button size="lg" className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                <Calendar className="w-4 h-4 mr-2" />
+                Schedule Site Visit
+              </Button>
+            </Link>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => window.open('tel:+918588834221', '_self')}
+            >
+              <Phone className="w-4 h-4 mr-2" />
               Contact Sales Team
             </Button>
           </div>
