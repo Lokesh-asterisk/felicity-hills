@@ -228,9 +228,11 @@ export default function ContactSection() {
                       <SelectValue placeholder="Select Plot Size" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="200-300">200-300 yards</SelectItem>
-                      <SelectItem value="300-500">300-500 yards</SelectItem>
-                      <SelectItem value="500-800">500-800 yards</SelectItem>
+                      <SelectItem value="200-300">200-300 sq yd</SelectItem>
+                      <SelectItem value="300-500">300-500 sq yd</SelectItem>
+                      <SelectItem value="500-800">500-800 sq yd</SelectItem>
+                      <SelectItem value="800+">800+ sq yd</SelectItem>
+                      <SelectItem value="flexible">Flexible</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -242,10 +244,11 @@ export default function ContactSection() {
                       <SelectValue placeholder="Select Budget" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="15-25">₹15-25 lakh</SelectItem>
-                      <SelectItem value="25-40">₹25-40 lakh</SelectItem>
-                      <SelectItem value="40-60">₹40-60 lakh</SelectItem>
-                      <SelectItem value="60+">₹60+ lakh</SelectItem>
+                      <SelectItem value="15-25L">₹15-25 Lakh</SelectItem>
+                      <SelectItem value="25-40L">₹25-40 Lakh</SelectItem>
+                      <SelectItem value="40-60L">₹40-60 Lakh</SelectItem>
+                      <SelectItem value="60L+">₹60+ Lakh</SelectItem>
+                      <SelectItem value="flexible">Flexible</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
