@@ -88,7 +88,7 @@ export default function HeroSection() {
           
           <div className="lg:pl-12 animate-fade-in">
             <img 
-              src="/attached_assets/front_1754569110815.jpg" 
+              src="/khushalipur-site.jpg" 
               alt="Khushalipur Agricultural Plots - Real site showing entrance gates and development" 
               className="rounded-2xl shadow-2xl w-full"
             />
