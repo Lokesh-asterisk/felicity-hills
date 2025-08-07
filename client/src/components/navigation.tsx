@@ -24,6 +24,10 @@ export default function Navigation() {
 
   const handleNavigation = (path: string) => {
     setIsMenuOpen(false);
+    // Small delay to ensure menu closes before navigation
+    setTimeout(() => {
+      window.location.href = path;
+    }, 100);
   };
 
   return (
@@ -104,40 +108,36 @@ export default function Navigation() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden pb-4 space-y-2">
-            <Link 
-              href="/about"
+            <button 
               onClick={() => handleNavigation('/about')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               About
-            </Link>
-            <Link 
-              href="/project-showcase"
+            </button>
+            <button 
               onClick={() => handleNavigation('/project-showcase')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Projects
-            </Link>
+            </button>
             <button 
               onClick={() => scrollToSection('amenities')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Amenities
             </button>
-            <Link 
-              href="/videos"
+            <button 
               onClick={() => handleNavigation('/videos')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Videos
-            </Link>
-            <Link 
-              href="/brochures"
+            </button>
+            <button 
               onClick={() => handleNavigation('/brochures')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Brochures
-            </Link>
+            </button>
             <button 
               onClick={() => scrollToSection('calculator')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
@@ -150,14 +150,12 @@ export default function Navigation() {
             >
               Reviews
             </button>
-            <Link 
-              href="/book-visit"
+            <Button 
               onClick={() => handleNavigation('/book-visit')}
+              className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white"
             >
-              <Button className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white">
-                Book Visit
-              </Button>
-            </Link>
+              Book Visit
+            </Button>
             <Button 
               onClick={() => scrollToSection('contact')}
               className="w-full mt-2 bg-primary hover:bg-secondary"
