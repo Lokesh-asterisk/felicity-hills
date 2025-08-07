@@ -171,7 +171,7 @@ export default function HeroSection() {
                       </div>
                     </div>
                   ) : recentActivities.length > 0 ? (
-                    recentActivities.slice(0, 2).map((activity, index) => {
+                    recentActivities.map((activity, index) => {
                       const getActivityIcon = (type: string) => {
                         switch (type) {
                           case 'visit': return { icon: Calendar, color: 'blue' };
