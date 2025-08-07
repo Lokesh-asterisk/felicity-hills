@@ -59,12 +59,17 @@ export default function VideosPage() {
 
   // Function to convert Google Drive share URL to embed URL
   const convertGoogleDriveUrl = (url: string) => {
+    console.log('Original URL:', url);
     if (url.includes('drive.google.com/file/d/')) {
       const fileId = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1];
+      console.log('Extracted file ID:', fileId);
       if (fileId) {
-        return `https://drive.google.com/file/d/${fileId}/preview`;
+        const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+        console.log('Embed URL:', embedUrl);
+        return embedUrl;
       }
     }
+    console.log('Returning original URL:', url);
     return url;
   };
 
