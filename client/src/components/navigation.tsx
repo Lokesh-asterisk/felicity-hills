@@ -48,6 +48,9 @@ export default function Navigation() {
             <Link href="/about" className="text-gray-700 hover:text-primary transition-colors">
               About
             </Link>
+            <Link href="/project-showcase" className="text-gray-700 hover:text-primary transition-colors">
+              Projects
+            </Link>
             <button 
               onClick={() => scrollToSection('amenities')} 
               className="text-gray-700 hover:text-primary transition-colors"
@@ -107,6 +110,13 @@ export default function Navigation() {
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               About
+            </Link>
+            <Link 
+              href="/project-showcase"
+              onClick={() => handleNavigation('/project-showcase')}
+              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
+            >
+              Projects
             </Link>
             <button 
               onClick={() => scrollToSection('amenities')}

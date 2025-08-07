@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import About from "@/pages/about";
+import ProjectShowcase from "@/pages/project-showcase";
 import Videos from "@/pages/videos";
 import Brochures from "@/pages/brochures";
 import BookVisit from "@/pages/book-visit";
@@ -28,6 +29,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
+      <Route path="/project-showcase" component={ProjectShowcase} />
       <Route path="/videos" component={Videos} />
       <Route path="/brochures" component={Brochures} />
       <Route path="/book-visit" component={BookVisit} />
