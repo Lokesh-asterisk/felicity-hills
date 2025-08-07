@@ -291,12 +291,22 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="activity" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-            <TabsTrigger value="recent">Downloads</TabsTrigger>
-            <TabsTrigger value="popular">Popular Brochures</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
+          <div className="w-full overflow-x-auto">
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 min-w-fit">
+              <TabsTrigger value="activity" className="whitespace-nowrap px-3 py-2 text-sm">
+                Recent Activity
+              </TabsTrigger>
+              <TabsTrigger value="recent" className="whitespace-nowrap px-3 py-2 text-sm">
+                Downloads
+              </TabsTrigger>
+              <TabsTrigger value="popular" className="whitespace-nowrap px-3 py-2 text-sm">
+                Popular Brochures
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="whitespace-nowrap px-3 py-2 text-sm">
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Recent Activity */}
           <TabsContent value="activity" className="space-y-6">
