@@ -36,13 +36,13 @@ export default function HeroSection() {
   // Fetch real brochure stats for recent activity
   const { data: stats, isLoading } = useQuery<BrochureStats>({
     queryKey: ["/api/admin/brochure-stats"],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 5000, // Refresh every 5 seconds
   });
 
   // Fetch recent activities
   const { data: recentActivities = [], isLoading: activitiesLoading } = useQuery<Activity[]>({
     queryKey: ["/api/activities/recent"],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 5000, // Refresh every 5 seconds
   });
 
   const formatRelativeTime = (date: Date) => {

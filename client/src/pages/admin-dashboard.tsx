@@ -396,13 +396,13 @@ export default function AdminDashboard() {
   // Only fetch data if authenticated
   const { data: stats, isLoading } = useQuery<BrochureStats>({
     queryKey: ["/api/admin/brochure-stats"],
-    refetchInterval: 30000,
+    refetchInterval: 5000,
     enabled: isAuthenticated, // Only run query when authenticated
   });
 
   const { data: downloads = [], isLoading: downloadsLoading } = useQuery<BrochureDownload[]>({
     queryKey: ["/api/admin/brochure-downloads"],
-    refetchInterval: 30000,
+    refetchInterval: 5000,
     enabled: isAuthenticated, // Only run query when authenticated
   });
 
