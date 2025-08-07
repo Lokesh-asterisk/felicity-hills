@@ -344,8 +344,7 @@ export default function About() {
               <a href="tel:+918588834221">
                 <Button 
                   size="lg"
-                  variant="outline" 
-                  className="border-2 border-white text-white hover:bg-white hover:text-green-600 hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold"
+                  className="bg-white text-green-600 hover:bg-gray-100 hover:text-green-700 hover:scale-105 transition-all duration-300 shadow-xl px-8 py-4 text-lg font-semibold border-2 border-white"
                 >
                   <Phone className="w-5 h-5 mr-2" />
                   Call: +91 85888 34221
