@@ -10,9 +10,10 @@ import path from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
-  // Serve static files (PDFs and HTML brochures)
+  // Serve static files (PDFs, HTML brochures, and images)
   app.use('/pdfs', express.static(path.join(process.cwd(), 'public', 'pdfs')));
   app.use('/brochures', express.static(path.join(process.cwd(), 'public', 'brochures')));
+  app.use(express.static(path.join(process.cwd(), 'public')));
   
   // Initialize brochures with PDFs on startup
   try {
