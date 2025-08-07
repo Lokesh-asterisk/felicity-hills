@@ -1,8 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, Users, TrendingUp } from "lucide-react";
+import { Clock, Calendar, Users, TrendingUp, Wifi, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { format, isToday, isYesterday } from "date-fns";
+import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 import type { Activity } from "@shared/schema";
 
 export default function RecentActivitySection() {
@@ -13,7 +13,12 @@ export default function RecentActivitySection() {
   });
 
   const formatRelativeTime = (date: Date) => {
-    if (isToday(date)) return format(date, "h:mm a") + " today";
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (isToday(date)) return format(date, "h:mm a");
     if (isYesterday(date)) return "Yesterday";
     return format(date, "MMM dd");
   };
@@ -23,16 +28,17 @@ export default function RecentActivitySection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Badge variant="outline" className="text-sm">
-              <Clock className="w-4 h-4 mr-1" />
-              Live Updates
+            <Badge className="text-sm bg-green-100 text-green-800 border-green-200 animate-pulse">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-ping"></div>
+              <Wifi className="w-4 h-4 mr-1" />
+              Live Data Stream
             </Badge>
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Recent Activity
+            Live Activity Feed
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Stay updated with the latest developments and activities at Khushalipur
+            Real-time business activities and customer engagements happening now
           </p>
         </div>
 
@@ -54,9 +60,27 @@ export default function RecentActivitySection() {
               </CardContent>
             </Card>
           ) : recentActivities.length > 0 ? (
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardContent className="p-6">
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="relative">
+              {/* Live indicator overlay */}
+              <div className="absolute -top-2 -right-2 z-10">
+                <div className="flex items-center bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+                  <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+                  LIVE
+                </div>
+              </div>
+              
+              <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-l-green-500">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Zap className="w-4 h-4 mr-1 text-green-500" />
+                      <span>Auto-refreshing every 5 seconds</span>
+                    </div>
+                    <div className="text-xs text-green-600 font-medium">
+                      {recentActivities.length} activities today
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {recentActivities.map((activity, index) => {
                     const getActivityIcon = (type: string) => {
                       switch (type) {
@@ -72,20 +96,31 @@ export default function RecentActivitySection() {
                     return (
                       <div 
                         key={activity.id} 
-                        className="flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200 animate-fade-in-up"
+                        className={`relative flex items-center p-4 bg-gradient-to-r from-gray-50 to-white hover:from-${color}-50 hover:to-white rounded-lg transition-all duration-300 border border-gray-200 hover:border-${color}-200 hover:shadow-md animate-fade-in-up group`}
                         style={{ animationDelay: `${index * 0.05}s` }}
                       >
-                        <div className={`w-10 h-10 bg-${color}-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0`}>
+                        {/* Live indicator for very recent activities */}
+                        {activity.createdAt && new Date().getTime() - new Date(activity.createdAt).getTime() < 300000 && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+                        )}
+                        
+                        <div className={`w-10 h-10 bg-${color}-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0 group-hover:scale-110 transition-transform duration-200`}>
                           <Icon className={`w-5 h-5 text-${color}-600`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm text-gray-900 truncate">
+                          <div className="font-medium text-sm text-gray-900 truncate group-hover:text-gray-700">
                             {activity.title}
                           </div>
                           <div className="text-xs text-gray-600 truncate">
                             {activity.description}
                           </div>
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className={`text-xs font-medium mt-1 ${
+                            activity.createdAt && new Date().getTime() - new Date(activity.createdAt).getTime() < 60000 
+                              ? 'text-green-600' 
+                              : activity.createdAt && new Date().getTime() - new Date(activity.createdAt).getTime() < 300000
+                              ? 'text-orange-600'
+                              : 'text-gray-500'
+                          }`}>
                             {activity.createdAt ? formatRelativeTime(new Date(activity.createdAt)) : 'Recently'}
                           </div>
                         </div>
@@ -95,6 +130,7 @@ export default function RecentActivitySection() {
                 </div>
               </CardContent>
             </Card>
+            </div>
           ) : (
             <Card className="text-center py-12">
               <CardContent>
