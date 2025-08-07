@@ -327,7 +327,7 @@ export class DatabaseStorage implements IStorage {
       {
         title: "Location Advantages & Connectivity",
         description: "Discover why Khushalipur is the perfect location for agricultural land investment with excellent connectivity to Delhi and Dehradun.",
-        videoUrl: "https://www.youtube.com/embed/sample-location-video",
+        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/view?usp=sharing",
         thumbnailUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
         duration: "3:45",
         category: "location"
