@@ -17,7 +17,7 @@ export interface BookingDetails {
 
 export class EmailService {
   private static instance: EmailService;
-  private fromEmail = 'noreply@khushalipur.com'; // You can customize this
+  private fromEmail = 'lokesh.mvt@gmail.com'; // Must be verified in SendGrid
 
   static getInstance(): EmailService {
     if (!EmailService.instance) {

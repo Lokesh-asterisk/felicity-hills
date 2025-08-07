@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack React application for Khushalipur - a real estate landing page focused on agricultural land investment near Dehradun. The application showcases amenities, investment calculators, testimonials, and provides site visit booking functionality. It features a comprehensive brochure management system with download tracking, admin analytics dashboard, and dedicated pages for videos and documentation. Built with a modern UI design using shadcn/ui components and Tailwind CSS.
+This is a full-stack React application for Khushalipur - a real estate landing page focused on agricultural land investment near Dehradun. The application showcases amenities, investment calculators, testimonials, and provides comprehensive site visit booking functionality with automated email notifications. It features a comprehensive brochure management system with download tracking, admin analytics dashboard, and dedicated pages for videos and documentation. Built with a modern UI design using shadcn/ui components and Tailwind CSS.
 
 # User Preferences
 
@@ -32,7 +32,7 @@ Preferred communication style: Simple, everyday language.
 ## API Structure
 - `GET /api/plots` - Retrieve all available plots with pricing and features
 - `GET /api/testimonials` - Fetch customer testimonials and success stories  
-- `POST /api/site-visits` - Create new site visit booking with form validation
+- `POST /api/site-visits` - Create new site visit booking with email notifications (user confirmation + admin alert)
 - `GET /api/brochures` - Retrieve all available brochures for download
 - `POST /api/brochures/:id/download` - Track brochure downloads with user details
 - `GET /api/admin/brochure-downloads` - Admin endpoint for download tracking data
