@@ -196,32 +196,6 @@ export default function InvestmentCalculator() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Investment Comparison */}
-        <Card className="mt-12 shadow-lg animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <CardContent className="p-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Investment Comparison</h3>
-            <div className="grid md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary mb-2">15-20%</div>
-                <div className="text-sm text-gray-600">Khushalipur Plots</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-400 mb-2">6-7%</div>
-                <div className="text-sm text-gray-600">Fixed Deposit</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-400 mb-2">10-12%</div>
-                <div className="text-sm text-gray-600">Mutual Funds</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-400 mb-2">12-15%*</div>
-                <div className="text-sm text-gray-600">Stock Market</div>
-                <div className="text-xs text-gray-500 mt-1">*Subject to market risks</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </section>
   );
