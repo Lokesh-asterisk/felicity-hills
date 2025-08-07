@@ -1,10 +1,13 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, Users, FileText, TrendingUp, Calendar, Mail } from "lucide-react";
+import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut } from "lucide-react";
 import { format, isToday, isYesterday, subDays, startOfDay } from "date-fns";
+import AdminLogin from "@/components/admin-login";
 
 interface BrochureDownload {
   id: string;
@@ -32,16 +35,52 @@ interface BrochureStats {
   }>;
 }
 
+const ADMIN_PASSWORD = "khushalipur2025"; // In production, this should be in environment variables
+
 export default function AdminDashboard() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+  // Check if already authenticated on component mount
+  useEffect(() => {
+    const authStatus = sessionStorage.getItem("admin-authenticated");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = (password: string) => {
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      setLoginError("");
+      sessionStorage.setItem("admin-authenticated", "true");
+    } else {
+      setLoginError("Invalid password. Please try again.");
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    sessionStorage.removeItem("admin-authenticated");
+  };
+
+  // Only fetch data if authenticated
   const { data: stats, isLoading } = useQuery<BrochureStats>({
     queryKey: ["/api/admin/brochure-stats"],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000,
+    enabled: isAuthenticated, // Only run query when authenticated
   });
 
   const { data: downloads = [], isLoading: downloadsLoading } = useQuery<BrochureDownload[]>({
     queryKey: ["/api/admin/brochure-downloads"],
     refetchInterval: 30000,
+    enabled: isAuthenticated, // Only run query when authenticated
   });
+
+  // Show login form if not authenticated
+  if (!isAuthenticated) {
+    return <AdminLogin onLogin={handleLogin} error={loginError} />;
+  }
 
   if (isLoading || downloadsLoading) {
     return (
@@ -87,9 +126,20 @@ export default function AdminDashboard() {
               Khushalipur Brochure Download Analytics
             </p>
           </div>
-          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-            Live Data
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              Live Data
+            </Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
