@@ -25,7 +25,7 @@ export default function FAQSection() {
       id: "investment",
       icon: DollarSign,
       question: "What is the minimum investment amount?",
-      answer: "The minimum investment starts from ₹16.2 lakhs for a 200 sq yd plot at ₹8,100 per sq yd. We also offer EMI facilities to make investment more accessible."
+      answer: "The minimum investment starts from ₹16.2 lakhs for a 200 sq yd plot at ₹8,100 per sq yd."
     },
     {
       id: "legal",
