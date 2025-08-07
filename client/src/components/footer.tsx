@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Phone, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
-import logoImage from "@assets/logo_1754576948122.png";
+import logoImage from "@assets/logo1_1754577128388.png";
 
 export default function Footer() {
   const quickLinks = [
