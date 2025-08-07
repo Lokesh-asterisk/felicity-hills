@@ -245,6 +245,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/admin/brochure-downloads/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteBrochureDownload(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Download record not found" });
+      }
+      res.json({ message: "Download record deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting brochure download:", error);
+      res.status(500).json({ message: "Failed to delete download record" });
+    }
+  });
+
   // Get videos
   app.get("/api/videos", async (_req, res) => {
     try {

@@ -56,6 +56,7 @@ export interface IStorage {
   createBrochureDownload(download: InsertBrochureDownload): Promise<BrochureDownload>;
   getBrochureDownloads(): Promise<BrochureDownload[]>;
   getBrochureDownloadStats(): Promise<any>;
+  deleteBrochureDownload(id: string): Promise<boolean>;
   
   // Video operations
   getVideos(): Promise<Video[]>;
@@ -245,6 +246,11 @@ export class DatabaseStorage implements IStorage {
       recentDownloads,
       downloadsByDate,
     };
+  }
+
+  async deleteBrochureDownload(id: string): Promise<boolean> {
+    const result = await db.delete(brochureDownloads).where(eq(brochureDownloads.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   // Video operations
