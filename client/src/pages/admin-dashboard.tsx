@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,7 @@ const ADMIN_PASSWORD = "khushalipur2025"; // In production, this should be in en
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [, setLocation] = useLocation();
   const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([
     {
       id: "1",
@@ -102,6 +104,7 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem("admin-authenticated");
+    setLocation("/"); // Redirect to home page
   };
 
   const handleAddActivity = () => {
