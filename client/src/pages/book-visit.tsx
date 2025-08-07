@@ -15,10 +15,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarDays, MapPin, Phone, Mail, IndianRupee, Clock } from "lucide-react";
 import { z } from "zod";
 
-// Extend the schema with additional validation
+// Enhanced validation schema with proper mobile and email validation
 const bookingFormSchema = insertSiteVisitSchema.extend({
-  email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
-  mobile: z.string().min(10, "Mobile number should be at least 10 digits").max(15, "Mobile number too long"),
+  email: z.string().optional().or(z.literal("")).refine(
+    (email) => {
+      if (!email || email === "") return true;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    },
+    { message: "Please enter a valid email address" }
+  ),
+  mobile: z.string()
+    .min(1, "Mobile number is required")
+    .refine(
+      (mobile) => {
+        // Remove all non-digit characters except +
+        const cleanMobile = mobile.replace(/[^\d+]/g, '');
+        // Check for Indian mobile number format: +91 followed by 10 digits starting with 6-9
+        const indianMobileRegex = /^(\+91)?[6-9]\d{9}$/;
+        return indianMobileRegex.test(cleanMobile);
+      },
+      { message: "Please enter a valid Indian mobile number (10 digits starting with 6-9)" }
+    ),
 });
 
 type BookingFormData = z.infer<typeof bookingFormSchema>;
@@ -165,11 +183,20 @@ export default function BookVisit() {
                       type="tel"
                       placeholder="+91 XXXXX XXXXX"
                       {...form.register("mobile")}
+                      onChange={(e) => {
+                        // Allow only numbers, +, spaces, and hyphens while typing
+                        const value = e.target.value.replace(/[^\d+\s-]/g, '');
+                        form.setValue("mobile", value);
+                      }}
                       className={form.formState.errors.mobile ? "border-red-500" : ""}
+                      maxLength={15}
                     />
                     {form.formState.errors.mobile && (
                       <p className="text-sm text-red-500">{form.formState.errors.mobile.message}</p>
                     )}
+                    <p className="text-sm text-gray-500">
+                      Enter 10-digit Indian mobile number (starting with 6, 7, 8, or 9)
+                    </p>
                   </div>
                 </div>
 
@@ -186,7 +213,7 @@ export default function BookVisit() {
                     <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
                   )}
                   <p className="text-sm text-gray-500">
-                    Provide email to receive detailed confirmation and directions
+                    📧 Provide email to receive detailed confirmation and directions
                   </p>
                 </div>
               </div>

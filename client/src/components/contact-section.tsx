@@ -51,8 +51,41 @@ export default function ContactSection() {
     }
   });
 
+  // Validation functions
+  const validateMobile = (mobile: string): string | null => {
+    // Remove all non-digit characters except +
+    const cleanMobile = mobile.replace(/[^\d+]/g, '');
+    
+    // Check for Indian mobile number format
+    const indianMobileRegex = /^(\+91)?[6-9]\d{9}$/;
+    
+    if (!cleanMobile) {
+      return "Mobile number is required";
+    }
+    
+    if (!indianMobileRegex.test(cleanMobile)) {
+      return "Please enter a valid Indian mobile number (10 digits starting with 6-9)";
+    }
+    
+    return null;
+  };
+  
+  const validateEmail = (email: string): string | null => {
+    if (!email) return null; // Email is optional
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    
+    return null;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
     if (!formData.name || !formData.mobile) {
       toast({
         title: "Required fields missing",
@@ -61,6 +94,29 @@ export default function ContactSection() {
       });
       return;
     }
+    
+    // Validate mobile number
+    const mobileError = validateMobile(formData.mobile);
+    if (mobileError) {
+      toast({
+        title: "Invalid Mobile Number",
+        description: mobileError,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Validate email if provided
+    const emailError = validateEmail(formData.email);
+    if (emailError) {
+      toast({
+        title: "Invalid Email Address",
+        description: emailError,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     createSiteVisit.mutate(formData);
   };
 
@@ -129,14 +185,20 @@ export default function ContactSection() {
                     type="tel"
                     required
                     value={formData.mobile}
-                    onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
+                    onChange={(e) => {
+                      // Allow only numbers, +, spaces, and hyphens while typing
+                      const value = e.target.value.replace(/[^\d+\s-]/g, '');
+                      setFormData(prev => ({ ...prev, mobile: value }));
+                    }}
                     placeholder="+91 XXXXX XXXXX"
                     className="mt-1"
+                    maxLength={15}
                   />
+                  <p className="text-xs text-gray-500 mt-1">Enter 10-digit Indian mobile number</p>
                 </div>
 
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">Email (Optional)</Label>
                   <Input
                     id="email"
                     type="email"
@@ -145,6 +207,7 @@ export default function ContactSection() {
                     placeholder="your.email@example.com"
                     className="mt-1"
                   />
+                  <p className="text-xs text-gray-500 mt-1">We'll send booking confirmation to this email</p>
                 </div>
 
                 <div>
