@@ -41,7 +41,8 @@ export default function BookVisit() {
 
   const bookingMutation = useMutation({
     mutationFn: async (data: InsertSiteVisit) => {
-      return await apiRequest("/api/site-visits", "POST", data);
+      const response = await apiRequest("POST", "/api/site-visits", data);
+      return await response.json();
     },
     onSuccess: (data: any) => {
       setIsSubmitted(true);
