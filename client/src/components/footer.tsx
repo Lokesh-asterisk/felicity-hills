@@ -40,7 +40,7 @@ export default function Footer() {
               <img 
                 src={logoImage} 
                 alt="Felicity Hills Logo" 
-                className="h-16 w-auto"
+                className="h-20 w-auto"
               />
             </div>
             <p className="text-gray-400 leading-relaxed">
