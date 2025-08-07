@@ -45,6 +45,9 @@ export default function Navigation() {
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
+            <Link href="/about" className="text-gray-700 hover:text-primary transition-colors">
+              About
+            </Link>
             <button 
               onClick={() => scrollToSection('amenities')} 
               className="text-gray-700 hover:text-primary transition-colors"
@@ -98,6 +101,13 @@ export default function Navigation() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden pb-4 space-y-2">
+            <Link 
+              href="/about"
+              onClick={() => handleNavigation('/about')}
+              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
+            >
+              About
+            </Link>
             <button 
               onClick={() => scrollToSection('amenities')}
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
