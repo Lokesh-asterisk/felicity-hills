@@ -153,10 +153,7 @@ export default function AdminDashboard() {
   // Create testimonial mutation
   const createTestimonialMutation = useMutation({
     mutationFn: async (data: z.infer<typeof testimonialFormSchema>) => {
-      await apiRequest("/api/admin/testimonials", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      await apiRequest("POST", "/api/admin/testimonials", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
@@ -169,10 +166,7 @@ export default function AdminDashboard() {
   const updateTestimonialMutation = useMutation({
     mutationFn: async (data: z.infer<typeof testimonialFormSchema>) => {
       if (!editingTestimonial) throw new Error("No testimonial to update");
-      await apiRequest(`/api/admin/testimonials/${editingTestimonial.id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await apiRequest("PUT", `/api/admin/testimonials/${editingTestimonial.id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
@@ -185,9 +179,7 @@ export default function AdminDashboard() {
   // Delete testimonial mutation
   const deleteTestimonialMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest(`/api/admin/testimonials/${id}`, {
-        method: "DELETE",
-      });
+      await apiRequest("DELETE", `/api/admin/testimonials/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
