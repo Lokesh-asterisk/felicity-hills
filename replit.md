@@ -2,6 +2,13 @@
 
 This is a full-stack React application for Khushalipur - a real estate landing page focused on agricultural land investment near Dehradun. The application showcases amenities, investment calculators, testimonials, and provides comprehensive site visit booking functionality with automated email notifications. It features a comprehensive brochure management system with download tracking, admin analytics dashboard, and dedicated pages for videos and documentation. Built with a modern UI design using shadcn/ui components and Tailwind CSS.
 
+## Recent Updates (August 2025)
+- ✅ Fixed main menu "Book Visit" form submission error
+- ✅ Enhanced email notifications with professional formatting and spam prevention
+- ✅ Improved admin alert emails for better inbox delivery
+- ✅ Both booking forms (main menu + contact section) fully operational
+- ✅ Ready for deployment to custom domain (felicityhills.com)
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
