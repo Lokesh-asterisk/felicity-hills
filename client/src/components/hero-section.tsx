@@ -87,11 +87,19 @@ export default function HeroSection() {
           </div>
           
           <div className="lg:pl-12 animate-fade-in">
-            <img 
-              src="/khushalipur-site.jpg" 
-              alt="Khushalipur Agricultural Plots - Real site showing entrance gates and development" 
-              className="rounded-2xl shadow-2xl w-full"
-            />
+            <div className="relative">
+              <img 
+                src="/khushalipur-site.jpg" 
+                alt="Khushalipur Agricultural Plots - Real site showing entrance gates and development" 
+                className="rounded-2xl shadow-2xl w-full"
+              />
+              {/* Image Caption */}
+              <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+                <p className="text-sm font-medium text-gray-800 text-center">
+                  Khushalipur Agricultural Plots - Real site showing entrance gates and development
+                </p>
+              </div>
+            </div>
             
             {/* Recent Activity Card */}
             <Card className="shadow-lg mt-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
