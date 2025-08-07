@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2 } from "lucide-react";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { apiRequest } from "@/lib/queryClient";
+import type { Testimonial } from "@shared/schema";
 import { format, isToday, isYesterday, subDays, startOfDay } from "date-fns";
 import AdminLogin from "@/components/admin-login";
 
@@ -47,6 +53,16 @@ interface ActivityItem {
   type: 'visit' | 'inquiry' | 'sale' | 'meeting' | 'other';
 }
 
+const testimonialFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  location: z.string().min(1, "Location is required"),
+  investment: z.number().min(1, "Investment amount is required"),
+  plotSize: z.number().min(1, "Plot size is required"),
+  returns: z.number().min(1, "Returns percentage is required"),
+  duration: z.string().min(1, "Duration is required"),
+  review: z.string().min(10, "Review should be at least 10 characters"),
+});
+
 const ADMIN_PASSWORD = "khushalipur2025"; // In production, this should be in environment variables
 
 export default function AdminDashboard() {
@@ -82,6 +98,123 @@ export default function AdminDashboard() {
     description: "",
     type: "other" as ActivityItem['type']
   });
+
+  // Testimonial management state
+  const [showTestimonialDialog, setShowTestimonialDialog] = useState(false);
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
+  
+  const queryClient = useQueryClient();
+  
+  // Get testimonials data
+  const { data: testimonials = [], isLoading: testimonialsLoading } = useQuery<Testimonial[]>({
+    queryKey: ["/api/testimonials"],
+  });
+
+  // Testimonial form
+  const testimonialForm = useForm<z.infer<typeof testimonialFormSchema>>({
+    resolver: zodResolver(testimonialFormSchema),
+    defaultValues: {
+      name: "",
+      location: "",
+      investment: 0,
+      plotSize: 0,
+      returns: 0,
+      duration: "",
+      review: "",
+    },
+  });
+
+  // Reset form when dialog opens/closes
+  useEffect(() => {
+    if (showTestimonialDialog && editingTestimonial) {
+      testimonialForm.reset({
+        name: editingTestimonial.name,
+        location: editingTestimonial.location,
+        investment: editingTestimonial.investment,
+        plotSize: editingTestimonial.plotSize,
+        returns: editingTestimonial.returns,
+        duration: editingTestimonial.duration,
+        review: editingTestimonial.review,
+      });
+    } else if (!showTestimonialDialog) {
+      testimonialForm.reset({
+        name: "",
+        location: "",
+        investment: 0,
+        plotSize: 0,
+        returns: 0,
+        duration: "",
+        review: "",
+      });
+      setEditingTestimonial(null);
+    }
+  }, [showTestimonialDialog, editingTestimonial, testimonialForm]);
+
+  // Create testimonial mutation
+  const createTestimonialMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof testimonialFormSchema>) => {
+      await apiRequest("/api/admin/testimonials", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
+      setShowTestimonialDialog(false);
+      testimonialForm.reset();
+    },
+  });
+
+  // Update testimonial mutation
+  const updateTestimonialMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof testimonialFormSchema>) => {
+      if (!editingTestimonial) throw new Error("No testimonial to update");
+      await apiRequest(`/api/admin/testimonials/${editingTestimonial.id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
+      setShowTestimonialDialog(false);
+      setEditingTestimonial(null);
+      testimonialForm.reset();
+    },
+  });
+
+  // Delete testimonial mutation
+  const deleteTestimonialMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest(`/api/admin/testimonials/${id}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/testimonials"] });
+    },
+  });
+
+  // Submit testimonial form
+  const onTestimonialSubmit = (data: z.infer<typeof testimonialFormSchema>) => {
+    if (editingTestimonial) {
+      updateTestimonialMutation.mutate(data);
+    } else {
+      createTestimonialMutation.mutate(data);
+    }
+  };
+
+  // Handle edit testimonial
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    setEditingTestimonial(testimonial);
+    setShowTestimonialDialog(true);
+  };
+
+  // Handle delete testimonial
+  const handleDeleteTestimonial = (id: string) => {
+    if (confirm("Are you sure you want to delete this customer story?")) {
+      deleteTestimonialMutation.mutate(id);
+    }
+  };
 
   // Check if already authenticated on component mount
   useEffect(() => {
@@ -303,6 +436,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
               Analytics
+            </TabsTrigger>
+            <TabsTrigger value="testimonials" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
+              Customer Stories
             </TabsTrigger>
           </TabsList>
 
@@ -560,6 +696,259 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Customer Stories Management */}
+          <TabsContent value="testimonials" className="space-y-6">
+            <Card className="bg-white dark:bg-gray-800 shadow-lg">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Star className="h-5 w-5 text-yellow-600" />
+                    <CardTitle>Customer Stories Management</CardTitle>
+                  </div>
+                  <Dialog open={showTestimonialDialog} onOpenChange={setShowTestimonialDialog}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Customer Story
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>
+                          {editingTestimonial ? "Edit Customer Story" : "Add New Customer Story"}
+                        </DialogTitle>
+                        <DialogDescription>
+                          {editingTestimonial 
+                            ? "Update the customer story details below." 
+                            : "Add a new customer success story to showcase on the website."
+                          }
+                        </DialogDescription>
+                      </DialogHeader>
+                      
+                      <Form {...testimonialForm}>
+                        <form onSubmit={testimonialForm.handleSubmit(onTestimonialSubmit)} className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                              control={testimonialForm.control}
+                              name="name"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Customer Name</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="e.g., Rajesh Kumar" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={testimonialForm.control}
+                              name="location"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Location</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="e.g., Delhi" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-4">
+                            <FormField
+                              control={testimonialForm.control}
+                              name="investment"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Investment (₹)</FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="number" 
+                                      placeholder="e.g., 500000" 
+                                      {...field}
+                                      onChange={(e) => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={testimonialForm.control}
+                              name="plotSize"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Plot Size (Sq Yd)</FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="number" 
+                                      placeholder="e.g., 1000" 
+                                      {...field}
+                                      onChange={(e) => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={testimonialForm.control}
+                              name="returns"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Returns (%)</FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="number" 
+                                      placeholder="e.g., 45" 
+                                      {...field}
+                                      onChange={(e) => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <FormField
+                            control={testimonialForm.control}
+                            name="duration"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Duration</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., 3 years" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={testimonialForm.control}
+                            name="review"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Customer Review</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="Enter the customer's testimonial or review..."
+                                    className="min-h-[100px]"
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="flex justify-end gap-3 pt-4">
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              onClick={() => setShowTestimonialDialog(false)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button 
+                              type="submit" 
+                              disabled={createTestimonialMutation.isPending || updateTestimonialMutation.isPending}
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              {createTestimonialMutation.isPending || updateTestimonialMutation.isPending
+                                ? "Saving..." 
+                                : editingTestimonial ? "Update Story" : "Add Story"
+                              }
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {testimonialsLoading ? (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+                    <p className="mt-2">Loading customer stories...</p>
+                  </div>
+                ) : !testimonials?.length ? (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <Star className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No customer stories added yet</p>
+                    <p className="text-sm">Add your first success story to showcase on the website</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Customer</TableHead>
+                          <TableHead>Location</TableHead>
+                          <TableHead>Investment</TableHead>
+                          <TableHead>Plot Size</TableHead>
+                          <TableHead>Returns</TableHead>
+                          <TableHead>Duration</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {testimonials.map((testimonial) => (
+                          <TableRow key={testimonial.id}>
+                            <TableCell className="font-medium">
+                              <div>
+                                <div className="font-semibold">{testimonial.name}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 max-w-[200px] truncate">
+                                  "{testimonial.review}"
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>{testimonial.location}</TableCell>
+                            <TableCell>
+                              <div className="font-medium">₹{testimonial.investment.toLocaleString()}</div>
+                            </TableCell>
+                            <TableCell>{testimonial.plotSize.toLocaleString()} Sq Yd</TableCell>
+                            <TableCell>
+                              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                {testimonial.returns}%
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{testimonial.duration}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditTestimonial(testimonial)}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDeleteTestimonial(testimonial.id)}
+                                  disabled={deleteTestimonialMutation.isPending}
+                                  className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </div>
                 )}
               </CardContent>

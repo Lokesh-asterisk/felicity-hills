@@ -40,6 +40,9 @@ export interface IStorage {
   
   // Testimonial operations
   getTestimonials(): Promise<Testimonial[]>;
+  createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+  updateTestimonial(id: string, testimonial: InsertTestimonial): Promise<Testimonial | undefined>;
+  deleteTestimonial(id: string): Promise<boolean>;
   
   // Brochure operations
   getBrochures(): Promise<Brochure[]>;
@@ -106,6 +109,25 @@ export class DatabaseStorage implements IStorage {
   // Testimonial operations
   async getTestimonials(): Promise<Testimonial[]> {
     return await db.select().from(testimonials);
+  }
+
+  async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
+    const [newTestimonial] = await db.insert(testimonials).values(testimonial).returning();
+    return newTestimonial;
+  }
+
+  async updateTestimonial(id: string, testimonial: InsertTestimonial): Promise<Testimonial | undefined> {
+    const [updatedTestimonial] = await db
+      .update(testimonials)
+      .set(testimonial)
+      .where(eq(testimonials.id, id))
+      .returning();
+    return updatedTestimonial || undefined;
+  }
+
+  async deleteTestimonial(id: string): Promise<boolean> {
+    const result = await db.delete(testimonials).where(eq(testimonials.id, id));
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Brochure operations

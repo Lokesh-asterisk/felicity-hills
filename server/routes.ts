@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertSiteVisitSchema } from "@shared/schema";
+import { insertSiteVisitSchema, insertTestimonialSchema } from "@shared/schema";
 import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { EmailService } from "./emailService";
 import { z } from "zod";
@@ -40,6 +40,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(testimonials);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch testimonials" });
+    }
+  });
+
+  // Admin testimonial management endpoints
+  app.post("/api/admin/testimonials", async (req, res) => {
+    try {
+      const testimonialData = insertTestimonialSchema.parse(req.body);
+      const testimonial = await storage.createTestimonial(testimonialData);
+      res.json(testimonial);
+    } catch (error) {
+      console.error("Error creating testimonial:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid testimonial data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create testimonial" });
+      }
+    }
+  });
+
+  app.put("/api/admin/testimonials/:id", async (req, res) => {
+    try {
+      const testimonialData = insertTestimonialSchema.parse(req.body);
+      const testimonial = await storage.updateTestimonial(req.params.id, testimonialData);
+      if (!testimonial) {
+        return res.status(404).json({ message: "Testimonial not found" });
+      }
+      res.json(testimonial);
+    } catch (error) {
+      console.error("Error updating testimonial:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid testimonial data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update testimonial" });
+      }
+    }
+  });
+
+  app.delete("/api/admin/testimonials/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteTestimonial(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Testimonial not found" });
+      }
+      res.json({ message: "Testimonial deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting testimonial:", error);
+      res.status(500).json({ message: "Failed to delete testimonial" });
     }
   });
 
