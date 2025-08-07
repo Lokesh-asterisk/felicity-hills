@@ -87,6 +87,13 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const adminSettings = pgTable("admin_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  key: varchar("key").notNull().unique(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertPlotSchema = createInsertSchema(plots).omit({ id: true });
 export const insertSiteVisitSchema = createInsertSchema(siteVisits).omit({ id: true, createdAt: true });
 export const insertTestimonialSchema = createInsertSchema(testimonials).omit({ id: true });
@@ -95,6 +102,7 @@ export const insertVideoSchema = createInsertSchema(videos).omit({ id: true, cre
 export const insertBrochureDownloadSchema = createInsertSchema(brochureDownloads).omit({ id: true, downloadedAt: true });
 export const insertActivitySchema = createInsertSchema(activities).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAdminSettingSchema = createInsertSchema(adminSettings).omit({ id: true, updatedAt: true });
 
 export type Plot = typeof plots.$inferSelect;
 export type SiteVisit = typeof siteVisits.$inferSelect;
@@ -104,6 +112,7 @@ export type Video = typeof videos.$inferSelect;
 export type BrochureDownload = typeof brochureDownloads.$inferSelect;
 export type Activity = typeof activities.$inferSelect;
 export type User = typeof users.$inferSelect;
+export type AdminSetting = typeof adminSettings.$inferSelect;
 export type InsertPlot = z.infer<typeof insertPlotSchema>;
 export type InsertSiteVisit = z.infer<typeof insertSiteVisitSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
@@ -112,4 +121,5 @@ export type InsertVideo = z.infer<typeof insertVideoSchema>;
 export type InsertBrochureDownload = z.infer<typeof insertBrochureDownloadSchema>;
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertAdminSetting = z.infer<typeof insertAdminSettingSchema>;
 export type UpsertUser = typeof users.$inferInsert;

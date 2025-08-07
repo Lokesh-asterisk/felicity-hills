@@ -7,6 +7,7 @@ import {
   brochureDownloads,
   activities,
   users,
+  adminSettings,
   type Plot,
   type SiteVisit,
   type Testimonial,
@@ -15,6 +16,7 @@ import {
   type BrochureDownload,
   type Activity,
   type User,
+  type AdminSetting,
   type InsertPlot,
   type InsertSiteVisit,
   type InsertTestimonial,
@@ -22,6 +24,7 @@ import {
   type InsertVideo,
   type InsertBrochureDownload,
   type InsertActivity,
+  type InsertAdminSetting,
   type UpsertUser,
 } from "@shared/schema";
 import { db } from "./db";
@@ -66,6 +69,10 @@ export interface IStorage {
   getActivities(): Promise<Activity[]>;
   getRecentActivities(): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
+  
+  // Admin settings operations
+  getAdminSetting(key: string): Promise<AdminSetting | undefined>;
+  upsertAdminSetting(setting: InsertAdminSetting): Promise<AdminSetting>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -283,6 +290,27 @@ export class DatabaseStorage implements IStorage {
   async createActivity(activity: InsertActivity): Promise<Activity> {
     const [newActivity] = await db.insert(activities).values(activity).returning();
     return newActivity;
+  }
+
+  // Admin settings operations
+  async getAdminSetting(key: string): Promise<AdminSetting | undefined> {
+    const [setting] = await db.select().from(adminSettings).where(eq(adminSettings.key, key));
+    return setting || undefined;
+  }
+
+  async upsertAdminSetting(setting: InsertAdminSetting): Promise<AdminSetting> {
+    const [upsertedSetting] = await db
+      .insert(adminSettings)
+      .values(setting)
+      .onConflictDoUpdate({
+        target: adminSettings.key,
+        set: {
+          value: setting.value,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return upsertedSetting;
   }
 
   // Initialize with sample data

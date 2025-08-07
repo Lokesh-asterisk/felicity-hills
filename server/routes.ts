@@ -1,12 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertSiteVisitSchema, insertTestimonialSchema, insertActivitySchema } from "@shared/schema";
+import { insertSiteVisitSchema, insertTestimonialSchema, insertActivitySchema, insertAdminSettingSchema } from "@shared/schema";
 import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { EmailService } from "./emailService";
 import { z } from "zod";
 import express from "express";
 import path from "path";
+import bcrypt from "bcryptjs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -255,6 +256,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting brochure download:", error);
       res.status(500).json({ message: "Failed to delete download record" });
+    }
+  });
+
+  // Admin password management
+  app.post("/api/admin/change-password", async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Current password and new password are required" });
+      }
+      
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: "New password must be at least 6 characters long" });
+      }
+      
+      // Get current password from settings
+      const passwordSetting = await storage.getAdminSetting("admin_password");
+      const currentHashedPassword = passwordSetting?.value || "khushalipur2025"; // fallback to default
+      
+      // Verify current password
+      let isCurrentPasswordValid = false;
+      if (passwordSetting) {
+        // Check if it's hashed (starts with $2a$ or $2b$)
+        if (currentHashedPassword.startsWith("$2")) {
+          isCurrentPasswordValid = await bcrypt.compare(currentPassword, currentHashedPassword);
+        } else {
+          // Plain text comparison for backwards compatibility
+          isCurrentPasswordValid = currentPassword === currentHashedPassword;
+        }
+      } else {
+        // No setting exists, check against default
+        isCurrentPasswordValid = currentPassword === "khushalipur2025";
+      }
+      
+      if (!isCurrentPasswordValid) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+      
+      // Hash the new password
+      const saltRounds = 10;
+      const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+      
+      // Save the new password
+      await storage.upsertAdminSetting({
+        key: "admin_password",
+        value: hashedNewPassword
+      });
+      
+      res.json({ message: "Password changed successfully" });
+    } catch (error) {
+      console.error("Error changing admin password:", error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  });
+  
+  app.post("/api/admin/verify-password", async (req, res) => {
+    try {
+      const { password } = req.body;
+      
+      if (!password) {
+        return res.status(400).json({ message: "Password is required" });
+      }
+      
+      // Get current password from settings
+      const passwordSetting = await storage.getAdminSetting("admin_password");
+      const storedPassword = passwordSetting?.value || "khushalipur2025"; // fallback to default
+      
+      let isPasswordValid = false;
+      if (passwordSetting && storedPassword.startsWith("$2")) {
+        // Hashed password
+        isPasswordValid = await bcrypt.compare(password, storedPassword);
+      } else {
+        // Plain text comparison for default or legacy passwords
+        isPasswordValid = password === storedPassword;
+      }
+      
+      if (isPasswordValid) {
+        res.json({ valid: true });
+      } else {
+        res.status(401).json({ valid: false, message: "Invalid password" });
+      }
+    } catch (error) {
+      console.error("Error verifying admin password:", error);
+      res.status(500).json({ message: "Failed to verify password" });
     }
   });
 

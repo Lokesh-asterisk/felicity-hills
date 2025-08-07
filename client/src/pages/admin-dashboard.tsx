@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star } from "lucide-react";
+import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -63,7 +63,7 @@ const testimonialFormSchema = z.object({
   review: z.string().min(10, "Review should be at least 10 characters"),
 });
 
-const ADMIN_PASSWORD = "khushalipur2025"; // In production, this should be in environment variables
+// Password verification is now handled via API
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -351,6 +351,64 @@ export default function AdminDashboard() {
     }
   };
 
+  // Password change state
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+
+  // Change password mutation
+  const changePasswordMutation = useMutation({
+    mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
+      await apiRequest("POST", "/api/admin/change-password", data);
+    },
+    onSuccess: () => {
+      setPasswordSuccess("Password changed successfully!");
+      setPasswordError("");
+      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setTimeout(() => setPasswordSuccess(""), 3000);
+    },
+    onError: (error: any) => {
+      setPasswordError(error.message || "Failed to change password");
+      setPasswordSuccess("");
+    },
+  });
+
+  // Handle password form submission
+  const handlePasswordChange = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess("");
+    
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      setPasswordError("All fields are required");
+      return;
+    }
+    
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordError("New password must be at least 6 characters long");
+      return;
+    }
+    
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+    
+    changePasswordMutation.mutate({
+      currentPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword
+    });
+  };
+
   // Check if already authenticated on component mount
   useEffect(() => {
     const authStatus = sessionStorage.getItem("admin-authenticated");
@@ -359,13 +417,14 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  const handleLogin = (password: string) => {
-    if (password === ADMIN_PASSWORD) {
+  const handleLogin = async (password: string) => {
+    try {
+      const response = await apiRequest("POST", "/api/admin/verify-password", { password });
       setIsAuthenticated(true);
       setLoginError("");
       sessionStorage.setItem("admin-authenticated", "true");
-    } else {
-      setLoginError("Invalid password. Please try again.");
+    } catch (error: any) {
+      setLoginError(error.message || "Invalid password. Please try again.");
     }
   };
 
@@ -574,6 +633,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="testimonials" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
               Customer Stories
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
+              Settings
             </TabsTrigger>
           </TabsList>
 
@@ -1098,6 +1160,142 @@ export default function AdminDashboard() {
                     </Table>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="space-y-6">
+            <Card className="bg-white dark:bg-gray-800 shadow-lg">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-blue-600" />
+                  <CardTitle>Admin Settings</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Password Change Section */}
+                <div className="border rounded-lg p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Lock className="h-5 w-5 text-gray-600" />
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Change Password</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                    Update your admin password for enhanced security
+                  </p>
+                  
+                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                    {/* Current Password */}
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                        Current Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showPasswords.current ? "text" : "password"}
+                          value={passwordForm.currentPassword}
+                          onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                          placeholder="Enter current password"
+                          className="pr-10"
+                          disabled={changePasswordMutation.isPending}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* New Password */}
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                        New Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showPasswords.new ? "text" : "password"}
+                          value={passwordForm.newPassword}
+                          onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                          placeholder="Enter new password (min 6 characters)"
+                          className="pr-10"
+                          disabled={changePasswordMutation.isPending}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Confirm Password */}
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                        Confirm New Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showPasswords.confirm ? "text" : "password"}
+                          value={passwordForm.confirmPassword}
+                          onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                          placeholder="Confirm new password"
+                          className="pr-10"
+                          disabled={changePasswordMutation.isPending}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Error/Success Messages */}
+                    {passwordError && (
+                      <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+                        <p className="text-sm text-red-600 dark:text-red-400">{passwordError}</p>
+                      </div>
+                    )}
+                    
+                    {passwordSuccess && (
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+                        <p className="text-sm text-green-600 dark:text-green-400">{passwordSuccess}</p>
+                      </div>
+                    )}
+                    
+                    {/* Submit Button */}
+                    <Button
+                      type="submit"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={changePasswordMutation.isPending}
+                    >
+                      {changePasswordMutation.isPending ? "Changing Password..." : "Change Password"}
+                    </Button>
+                  </form>
+                </div>
+                
+                {/* Security Information */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <Lock className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium text-blue-900 dark:text-blue-200 mb-1">Security Tips</h4>
+                      <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                        <li>• Use a strong password with at least 6 characters</li>
+                        <li>• Include a mix of letters, numbers, and special characters</li>
+                        <li>• Don't share your admin password with anyone</li>
+                        <li>• Change your password regularly for security</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
