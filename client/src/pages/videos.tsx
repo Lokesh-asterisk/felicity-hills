@@ -64,7 +64,8 @@ export default function VideosPage() {
       const fileId = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1];
       console.log('Extracted file ID:', fileId);
       if (fileId) {
-        const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+        // Try different embed formats for better compatibility
+        const embedUrl = `https://drive.google.com/file/d/${fileId}/preview?usp=embed_facebook`;
         console.log('Embed URL:', embedUrl);
         return embedUrl;
       }
@@ -250,35 +251,47 @@ export default function VideosPage() {
           
           {selectedVideo && (
             <div className="px-6 pb-6">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  src={convertGoogleDriveUrl(selectedVideo.videoUrl)}
-                  title={selectedVideo.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="absolute top-0 left-0 w-full h-full rounded-lg"
-                  onError={() => {
-                    console.error('Video failed to load');
-                  }}
-                />
-                {/* Fallback message */}
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg" style={{ zIndex: -1 }}>
+              <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                {/* Alternative: Direct link approach since Google Drive iframe embedding has restrictions */}
+                <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-8">
-                    <div className="text-4xl mb-4">🎥</div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Video Loading</h3>
-                    <p className="text-gray-600 text-sm mb-4">
-                      If the video doesn't load, please ensure the Google Drive video is set to "Anyone with the link" sharing.
+                    <div className="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Play className="w-10 h-10 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                      {selectedVideo.title}
+                    </h3>
+                    <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                      {selectedVideo.description}
                     </p>
-                    <Button asChild className="bg-primary text-white hover:bg-secondary" size="sm">
-                      <a 
-                        href={selectedVideo.videoUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <Button asChild className="bg-primary text-white hover:bg-secondary" size="lg">
+                        <a 
+                          href={selectedVideo.videoUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          Watch on Google Drive
+                        </a>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="lg"
+                        onClick={() => navigator.clipboard?.writeText(selectedVideo.videoUrl)}
                       >
-                        Open in Google Drive
-                      </a>
-                    </Button>
+                        Copy Link
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-center mt-4 space-x-4">
+                      <Badge className="bg-green-100 text-green-800">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {selectedVideo.duration}
+                      </Badge>
+                      <Badge className="bg-blue-100 text-blue-800">
+                        HD Quality
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </div>
