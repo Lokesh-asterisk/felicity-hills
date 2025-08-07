@@ -1,5 +1,6 @@
 import Navigation from "../components/navigation";
 import HeroSection from "../components/hero-section";
+import RecentActivitySection from "../components/recent-activity-section";
 import LocationAdvantages from "../components/location-advantages";
 import ComparisonTable from "../components/comparison-table";
 import AmenitiesSection from "../components/amenities-section";
@@ -14,6 +15,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Navigation />
       <HeroSection />
+      <RecentActivitySection />
       <LocationAdvantages />
       <ComparisonTable />
       <AmenitiesSection />
