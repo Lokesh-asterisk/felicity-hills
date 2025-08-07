@@ -297,6 +297,17 @@ export default function AdminDashboard() {
     },
   });
 
+  // Delete brochure download mutation
+  const deleteDownloadMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/admin/brochure-downloads/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-downloads"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-stats"] });
+    },
+  });
+
   // Create activity mutation
   const createActivityMutation = useMutation({
     mutationFn: async (data: { title: string; description: string; type: string }) => {
@@ -330,6 +341,13 @@ export default function AdminDashboard() {
   const handleDeleteTestimonial = (id: string) => {
     if (confirm("Are you sure you want to delete this customer story?")) {
       deleteTestimonialMutation.mutate(id);
+    }
+  };
+
+  // Handle delete brochure download
+  const handleDeleteDownload = (id: string) => {
+    if (confirm("Are you sure you want to delete this download record?")) {
+      deleteDownloadMutation.mutate(id);
     }
   };
 
@@ -702,6 +720,7 @@ export default function AdminDashboard() {
                           <TableHead>Email</TableHead>
                           <TableHead>Phone</TableHead>
                           <TableHead>Brochure</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -725,6 +744,17 @@ export default function AdminDashboard() {
                               <Badge variant="outline" className="text-xs">
                                 {download.brochureTitle}
                               </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteDownload(download.id)}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                disabled={deleteDownloadMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </TableCell>
                           </TableRow>
                         ))}
