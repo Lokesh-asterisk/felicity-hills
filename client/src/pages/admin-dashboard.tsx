@@ -512,9 +512,12 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {recentActivities.length}
+                {recentActivities.filter(activity => {
+                  const activityDate = new Date(activity.date);
+                  return isToday(activityDate) || isYesterday(activityDate);
+                }).length}
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Manual activities tracked</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Today & yesterday activities</p>
             </CardContent>
           </Card>
         </div>
