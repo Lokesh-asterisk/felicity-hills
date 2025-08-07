@@ -13,15 +13,15 @@ export default function HeroSection() {
 
   return (
     <section className="relative bg-gradient-to-br from-green-50 to-teal-50 overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div 
+      {/* Real Khushalipur Site Background */}
+      <div className="absolute inset-0 opacity-20">
+        <img 
+          src="/attached_assets/front_1754569110815.jpg"
+          alt="Khushalipur Agricultural Plots Development Site"
+          className="w-full h-full object-cover"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            filter: 'sepia(10%) brightness(1.1) contrast(1.05)'
           }}
-          className="w-full h-full"
         />
       </div>
       
