@@ -1,7 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flame, Calendar, MapPin } from "lucide-react";
+import { Flame, Calendar, MapPin, Download, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { format, isToday, isYesterday } from "date-fns";
+
+interface BrochureStats {
+  totalDownloads: number;
+  todayDownloads: number;
+  uniqueUsers: number;
+  topBrochures: Array<{
+    id: string;
+    title: string;
+    downloadCount: number;
+  }>;
+  recentDownloads: Array<{
+    id: string;
+    brochureId: string;
+    brochureTitle: string;
+    userName: string;
+    userEmail: string;
+    downloadedAt: Date;
+  }>;
+}
 
 export default function HeroSection() {
   const scrollToSection = (sectionId: string) => {
@@ -9,6 +30,18 @@ export default function HeroSection() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
+
+  // Fetch real brochure stats for recent activity
+  const { data: stats, isLoading } = useQuery<BrochureStats>({
+    queryKey: ["/api/admin/brochure-stats"],
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  const formatRelativeTime = (date: Date) => {
+    if (isToday(date)) return format(date, "h:mm a") + " today";
+    if (isYesterday(date)) return "Yesterday";
+    return format(date, "MMM dd");
   };
 
   return (
@@ -104,29 +137,68 @@ export default function HeroSection() {
             {/* Recent Activity Card */}
             <Card className="shadow-lg mt-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
               <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Recent Activity</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                        <div className="w-3 h-3 bg-primary rounded-full"></div>
-                      </div>
-                      <div>
-                        <div className="font-medium text-sm">Ram Singh booked 300 sq yd plot</div>
-                        <div className="text-xs text-gray-500">2 hours ago • ₹24.3 लाख</div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-gray-900">Recent Activity</h3>
+                  <Badge variant="outline" className="text-xs">
+                    <Clock className="w-3 h-3 mr-1" />
+                    Live
+                  </Badge>
+                </div>
+                
+                {isLoading ? (
+                  <div className="space-y-3">
+                    <div className="animate-pulse flex items-center">
+                      <div className="w-8 h-8 bg-gray-200 rounded-full mr-3"></div>
+                      <div className="flex-1">
+                        <div className="h-3 bg-gray-200 rounded w-3/4 mb-1"></div>
+                        <div className="h-2 bg-gray-200 rounded w-1/2"></div>
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 pt-3 border-t">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">23</div>
-                      <div className="text-xs text-gray-600">Site Visits Today</div>
+                ) : (
+                  <div className="space-y-3">
+                    {stats?.recentDownloads?.length ? (
+                      stats.recentDownloads.slice(0, 2).map((download) => (
+                        <div key={download.id} className="flex items-center">
+                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                            <Download className="w-4 h-4 text-green-600" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-sm">
+                              {download.userName} downloaded brochure
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {formatRelativeTime(new Date(download.downloadedAt))} • {download.brochureTitle}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center text-gray-500">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                          <Download className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-medium text-sm">No recent downloads</div>
+                          <div className="text-xs">Activity will appear here</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <div className="grid grid-cols-2 gap-4 pt-3 border-t">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-primary">
+                      {isLoading ? "..." : stats?.totalDownloads || 0}
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">7</div>
-                      <div className="text-xs text-gray-600">Plots Booked</div>
+                    <div className="text-xs text-gray-600">Total Downloads</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-primary">
+                      {isLoading ? "..." : stats?.todayDownloads || 0}
                     </div>
+                    <div className="text-xs text-gray-600">Today's Downloads</div>
                   </div>
                 </div>
               </CardContent>

@@ -69,6 +69,9 @@ export default function Navigation() {
             >
               Reviews
             </button>
+            <Link href="/admin" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+              Admin
+            </Link>
             <Link href="/book-visit">
               <Button className="bg-green-600 hover:bg-green-700 text-white">
                 Book Visit
