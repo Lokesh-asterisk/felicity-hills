@@ -15,11 +15,11 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Navigation />
       <HeroSection />
-      <RecentActivitySection />
       <LocationAdvantages />
-      <ComparisonTable />
       <AmenitiesSection />
+      <ComparisonTable />
       <InvestmentCalculator />
+      <RecentActivitySection />
       <TestimonialsSection />
       <FAQSection />
       <ContactSection />
