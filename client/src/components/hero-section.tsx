@@ -95,7 +95,7 @@ export default function HeroSection() {
               />
               {/* Image Caption */}
               <div className="absolute bottom-4 left-4 right-4 p-3">
-                <p className="text-sm font-medium text-white text-center drop-shadow-lg">
+                <p className="text-sm font-bold text-white text-center" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)'}}>
                   Khushalipur Agricultural Plots - Real site showing entrance gates and development
                 </p>
               </div>
