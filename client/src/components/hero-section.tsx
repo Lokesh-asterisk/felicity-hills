@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flame, Calendar, MapPin, Download, Clock } from "lucide-react";
+import { Flame, Calendar, MapPin, Download, Clock, Users, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { format, isToday, isYesterday } from "date-fns";
+import type { Activity } from "@shared/schema";
 
 interface BrochureStats {
   totalDownloads: number;
@@ -35,6 +36,12 @@ export default function HeroSection() {
   // Fetch real brochure stats for recent activity
   const { data: stats, isLoading } = useQuery<BrochureStats>({
     queryKey: ["/api/admin/brochure-stats"],
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // Fetch recent activities
+  const { data: recentActivities = [], isLoading: activitiesLoading } = useQuery<Activity[]>({
+    queryKey: ["/api/activities/recent"],
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
@@ -146,32 +153,67 @@ export default function HeroSection() {
                 </div>
                 
                 <div className="space-y-3">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <Calendar className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-sm">
-                        Site visit scheduled
+                  {activitiesLoading ? (
+                    <div className="animate-pulse space-y-3">
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-gray-200 rounded-full mr-3"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-200 rounded mb-1"></div>
+                          <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500">
-                        Today • Rajesh Kumar
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                      <MapPin className="w-4 h-4 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-sm">
-                        Plot booking confirmed
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        Yesterday • Singh Family
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-gray-200 rounded-full mr-3"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-200 rounded mb-1"></div>
+                          <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : recentActivities.length > 0 ? (
+                    recentActivities.slice(0, 2).map((activity, index) => {
+                      const getActivityIcon = (type: string) => {
+                        switch (type) {
+                          case 'visit': return { icon: Calendar, color: 'blue' };
+                          case 'sale': return { icon: TrendingUp, color: 'green' };
+                          case 'inquiry': return { icon: Users, color: 'purple' };
+                          case 'meeting': return { icon: Users, color: 'orange' };
+                          default: return { icon: Clock, color: 'gray' };
+                        }
+                      };
+                      const { icon: Icon, color } = getActivityIcon(activity.type);
+                      
+                      return (
+                        <div key={activity.id} className="flex items-center">
+                          <div className={`w-8 h-8 bg-${color}-100 rounded-full flex items-center justify-center mr-3`}>
+                            <Icon className={`w-4 h-4 text-${color}-600`} />
+                          </div>
+                          <div>
+                            <div className="font-medium text-sm">
+                              {activity.title}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {activity.createdAt ? formatRelativeTime(new Date(activity.createdAt)) : 'Recently'} • {activity.description.split(' ')[0] || 'User'}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                        <Clock className="w-4 h-4 text-gray-600" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-sm">
+                          No recent activity
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Check back later
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 pt-3 border-t">

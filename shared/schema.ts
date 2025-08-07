@@ -68,6 +68,14 @@ export const brochureDownloads = pgTable("brochure_downloads", {
   userAgent: text("user_agent"),
 });
 
+export const activities = pgTable("activities", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  type: text("type").notNull(), // 'visit', 'inquiry', 'sale', 'meeting', 'other'
+  createdAt: timestamp("created_at").default(sql`now()`),
+});
+
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique(),
@@ -85,6 +93,7 @@ export const insertTestimonialSchema = createInsertSchema(testimonials).omit({ i
 export const insertBrochureSchema = createInsertSchema(brochures).omit({ id: true, createdAt: true });
 export const insertVideoSchema = createInsertSchema(videos).omit({ id: true, createdAt: true });
 export const insertBrochureDownloadSchema = createInsertSchema(brochureDownloads).omit({ id: true, downloadedAt: true });
+export const insertActivitySchema = createInsertSchema(activities).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 
 export type Plot = typeof plots.$inferSelect;
@@ -93,6 +102,7 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type Brochure = typeof brochures.$inferSelect;
 export type Video = typeof videos.$inferSelect;
 export type BrochureDownload = typeof brochureDownloads.$inferSelect;
+export type Activity = typeof activities.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type InsertPlot = z.infer<typeof insertPlotSchema>;
 export type InsertSiteVisit = z.infer<typeof insertSiteVisitSchema>;
@@ -100,5 +110,6 @@ export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type InsertBrochure = z.infer<typeof insertBrochureSchema>;
 export type InsertVideo = z.infer<typeof insertVideoSchema>;
 export type InsertBrochureDownload = z.infer<typeof insertBrochureDownloadSchema>;
+export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type UpsertUser = typeof users.$inferInsert;

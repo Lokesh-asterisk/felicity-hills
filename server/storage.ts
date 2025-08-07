@@ -5,6 +5,7 @@ import {
   brochures,
   videos,
   brochureDownloads,
+  activities,
   users,
   type Plot,
   type SiteVisit,
@@ -12,6 +13,7 @@ import {
   type Brochure,
   type Video,
   type BrochureDownload,
+  type Activity,
   type User,
   type InsertPlot,
   type InsertSiteVisit,
@@ -19,6 +21,7 @@ import {
   type InsertBrochure,
   type InsertVideo,
   type InsertBrochureDownload,
+  type InsertActivity,
   type UpsertUser,
 } from "@shared/schema";
 import { db } from "./db";
@@ -57,6 +60,11 @@ export interface IStorage {
   // Video operations
   getVideos(): Promise<Video[]>;
   createVideo(video: InsertVideo): Promise<Video>;
+  
+  // Activity operations
+  getActivities(): Promise<Activity[]>;
+  getRecentActivities(): Promise<Activity[]>;
+  createActivity(activity: InsertActivity): Promise<Activity>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -247,6 +255,28 @@ export class DatabaseStorage implements IStorage {
   async createVideo(video: InsertVideo): Promise<Video> {
     const [newVideo] = await db.insert(videos).values(video).returning();
     return newVideo;
+  }
+
+  // Activity operations
+  async getActivities(): Promise<Activity[]> {
+    return await db.select().from(activities).orderBy(desc(activities.createdAt));
+  }
+
+  async getRecentActivities(): Promise<Activity[]> {
+    // Get activities from today and yesterday
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    
+    return await db
+      .select()
+      .from(activities)
+      .where(sql`${activities.createdAt} >= ${twoDaysAgo}`)
+      .orderBy(desc(activities.createdAt));
+  }
+
+  async createActivity(activity: InsertActivity): Promise<Activity> {
+    const [newActivity] = await db.insert(activities).values(activity).returning();
+    return newActivity;
   }
 
   // Initialize with sample data

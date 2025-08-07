@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertSiteVisitSchema, insertTestimonialSchema } from "@shared/schema";
+import { insertSiteVisitSchema, insertTestimonialSchema, insertActivitySchema } from "@shared/schema";
 import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { EmailService } from "./emailService";
 import { z } from "zod";
@@ -40,6 +40,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(testimonials);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch testimonials" });
+    }
+  });
+
+  // Get recent activities (today and yesterday)
+  app.get("/api/activities/recent", async (_req, res) => {
+    try {
+      const activities = await storage.getRecentActivities();
+      res.json(activities);
+    } catch (error) {
+      console.error("Error fetching recent activities:", error);
+      res.status(500).json({ message: "Failed to fetch recent activities" });
+    }
+  });
+
+  // Get all activities
+  app.get("/api/activities", async (_req, res) => {
+    try {
+      const activities = await storage.getActivities();
+      res.json(activities);
+    } catch (error) {
+      console.error("Error fetching activities:", error);
+      res.status(500).json({ message: "Failed to fetch activities" });
+    }
+  });
+
+  // Create new activity
+  app.post("/api/activities", async (req, res) => {
+    try {
+      const activityData = insertActivitySchema.parse(req.body);
+      const activity = await storage.createActivity(activityData);
+      res.json(activity);
+    } catch (error) {
+      console.error("Error creating activity:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create activity" });
+      }
     }
   });
 
