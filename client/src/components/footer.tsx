@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Phone, MapPin, Clock } from "lucide-react";
+import { Link } from "wouter";
 import logoImage from "@assets/website logo1_1754473813433.png";
 
 export default function Footer() {
@@ -85,8 +86,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 Felicity Hills. All rights reserved. | Khushalipur Agricultural Land Investment</p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center text-gray-400">
+            <p>&copy; 2024 Felicity Hills. All rights reserved. | Khushalipur Agricultural Land Investment</p>
+            <Link href="/admin" className="mt-2 md:mt-0 text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              Admin Dashboard
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
