@@ -246,8 +246,8 @@ export default function ContactSection() {
               <CardContent className="p-8">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Contact</h3>
                 <div className="space-y-4">
-                  <Button asChild className="w-full bg-primary text-white hover:bg-secondary" size="lg">
-                    <a href="tel:+918588834221">
+                  <Button asChild className="w-full bg-green-600 text-white hover:bg-green-700 hover:text-white" size="lg">
+                    <a href="tel:+918588834221" className="text-white hover:text-white">
                       <Phone className="w-5 h-5 mr-2" />
                       Call Now
                     </a>
