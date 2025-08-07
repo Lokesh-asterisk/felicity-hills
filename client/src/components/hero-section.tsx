@@ -145,47 +145,34 @@ export default function HeroSection() {
                   </Badge>
                 </div>
                 
-                {isLoading ? (
-                  <div className="space-y-3">
-                    <div className="animate-pulse flex items-center">
-                      <div className="w-8 h-8 bg-gray-200 rounded-full mr-3"></div>
-                      <div className="flex-1">
-                        <div className="h-3 bg-gray-200 rounded w-3/4 mb-1"></div>
-                        <div className="h-2 bg-gray-200 rounded w-1/2"></div>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                      <Calendar className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">
+                        Site visit scheduled
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Today • Rajesh Kumar
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {stats?.recentDownloads?.length ? (
-                      stats.recentDownloads.slice(0, 2).map((download) => (
-                        <div key={download.id} className="flex items-center">
-                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                            <Download className="w-4 h-4 text-green-600" />
-                          </div>
-                          <div>
-                            <div className="font-medium text-sm">
-                              {download.userName} downloaded brochure
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {formatRelativeTime(new Date(download.downloadedAt))} • {download.brochureTitle}
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="flex items-center text-gray-500">
-                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
-                          <Download className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="font-medium text-sm">No recent downloads</div>
-                          <div className="text-xs">Activity will appear here</div>
-                        </div>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                      <MapPin className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-sm">
+                        Plot booking confirmed
                       </div>
-                    )}
+                      <div className="text-xs text-gray-500">
+                        Yesterday • Singh Family
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
                 
                 <div className="grid grid-cols-2 gap-4 pt-3 border-t">
                   <div className="text-center">
