@@ -43,6 +43,8 @@ export interface IStorage {
   // Site visit operations
   createSiteVisit(siteVisit: InsertSiteVisit): Promise<SiteVisit>;
   getSiteVisits(): Promise<SiteVisit[]>;
+  getSiteVisitStats(): Promise<any>;
+  updateSiteVisitStatus(id: string, status: string): Promise<SiteVisit | undefined>;
   
   // Testimonial operations
   getTestimonials(): Promise<Testimonial[]>;
@@ -120,6 +122,62 @@ export class DatabaseStorage implements IStorage {
 
   async getSiteVisits(): Promise<SiteVisit[]> {
     return await db.select().from(siteVisits).orderBy(desc(siteVisits.createdAt));
+  }
+
+  async getSiteVisitStats(): Promise<any> {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    // Total site visits
+    const totalVisits = await db
+      .select({ count: count() })
+      .from(siteVisits);
+
+    // Today's visits
+    const todayVisits = await db
+      .select({ count: count() })
+      .from(siteVisits)
+      .where(sql`${siteVisits.createdAt} >= ${todayStart}`);
+
+    // This week's visits
+    const weekVisits = await db
+      .select({ count: count() })
+      .from(siteVisits)
+      .where(sql`${siteVisits.createdAt} >= ${weekStart}`);
+
+    // Recent visits (last 10)
+    const recentVisits = await db
+      .select()
+      .from(siteVisits)
+      .orderBy(desc(siteVisits.createdAt))
+      .limit(10);
+
+    // Visits by date (last 7 days)
+    const visitsByDate = await db
+      .select({
+        date: sql`DATE(${siteVisits.createdAt})`.as('date'),
+        visits: count(),
+      })
+      .from(siteVisits)
+      .where(sql`${siteVisits.createdAt} >= ${weekStart}`)
+      .groupBy(sql`DATE(${siteVisits.createdAt})`)
+      .orderBy(sql`DATE(${siteVisits.createdAt})`);
+
+    return {
+      totalVisits: totalVisits[0]?.count || 0,
+      todayVisits: todayVisits[0]?.count || 0,
+      weekVisits: weekVisits[0]?.count || 0,
+      recentVisits,
+      visitsByDate,
+    };
+  }
+
+  async updateSiteVisitStatus(id: string, status: string): Promise<SiteVisit | undefined> {
+    // Note: This would require adding a status field to the siteVisits table
+    // For now, this is a placeholder for future implementation
+    const [visit] = await db.select().from(siteVisits).where(eq(siteVisits.id, id));
+    return visit || undefined;
   }
 
   // Testimonial operations

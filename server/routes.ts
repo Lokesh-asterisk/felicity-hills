@@ -129,6 +129,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all site visits (admin)
+  app.get("/api/admin/site-visits", async (_req, res) => {
+    try {
+      const siteVisits = await storage.getSiteVisits();
+      res.json(siteVisits);
+    } catch (error) {
+      console.error("Error fetching site visits:", error);
+      res.status(500).json({ message: "Failed to fetch site visits" });
+    }
+  });
+
+  // Get site visit statistics (admin)
+  app.get("/api/admin/site-visit-stats", async (_req, res) => {
+    try {
+      const stats = await storage.getSiteVisitStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching site visit stats:", error);
+      res.status(500).json({ message: "Failed to fetch site visit statistics" });
+    }
+  });
+
   // Create site visit booking
   app.post("/api/site-visits", async (req, res) => {
     try {

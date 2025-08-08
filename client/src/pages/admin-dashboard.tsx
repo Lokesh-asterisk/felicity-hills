@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
-import type { Testimonial, Activity } from "@shared/schema";
+import type { Testimonial, Activity, SiteVisit } from "@shared/schema";
 import { format, isToday, isYesterday, subDays, startOfDay } from "date-fns";
 import AdminLogin from "@/components/admin-login";
 
@@ -42,6 +42,17 @@ interface BrochureStats {
   downloadsByDate: Array<{
     date: string;
     downloads: number;
+  }>;
+}
+
+interface SiteVisitStats {
+  totalVisits: number;
+  todayVisits: number;
+  weekVisits: number;
+  recentVisits: Array<SiteVisit>;
+  visitsByDate: Array<{
+    date: string;
+    visits: number;
   }>;
 }
 
@@ -483,6 +494,19 @@ export default function AdminDashboard() {
     enabled: isAuthenticated, // Only run query when authenticated
   });
 
+  // Site visit data
+  const { data: siteVisitStats, isLoading: siteVisitStatsLoading } = useQuery<SiteVisitStats>({
+    queryKey: ["/api/admin/site-visit-stats"],
+    refetchInterval: 5000,
+    enabled: isAuthenticated,
+  });
+
+  const { data: siteVisits = [], isLoading: siteVisitsLoading } = useQuery<SiteVisit[]>({
+    queryKey: ["/api/admin/site-visits"],
+    refetchInterval: 5000,
+    enabled: isAuthenticated,
+  });
+
   // Show login form if not authenticated
   if (!isAuthenticated) {
     return <AdminLogin onLogin={handleLogin} error={loginError} />;
@@ -600,18 +624,17 @@ export default function AdminDashboard() {
           <Card className="bg-white dark:bg-gray-800 shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Recent Activities
+                Site Visit Bookings
               </CardTitle>
               <Calendar className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {recentActivities.filter(activity => {
-                  const activityDate = new Date(activity.createdAt || new Date());
-                  return isToday(activityDate) || isYesterday(activityDate);
-                }).length}
+                {siteVisitStats?.totalVisits || 0}
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Today & yesterday activities</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {siteVisitStats?.todayVisits || 0} booked today
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -633,6 +656,9 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="testimonials" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
               Customer Stories
+            </TabsTrigger>
+            <TabsTrigger value="sitevisits" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
+              Site Visits
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
               Settings
@@ -1158,6 +1184,152 @@ export default function AdminDashboard() {
                         ))}
                       </TableBody>
                     </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Site Visits Tab */}
+          <TabsContent value="sitevisits" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <Card className="bg-white dark:bg-gray-800">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                    Total Bookings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {siteVisitStats?.totalVisits || 0}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                    Today's Bookings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {siteVisitStats?.todayVisits || 0}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                    This Week
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {siteVisitStats?.weekVisits || 0}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-white dark:bg-gray-800">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Site Visit Bookings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {siteVisitsLoading ? (
+                  <div className="animate-pulse space-y-4">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="flex space-x-4">
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : siteVisits.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Mobile</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Preferred Date</TableHead>
+                          <TableHead>Plot Size</TableHead>
+                          <TableHead>Budget</TableHead>
+                          <TableHead>Booked On</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {siteVisits.map((visit) => (
+                          <TableRow key={visit.id}>
+                            <TableCell className="font-medium">{visit.name}</TableCell>
+                            <TableCell>
+                              <a 
+                                href={`tel:${visit.mobile}`}
+                                className="text-blue-600 hover:underline"
+                              >
+                                {visit.mobile}
+                              </a>
+                            </TableCell>
+                            <TableCell>
+                              {visit.email ? (
+                                <a 
+                                  href={`mailto:${visit.email}`}
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {visit.email}
+                                </a>
+                              ) : (
+                                <span className="text-gray-400">Not provided</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {visit.preferredDate ? (
+                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                  {visit.preferredDate}
+                                </Badge>
+                              ) : (
+                                <span className="text-gray-400">Not specified</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {visit.plotSize ? (
+                                <Badge variant="outline">{visit.plotSize}</Badge>
+                              ) : (
+                                <span className="text-gray-400">Not specified</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {visit.budget ? (
+                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                                  {visit.budget}
+                                </Badge>
+                              ) : (
+                                <span className="text-gray-400">Not specified</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-sm text-gray-500">
+                              {visit.createdAt ? formatRelativeDate(new Date(visit.createdAt)) : 'Unknown'}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      No Site Visit Bookings
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      Site visit bookings will appear here when customers book visits.
+                    </p>
                   </div>
                 )}
               </CardContent>
