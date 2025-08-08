@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Play, Clock, Loader2, X, ArrowLeft, Filter } from "lucide-react";
+import { Play, Clock, Loader2, X, Filter } from "lucide-react";
 import { Link } from "wouter";
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
@@ -83,16 +83,6 @@ export default function VideosPage() {
       <section className="relative bg-gradient-to-br from-green-50 to-teal-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in-up">
-            <Link href="/">
-              <Button 
-                variant="outline" 
-                className="mb-6 border-primary text-primary hover:bg-primary hover:text-white"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
-            </Link>
-            
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Project Videos
             </h1>
