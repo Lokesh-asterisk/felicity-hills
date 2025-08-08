@@ -461,8 +461,8 @@ export class DatabaseStorage implements IStorage {
       {
         title: "Khushalipur Project Overview with connectivity",
         description: "video shows all project overview its connectivity to roads",
-        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/view?usp=drive_link",
-        thumbnailUrl: "https://drive.google.com/thumbnail?id=12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR&sz=w800-h450",
+        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/preview",
+        thumbnailUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
         duration: "2:27",
         category: "location"
       },
