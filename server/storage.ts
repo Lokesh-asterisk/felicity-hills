@@ -459,52 +459,12 @@ export class DatabaseStorage implements IStorage {
     // Initialize videos
     const videoData = [
       {
-        title: "Khushalipur Project Overview with connectivity",
-        description: "video shows all project overview its connectivity to roads",
+        title: "Project Video",
+        description: "Watch our project overview video",
         videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/preview",
         thumbnailUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
         duration: "2:27",
-        category: "location"
-      },
-      {
-        title: "Khushalipur Agricultural Investment Guide",
-        description: "Detailed presentation about agricultural land investment opportunities, returns, and benefits in Khushalipur.",
-        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/view?usp=sharing",
-        thumbnailUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
-        duration: "8:15",
         category: "project"
-      },
-      {
-        title: "Location Advantages & Connectivity",
-        description: "Discover why Khushalipur is the perfect location for agricultural land investment with excellent connectivity to Delhi and Dehradun.",
-        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/view?usp=sharing",
-        thumbnailUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
-        duration: "3:45",
-        category: "location"
-      },
-      {
-        title: "Delhi-Dehradun Expressway Access",
-        description: "See how the expressway provides direct connectivity from Delhi NCR to our Khushalipur project location.",
-        videoUrl: "https://drive.google.com/file/d/1ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg/view",
-        thumbnailUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
-        duration: "4:20",
-        category: "location"
-      },
-      {
-        title: "Site Visit & Infrastructure Tour",
-        description: "Virtual tour showing our infrastructure, roads, and nearby amenities in Khushalipur.",
-        videoUrl: "https://drive.google.com/file/d/1XYZ123456789ABCDEFGHijklmnopqrstuv/view",
-        thumbnailUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
-        duration: "6:15",
-        category: "location"
-      },
-      {
-        title: "Customer Success Stories",
-        description: "Hear from satisfied customers who invested in Khushalipur agricultural plots.",
-        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnailUrl: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
-        duration: "7:30",
-        category: "testimonial"
       }
     ];
 
