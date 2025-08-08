@@ -55,7 +55,7 @@ export default function BrochuresPage() {
 
   const downloadMutation = useMutation({
     mutationFn: async (data: DownloadFormData & { brochureId: string }) => {
-      return await apiRequest(
+      const response = await apiRequest(
         "POST",
         `/api/brochures/${data.brochureId}/download`,
         {
@@ -63,7 +63,8 @@ export default function BrochuresPage() {
           userEmail: data.userEmail,
           userPhone: data.userPhone,
         }
-      ) as { success: boolean; downloadUrl: string; message: string };
+      );
+      return response as { success: boolean; downloadUrl: string; message: string };
     },
     onSuccess: (response) => {
       toast({
@@ -72,14 +73,9 @@ export default function BrochuresPage() {
       });
       
       // Trigger the actual file download
-      if (response.downloadUrl) {
-        const link = document.createElement('a');
-        link.href = response.downloadUrl;
-        link.download = selectedBrochure?.title || 'brochure';
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      if (response.success && response.downloadUrl) {
+        // Create download link
+        window.open(response.downloadUrl, '_blank');
       }
       
       // Reset form and close dialog
