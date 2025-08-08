@@ -72,6 +72,7 @@ export interface IStorage {
   getActivities(): Promise<Activity[]>;
   getRecentActivities(): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
+  updateActivity(id: string, activity: InsertActivity): Promise<Activity | undefined>;
   deleteActivity(id: string): Promise<boolean>;
   
   // Admin settings operations
@@ -361,9 +362,23 @@ export class DatabaseStorage implements IStorage {
     return newActivity;
   }
 
+  async updateActivity(id: string, activityData: InsertActivity): Promise<Activity | undefined> {
+    const [updatedActivity] = await db
+      .update(activities)
+      .set(activityData)
+      .where(eq(activities.id, id))
+      .returning();
+    return updatedActivity || undefined;
+  }
+
   async deleteActivity(id: string): Promise<boolean> {
-    const result = await db.delete(activities).where(eq(activities.id, id));
-    return result.rowCount! > 0;
+    try {
+      const result = await db.delete(activities).where(eq(activities.id, id));
+      return true; // If no error, deletion was successful
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      return false;
+    }
   }
 
   // Admin settings operations

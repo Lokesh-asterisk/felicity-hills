@@ -87,6 +87,7 @@ export default function AdminDashboard() {
     refetchInterval: 5000, // Auto-refresh every 5 seconds
   });
   const [showAddActivity, setShowAddActivity] = useState(false);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [newActivity, setNewActivity] = useState({
     title: "",
     description: "",
@@ -211,6 +212,21 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ["/api/activities"] });
       queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
       refetchActivities();
+      setNewActivity({ title: "", description: "", type: "other" });
+      setShowAddActivity(false);
+    },
+  });
+
+  // Update activity mutation
+  const updateActivityMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: { title: string; description: string; type: string } }) => {
+      await apiRequest("PUT", `/api/activities/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/activities"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
+      refetchActivities();
+      setEditingActivity(null);
       setNewActivity({ title: "", description: "", type: "other" });
       setShowAddActivity(false);
     },
@@ -349,12 +365,41 @@ export default function AdminDashboard() {
 
   const handleAddActivity = () => {
     if (newActivity.title && newActivity.description) {
-      createActivityMutation.mutate({
-        title: newActivity.title,
-        description: newActivity.description,
-        type: newActivity.type
-      });
+      if (editingActivity) {
+        // Update existing activity
+        updateActivityMutation.mutate({
+          id: editingActivity.id,
+          data: {
+            title: newActivity.title,
+            description: newActivity.description,
+            type: newActivity.type
+          }
+        });
+      } else {
+        // Create new activity
+        createActivityMutation.mutate({
+          title: newActivity.title,
+          description: newActivity.description,
+          type: newActivity.type
+        });
+      }
     }
+  };
+
+  const handleEditActivity = (activity: Activity) => {
+    setEditingActivity(activity);
+    setNewActivity({
+      title: activity.title,
+      description: activity.description,
+      type: activity.type as ActivityItem['type']
+    });
+    setShowAddActivity(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingActivity(null);
+    setNewActivity({ title: "", description: "", type: "other" });
+    setShowAddActivity(false);
   };
 
   const handleDeleteActivity = (id: string, title: string) => {
@@ -576,7 +621,10 @@ export default function AdminDashboard() {
                     <Calendar className="h-5 w-5 text-green-600" />
                     <CardTitle>Recent Activity</CardTitle>
                   </div>
-                  <Dialog open={showAddActivity} onOpenChange={setShowAddActivity}>
+                  <Dialog open={showAddActivity} onOpenChange={(open) => {
+                    if (!open) handleCancelEdit();
+                    setShowAddActivity(open);
+                  }}>
                     <DialogTrigger asChild>
                       <Button size="sm" className="bg-green-600 hover:bg-green-700">
                         <Plus className="h-4 w-4 mr-2" />
@@ -585,9 +633,9 @@ export default function AdminDashboard() {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Add New Activity</DialogTitle>
+                        <DialogTitle>{editingActivity ? 'Edit Activity' : 'Add New Activity'}</DialogTitle>
                         <DialogDescription>
-                          Add a new activity to track recent events and updates.
+                          {editingActivity ? 'Edit the activity details below' : 'Add a new activity to track recent events and updates.'}
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4">
@@ -625,16 +673,17 @@ export default function AdminDashboard() {
                         <div className="flex gap-2">
                           <Button
                             variant="outline"
-                            onClick={() => setShowAddActivity(false)}
+                            onClick={handleCancelEdit}
                             className="flex-1"
                           >
                             Cancel
                           </Button>
                           <Button
                             onClick={handleAddActivity}
+                            disabled={!newActivity.title || !newActivity.description || (editingActivity ? updateActivityMutation.isPending : createActivityMutation.isPending)}
                             className="flex-1 bg-green-600 hover:bg-green-700"
                           >
-                            Add Activity
+                            {editingActivity ? (updateActivityMutation.isPending ? 'Updating...' : 'Update Activity') : (createActivityMutation.isPending ? 'Adding...' : 'Add Activity')}
                           </Button>
                         </div>
                       </div>
@@ -669,15 +718,26 @@ export default function AdminDashboard() {
                             {format(new Date(activity.createdAt || new Date()), "MMM dd, yyyy 'at' h:mm a")}
                           </p>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteActivity(activity.id, activity.title)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          disabled={deleteActivityMutation.isPending}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditActivity(activity)}
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            disabled={updateActivityMutation.isPending}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteActivity(activity.id, activity.title)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            disabled={deleteActivityMutation.isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
