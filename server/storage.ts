@@ -459,12 +459,12 @@ export class DatabaseStorage implements IStorage {
     // Initialize videos
     const videoData = [
       {
-        title: "Khushalipur Project Overview",
-        description: "Complete walkthrough of the project location, amenities, and investment potential.",
-        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/view?usp=sharing",
-        thumbnailUrl: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
-        duration: "5:30",
-        category: "project"
+        title: "Khushalipur Project Overview with connectivity",
+        description: "video shows all project overview its connectivity to roads",
+        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/view?usp=drive_link",
+        thumbnailUrl: "https://drive.google.com/thumbnail?id=12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR&sz=w800-h450",
+        duration: "2:27",
+        category: "location"
       },
       {
         title: "Khushalipur Agricultural Investment Guide",
