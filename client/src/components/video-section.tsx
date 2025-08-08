@@ -159,32 +159,27 @@ export default function VideoSection() {
             {selectedVideo && (
               <div className="px-6 pb-6">
                 <div className="relative w-full bg-gray-900 rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
-                  {/* Embedded Google Drive Video */}
-                  <iframe 
+                  {/* Direct Video Player */}
+                  <video 
                     src={selectedVideo.videoUrl}
                     className="absolute inset-0 w-full h-full"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
+                    controls
+                    autoPlay={false}
+                    preload="metadata"
                     title={selectedVideo.title}
+                    onError={(e) => {
+                      console.log('Video error, falling back to iframe');
+                      // Fallback to iframe if direct video fails
+                      const video = e.target as HTMLVideoElement;
+                      const iframe = document.createElement('iframe');
+                      iframe.src = selectedVideo.videoUrl.replace('uc?export=download&id=', 'file/d/') + '/preview';
+                      iframe.className = video.className;
+                      iframe.allow = 'autoplay; encrypted-media';
+                      iframe.allowFullscreen = true;
+                      iframe.title = selectedVideo.title;
+                      video.parentNode?.replaceChild(iframe, video);
+                    }}
                   />
-                  
-                  {/* Fallback overlay for access issues */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900/90 opacity-0 hover:opacity-100 transition-opacity">
-                    <div className="text-center text-white p-6">
-                      <p className="text-sm mb-4">Having trouble viewing the video?</p>
-                      <Button 
-                        onClick={() => {
-                          const directUrl = selectedVideo.videoUrl.replace('/embed', '/view');
-                          window.open(directUrl, '_blank');
-                        }}
-                        className="bg-white text-gray-900 hover:bg-gray-100"
-                        size="sm"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Open in Google Drive
-                      </Button>
-                    </div>
-                  </div>
                 </div>
                 <div className="flex items-center justify-center mt-4 space-x-4">
                   <Badge className="bg-green-100 text-green-800">
