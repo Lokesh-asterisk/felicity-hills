@@ -72,6 +72,7 @@ export interface IStorage {
   getActivities(): Promise<Activity[]>;
   getRecentActivities(): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
+  deleteActivity(id: string): Promise<boolean>;
   
   // Admin settings operations
   getAdminSetting(key: string): Promise<AdminSetting | undefined>;
@@ -358,6 +359,11 @@ export class DatabaseStorage implements IStorage {
   async createActivity(activity: InsertActivity): Promise<Activity> {
     const [newActivity] = await db.insert(activities).values(activity).returning();
     return newActivity;
+  }
+
+  async deleteActivity(id: string): Promise<boolean> {
+    const result = await db.delete(activities).where(eq(activities.id, id));
+    return result.rowCount! > 0;
   }
 
   // Admin settings operations

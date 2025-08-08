@@ -82,6 +82,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete activity
+  app.delete("/api/activities/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteActivity(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Activity not found" });
+      }
+      res.json({ message: "Activity deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+      res.status(500).json({ message: "Failed to delete activity" });
+    }
+  });
+
   // Admin testimonial management endpoints
   app.post("/api/admin/testimonials", async (req, res) => {
     try {

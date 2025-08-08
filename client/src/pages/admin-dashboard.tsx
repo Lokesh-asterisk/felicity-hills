@@ -80,140 +80,12 @@ export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [, setLocation] = useLocation();
-  // Get recent activities from database instead of local state
+  // Get recent activities from database (same as home page)
   const { data: recentActivities = [], refetch: refetchActivities } = useQuery<Activity[]>({
-    queryKey: ["/api/activities"],
+    queryKey: ["/api/activities/recent"],
     enabled: isAuthenticated,
+    refetchInterval: 5000, // Auto-refresh every 5 seconds
   });
-  
-  const [localActivities, setLocalActivities] = useState<ActivityItem[]>([
-    {
-      id: "1",
-      title: "Site Visit Scheduled",
-      description: "Mr. Rajesh Kumar scheduled a visit for tomorrow",
-      date: new Date().toISOString(),
-      type: "visit"
-    },
-    {
-      id: "2",
-      title: "Document Verification",
-      description: "Legal documents verified for Sharma family's 3-acre plot",
-      date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      type: "other"
-    },
-    {
-      id: "3", 
-      title: "Investment Inquiry",
-      description: "New inquiry about 5-acre plots received from Delhi",
-      date: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-      type: "inquiry"
-    },
-    {
-      id: "4",
-      title: "Payment Completed",
-      description: "₹2.5L advance payment received from Gupta family",
-      date: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-      type: "sale"
-    },
-    {
-      id: "5",
-      title: "Client Meeting",
-      description: "Investment consultation meeting with Agarwal family",
-      date: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
-      type: "meeting"
-    },
-    {
-      id: "6",
-      title: "Plot Booking",
-      description: "2-acre plot booked by Singh family",
-      date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      type: "sale"
-    },
-    {
-      id: "7",
-      title: "Site Visit Completed",
-      description: "Conducted site tour for 6 families from Mumbai",
-      date: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
-      type: "visit"
-    },
-    {
-      id: "8",
-      title: "Infrastructure Update",
-      description: "Water pipeline installation completed in Sector B",
-      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "other"
-    },
-    {
-      id: "9",
-      title: "Follow-up Call",
-      description: "Discussed investment options with Verma family",
-      date: new Date(Date.now() - 2.5 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "inquiry"
-    },
-    {
-      id: "10",
-      title: "Registry Process",
-      description: "Registry documentation started for 4-acre plot",
-      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "sale"
-    },
-    {
-      id: "11",
-      title: "Group Visit Scheduled",
-      description: "Corporate group visit arranged for next weekend",
-      date: new Date(Date.now() - 3.5 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "visit"
-    },
-    {
-      id: "12",
-      title: "Legal Approval",
-      description: "Environmental clearance received for Phase 2",
-      date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "other"
-    },
-    {
-      id: "13",
-      title: "Investment Query",
-      description: "NRI investor inquiry for bulk purchase of 20 acres",
-      date: new Date(Date.now() - 4.5 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "inquiry"
-    },
-    {
-      id: "14",
-      title: "Client Onboarding",
-      description: "Welcome meeting with new investors - Jain family",
-      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "meeting"
-    },
-    {
-      id: "15",
-      title: "Road Development",
-      description: "Main access road widening work initiated",
-      date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "other"
-    },
-    {
-      id: "16",
-      title: "Plot Allocation",
-      description: "Prime corner plot allocated to Kapoor family",
-      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "sale"
-    },
-    {
-      id: "17",
-      title: "Investor Meeting",
-      description: "Quarterly review meeting with existing plot holders",
-      date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "meeting"
-    },
-    {
-      id: "18",
-      title: "Media Coverage",
-      description: "Local newspaper featured Khushalipur project",
-      date: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
-      type: "other"
-    }
-  ]);
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [newActivity, setNewActivity] = useState({
     title: "",
@@ -341,6 +213,18 @@ export default function AdminDashboard() {
       refetchActivities();
       setNewActivity({ title: "", description: "", type: "other" });
       setShowAddActivity(false);
+    },
+  });
+
+  // Delete activity mutation
+  const deleteActivityMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/activities/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/activities"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
+      refetchActivities();
     },
   });
 
@@ -473,10 +357,10 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteActivity = (id: string) => {
-    // For now, keep local delete functionality
-    // In production, you might want to add a DELETE API endpoint
-    setLocalActivities(localActivities.filter(activity => activity.id !== id));
+  const handleDeleteActivity = (id: string, title: string) => {
+    if (confirm(`Are you sure you want to delete the activity "${title}"?`)) {
+      deleteActivityMutation.mutate(id);
+    }
   };
 
   const getActivityIcon = (type: string) => {
@@ -773,7 +657,7 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {recentActivities.slice(0, 10).map((activity) => (
+                    {recentActivities.map((activity) => (
                       <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg border bg-gray-50 dark:bg-gray-700">
                         <div className={`${getActivityColor(activity.type)} mt-1`}>
                           {getActivityIcon(activity.type)}
@@ -788,8 +672,9 @@ export default function AdminDashboard() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDeleteActivity(activity.id)}
+                          onClick={() => handleDeleteActivity(activity.id, activity.title)}
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          disabled={deleteActivityMutation.isPending}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
