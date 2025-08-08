@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Play, Clock, Loader2, X } from "lucide-react";
+import { Play, Clock, Loader2, X, ExternalLink } from "lucide-react";
 import type { Video } from "@shared/schema";
 
 export default function VideoSection() {
@@ -167,6 +167,24 @@ export default function VideoSection() {
                     allowFullScreen
                     title={selectedVideo.title}
                   />
+                  
+                  {/* Fallback overlay for access issues */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-900/90 opacity-0 hover:opacity-100 transition-opacity">
+                    <div className="text-center text-white p-6">
+                      <p className="text-sm mb-4">Having trouble viewing the video?</p>
+                      <Button 
+                        onClick={() => {
+                          const directUrl = selectedVideo.videoUrl.replace('/embed', '/view');
+                          window.open(directUrl, '_blank');
+                        }}
+                        className="bg-white text-gray-900 hover:bg-gray-100"
+                        size="sm"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Open in Google Drive
+                      </Button>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center justify-center mt-4 space-x-4">
                   <Badge className="bg-green-100 text-green-800">
@@ -176,6 +194,18 @@ export default function VideoSection() {
                   <Badge className="bg-blue-100 text-blue-800">
                     HD Quality
                   </Badge>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const directUrl = selectedVideo.videoUrl.replace('/embed', '/view');
+                      window.open(directUrl, '_blank');
+                    }}
+                    className="text-xs"
+                  >
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    Open in New Tab
+                  </Button>
                 </div>
               </div>
             )}
