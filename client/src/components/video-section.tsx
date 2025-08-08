@@ -13,6 +13,8 @@ export default function VideoSection() {
 
   const { data: videos, isLoading } = useQuery<Video[]>({
     queryKey: ["/api/videos"],
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache the data
   });
 
   const getCategoryColor = (category: string) => {
