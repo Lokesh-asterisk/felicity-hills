@@ -159,26 +159,12 @@ export default function VideoSection() {
             {selectedVideo && (
               <div className="px-6 pb-6">
                 <div className="relative w-full bg-gray-900 rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
-                  {/* Direct Video Player */}
-                  <video 
+                  <iframe 
                     src={selectedVideo.videoUrl}
-                    className="absolute inset-0 w-full h-full"
-                    controls
-                    autoPlay={false}
-                    preload="metadata"
+                    className="absolute inset-0 w-full h-full border-0"
+                    allow="autoplay"
+                    allowFullScreen
                     title={selectedVideo.title}
-                    onError={(e) => {
-                      console.log('Video error, falling back to iframe');
-                      // Fallback to iframe if direct video fails
-                      const video = e.target as HTMLVideoElement;
-                      const iframe = document.createElement('iframe');
-                      iframe.src = selectedVideo.videoUrl.replace('uc?export=download&id=', 'file/d/') + '/preview';
-                      iframe.className = video.className;
-                      iframe.allow = 'autoplay; encrypted-media';
-                      iframe.allowFullscreen = true;
-                      iframe.title = selectedVideo.title;
-                      video.parentNode?.replaceChild(iframe, video);
-                    }}
                   />
                 </div>
                 <div className="flex items-center justify-center mt-4 space-x-4">
@@ -189,18 +175,6 @@ export default function VideoSection() {
                   <Badge className="bg-blue-100 text-blue-800">
                     HD Quality
                   </Badge>
-                  <Button 
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const directUrl = selectedVideo.videoUrl.replace('/embed', '/view');
-                      window.open(directUrl, '_blank');
-                    }}
-                    className="text-xs"
-                  >
-                    <ExternalLink className="w-3 h-3 mr-1" />
-                    Open in New Tab
-                  </Button>
                 </div>
               </div>
             )}
