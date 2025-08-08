@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import type { Brochure } from "@shared/schema";
+import Navigation from "../components/navigation";
+import Footer from "../components/footer";
 
 const downloadFormSchema = z.object({
   userName: z.string().min(2, "Name must be at least 2 characters"),
@@ -23,6 +25,15 @@ const downloadFormSchema = z.object({
 type DownloadFormData = z.infer<typeof downloadFormSchema>;
 
 export default function BrochuresPage() {
+  // Set page title for SEO
+  useEffect(() => {
+    document.title = "Download Brochures - Khushalipur Project Information | Felicity Hills";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Download detailed brochures and project information for Khushalipur agricultural land investment. Get comprehensive details about pricing, amenities, and investment returns.');
+    }
+  }, []);
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedBrochure, setSelectedBrochure] = useState<Brochure | null>(null);

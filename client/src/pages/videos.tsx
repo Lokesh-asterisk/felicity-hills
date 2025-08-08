@@ -1,19 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Play, Clock, Loader2, X, Filter, ExternalLink } from "lucide-react";
+import { Play, Clock, Loader2, Filter } from "lucide-react";
 import { Link } from "wouter";
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import type { Video } from "@shared/schema";
 
 export default function VideosPage() {
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  // Set page title for SEO
+  useEffect(() => {
+    document.title = "Project Videos - Khushalipur Agricultural Land Investment | Felicity Hills";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Watch comprehensive videos showcasing Khushalipur agricultural land project near Dehradun. See location advantages, amenities, and customer testimonials.');
+    }
+  }, []);
 
   const { data: videos, isLoading } = useQuery<Video[]>({
     queryKey: ["/api/videos"],
@@ -56,27 +62,6 @@ export default function VideosPage() {
     window.open(viewUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
   };
 
-  const closeVideo = () => {
-    setSelectedVideo(null);
-    setIsDialogOpen(false);
-  };
-
-  // Function to convert Google Drive share URL to embed URL
-  const convertGoogleDriveUrl = (url: string) => {
-    console.log('Original URL:', url);
-    if (url.includes('drive.google.com/file/d/')) {
-      const fileId = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1];
-      console.log('Extracted file ID:', fileId);
-      if (fileId) {
-        // Try different embed formats for better compatibility
-        const embedUrl = `https://drive.google.com/file/d/${fileId}/preview?usp=embed_facebook`;
-        console.log('Embed URL:', embedUrl);
-        return embedUrl;
-      }
-    }
-    console.log('Returning original URL:', url);
-    return url;
-  };
 
   return (
     <div className="min-h-screen bg-background">

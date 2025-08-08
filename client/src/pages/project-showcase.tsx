@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +8,15 @@ import { MapPin, Users, Building, Calendar, TreePine, Mountain, Waves, Home, Sta
 import { Link } from "wouter";
 
 export default function ProjectShowcase() {
+  // Set page title for SEO
+  useEffect(() => {
+    document.title = "Project Portfolio - Real Estate Developments | Felicity Hills";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Explore Felicity Hills diverse real estate portfolio across Uttarakhand and Himachal Pradesh. Agricultural plots, residential developments, and luxury projects with high investment returns.');
+    }
+  }, []);
+
   const projects = [
     {
       id: 1,

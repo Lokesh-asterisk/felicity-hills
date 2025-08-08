@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -12,8 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarDays, MapPin, Phone, Mail, IndianRupee, Clock } from "lucide-react";
+import { CalendarDays, MapPin, Phone, Mail, IndianRupee, Clock, ArrowLeft } from "lucide-react";
 import { z } from "zod";
+import { Link } from "wouter";
+import Navigation from "../components/navigation";
+import Footer from "../components/footer";
 
 // Enhanced validation schema with proper mobile and email validation
 const bookingFormSchema = insertSiteVisitSchema.extend({
@@ -42,6 +45,15 @@ const bookingFormSchema = insertSiteVisitSchema.extend({
 type BookingFormData = z.infer<typeof bookingFormSchema>;
 
 export default function BookVisit() {
+  // Set page title for SEO
+  useEffect(() => {
+    document.title = "Book Site Visit - Khushalipur Agricultural Land | Felicity Hills";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Schedule your site visit to Khushalipur agricultural land project. Book a free guided tour and explore the investment opportunities with our expert team.');
+    }
+  }, []);
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 

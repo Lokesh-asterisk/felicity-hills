@@ -1,12 +1,22 @@
+import { useEffect } from "react";
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Award, Zap, Home, TrendingUp, Shield, Clock, ArrowLeft, ChevronRight, Star, CheckCircle, Phone } from "lucide-react";
+import { MapPin, Users, Award, Zap, Home, TrendingUp, Shield, Clock, ChevronRight, Star, CheckCircle, Phone } from "lucide-react";
 import { Link } from "wouter";
 
 export default function About() {
+  // Set page title for SEO
+  useEffect(() => {
+    document.title = "About Felicity Hills - Leading Real Estate Developer | Khushalipur Project";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Learn about Felicity Hills, a trusted real estate developer with 15+ years experience. Discover our journey, values, and commitment to premium land investments in Uttarakhand and Himachal Pradesh.');
+    }
+  }, []);
+
   const stats = [
     { number: "8+", label: "Active Projects", icon: Home },
     { number: "500+", label: "Happy Families", icon: Users },

@@ -1,15 +1,11 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Play, Clock, Loader2, X, ExternalLink } from "lucide-react";
+import { Play, Clock, Loader2 } from "lucide-react";
 import type { Video } from "@shared/schema";
 
 export default function VideoSection() {
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: videos, isLoading } = useQuery<Video[]>({
     queryKey: ["/api/videos"],
@@ -41,10 +37,6 @@ export default function VideoSection() {
     window.open(viewUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
   };
 
-  const closeVideo = () => {
-    setSelectedVideo(null);
-    setIsDialogOpen(false);
-  };
 
   if (isLoading) {
     return (
