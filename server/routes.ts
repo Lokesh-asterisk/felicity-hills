@@ -151,6 +151,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete site visit (admin)
+  app.delete("/api/admin/site-visits/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteSiteVisit(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Site visit not found" });
+      }
+      res.json({ message: "Site visit deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting site visit:", error);
+      res.status(500).json({ message: "Failed to delete site visit" });
+    }
+  });
+
   // Create site visit booking
   app.post("/api/site-visits", async (req, res) => {
     try {

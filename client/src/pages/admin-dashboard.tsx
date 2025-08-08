@@ -308,6 +308,17 @@ export default function AdminDashboard() {
     },
   });
 
+  // Delete site visit mutation
+  const deleteSiteVisitMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await apiRequest("DELETE", `/api/admin/site-visits/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/site-visits"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/site-visit-stats"] });
+    },
+  });
+
   // Delete brochure download mutation
   const deleteDownloadMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -352,6 +363,13 @@ export default function AdminDashboard() {
   const handleDeleteTestimonial = (id: string) => {
     if (confirm("Are you sure you want to delete this customer story?")) {
       deleteTestimonialMutation.mutate(id);
+    }
+  };
+
+  // Handle delete site visit
+  const handleDeleteSiteVisit = (id: string, visitorName: string) => {
+    if (confirm(`Are you sure you want to delete the site visit booking for ${visitorName}?`)) {
+      deleteSiteVisitMutation.mutate(id);
     }
   };
 
@@ -1262,6 +1280,7 @@ export default function AdminDashboard() {
                           <TableHead>Plot Size</TableHead>
                           <TableHead>Budget</TableHead>
                           <TableHead>Booked On</TableHead>
+                          <TableHead className="text-center">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1315,6 +1334,17 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell className="text-sm text-gray-500">
                               {visit.createdAt ? formatRelativeDate(new Date(visit.createdAt)) : 'Unknown'}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteSiteVisit(visit.id, visit.name)}
+                                className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                disabled={deleteSiteVisitMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </TableCell>
                           </TableRow>
                         ))}

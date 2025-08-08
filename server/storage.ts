@@ -45,6 +45,7 @@ export interface IStorage {
   getSiteVisits(): Promise<SiteVisit[]>;
   getSiteVisitStats(): Promise<any>;
   updateSiteVisitStatus(id: string, status: string): Promise<SiteVisit | undefined>;
+  deleteSiteVisit(id: string): Promise<boolean>;
   
   // Testimonial operations
   getTestimonials(): Promise<Testimonial[]>;
@@ -178,6 +179,11 @@ export class DatabaseStorage implements IStorage {
     // For now, this is a placeholder for future implementation
     const [visit] = await db.select().from(siteVisits).where(eq(siteVisits.id, id));
     return visit || undefined;
+  }
+
+  async deleteSiteVisit(id: string): Promise<boolean> {
+    const result = await db.delete(siteVisits).where(eq(siteVisits.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
   }
 
   // Testimonial operations
