@@ -63,7 +63,7 @@ export default function BrochuresPage() {
           userEmail: data.userEmail,
           userPhone: data.userPhone,
         }
-      );
+      ) as { success: boolean; downloadUrl: string; message: string };
     },
     onSuccess: (response) => {
       toast({
@@ -71,11 +71,20 @@ export default function BrochuresPage() {
         description: "Your download request has been processed successfully.",
       });
       
+      // Trigger the actual file download
+      if (response.downloadUrl) {
+        const link = document.createElement('a');
+        link.href = response.downloadUrl;
+        link.download = selectedBrochure?.title || 'brochure';
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      
       // Reset form and close dialog
       form.reset();
       setSelectedBrochure(null);
-      
-
     },
     onError: (error) => {
       toast({
