@@ -334,6 +334,10 @@ export class DatabaseStorage implements IStorage {
     return newVideo;
   }
 
+  async clearAllVideos(): Promise<void> {
+    await db.delete(videos);
+  }
+
   // Activity operations
   async getActivities(): Promise<Activity[]> {
     return await db.select().from(activities).orderBy(desc(activities.createdAt));
@@ -379,6 +383,9 @@ export class DatabaseStorage implements IStorage {
 
   // Initialize with sample data
   async initializeData() {
+    // Always reset videos regardless of other data
+    await this.resetVideos();
+    
     // Check if data already exists
     const existingBrochures = await this.getBrochures();
     if (existingBrochures.length > 0) return;
@@ -456,7 +463,15 @@ export class DatabaseStorage implements IStorage {
       await db.insert(testimonials).values(testimonial);
     }
 
-    // Initialize videos
+    // Videos are handled in resetVideos() method
+  }
+
+  // Reset videos to current configuration
+  async resetVideos() {
+    // Clear all existing videos
+    await this.clearAllVideos();
+    
+    // Add the single video
     const videoData = [
       {
         title: "Project Video",
