@@ -49,8 +49,9 @@ export default function VideosPage() {
   };
 
   const playVideo = (video: Video) => {
-    setSelectedVideo(video);
-    setIsDialogOpen(true);
+    // Open Google Drive video directly in new window
+    const viewUrl = video.videoUrl.replace('/preview', '/view');
+    window.open(viewUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
   };
 
   const closeVideo = () => {
@@ -213,57 +214,6 @@ export default function VideosPage() {
         </div>
       </section>
 
-      {/* Video Modal */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-5xl w-full p-0">
-          <DialogHeader className="p-6 pb-0">
-            <div className="flex justify-between items-start">
-              <div>
-                <DialogTitle className="text-2xl font-bold">
-                  {selectedVideo?.title}
-                </DialogTitle>
-                <p className="text-gray-600 mt-2">
-                  {selectedVideo?.description}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={closeVideo}
-                className="h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </DialogHeader>
-          
-          {selectedVideo && (
-            <div className="px-6 pb-6">
-              <div className="relative w-full bg-gray-900 rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
-                <iframe 
-                  src={selectedVideo.videoUrl}
-                  className="absolute inset-0 w-full h-full border-0"
-                  allow="autoplay"
-                  allowFullScreen
-                  title={selectedVideo.title}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center space-x-4">
-                  <Badge className={getCategoryColor(selectedVideo.category)}>
-                    {getCategoryIcon(selectedVideo.category)} {selectedVideo.category}
-                  </Badge>
-                  <Badge variant="outline">
-                    <Clock className="w-3 h-3 mr-1" />
-                    {selectedVideo.duration}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
       {/* Call to Action */}
       <section className="py-20 bg-gradient-to-r from-primary to-secondary">
