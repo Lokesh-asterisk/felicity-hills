@@ -10,7 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff } from "lucide-react";
+import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import * as XLSX from 'xlsx';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -80,6 +82,10 @@ export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [, setLocation] = useLocation();
+  
+  // Selection state for brochure downloads
+  const [selectedDownloads, setSelectedDownloads] = useState<Set<string>>(new Set());
+  const [selectAll, setSelectAll] = useState(false);
   // Get recent activities from database (same as home page)
   const { data: recentActivities = [], refetch: refetchActivities } = useQuery<Activity[]>({
     queryKey: ["/api/activities/recent"],
@@ -428,6 +434,53 @@ export default function AdminDashboard() {
     }
   };
 
+  // Selection handlers
+  const handleSelectAll = (checked: boolean) => {
+    setSelectAll(checked);
+    if (checked) {
+      setSelectedDownloads(new Set(downloads.map(d => d.id)));
+    } else {
+      setSelectedDownloads(new Set());
+    }
+  };
+
+  const handleSelectDownload = (downloadId: string, checked: boolean) => {
+    const newSelected = new Set(selectedDownloads);
+    if (checked) {
+      newSelected.add(downloadId);
+    } else {
+      newSelected.delete(downloadId);
+    }
+    setSelectedDownloads(newSelected);
+    setSelectAll(newSelected.size === downloads.length);
+  };
+
+  // Excel export function
+  const exportToExcel = () => {
+    const selectedData = downloads.filter(download => selectedDownloads.has(download.id));
+    const dataToExport = selectedData.length > 0 ? selectedData : downloads;
+    
+    // Prepare data for Excel export
+    const exportData = dataToExport.map((download, index) => ({
+      'Sr. No.': index + 1,
+      'Date': format(new Date(download.downloadedAt), "yyyy-MM-dd"),
+      'Time': format(new Date(download.downloadedAt), "HH:mm:ss"),
+      'User Name': download.userName,
+      'Email': download.userEmail,
+      'Phone': download.userPhone || 'N/A',
+      'Brochure': download.brochureTitle
+    }));
+
+    // Create workbook and worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Brochure Downloads');
+    
+    // Export file
+    const fileName = `brochure-downloads-${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   // Only fetch data if authenticated
   const { data: stats, isLoading } = useQuery<BrochureStats>({
     queryKey: ["/api/admin/brochure-stats"],
@@ -763,12 +816,38 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                      Showing {downloads.length} entries
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Showing {downloads.length} entries
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {selectedDownloads.size > 0 && (
+                          <span className="text-sm text-blue-600 dark:text-blue-400">
+                            {selectedDownloads.size} selected
+                          </span>
+                        )}
+                        <Button
+                          onClick={exportToExcel}
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-2"
+                          disabled={downloads.length === 0}
+                        >
+                          <FileSpreadsheet className="h-4 w-4" />
+                          Export Excel
+                        </Button>
+                      </div>
                     </div>
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead className="w-12">
+                            <Checkbox
+                              checked={selectAll}
+                              onCheckedChange={handleSelectAll}
+                              aria-label="Select all downloads"
+                            />
+                          </TableHead>
                           <TableHead>Sr. No.</TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>User</TableHead>
@@ -781,6 +860,15 @@ export default function AdminDashboard() {
                       <TableBody>
                         {downloads.map((download, index) => (
                           <TableRow key={download.id}>
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedDownloads.has(download.id)}
+                                onCheckedChange={(checked) => 
+                                  handleSelectDownload(download.id, checked as boolean)
+                                }
+                                aria-label={`Select download ${index + 1}`}
+                              />
+                            </TableCell>
                             <TableCell className="font-medium text-center">
                               {index + 1}
                             </TableCell>
