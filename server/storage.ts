@@ -8,11 +8,6 @@ import {
   activities,
   users,
   adminSettings,
-  userProfiles,
-  achievements,
-  userAchievements,
-  engagementEvents,
-  leaderboards,
   type Plot,
   type SiteVisit,
   type Testimonial,
@@ -22,11 +17,6 @@ import {
   type Activity,
   type User,
   type AdminSetting,
-  type UserProfile,
-  type Achievement,
-  type UserAchievement,
-  type EngagementEvent,
-  type Leaderboard,
   type InsertPlot,
   type InsertSiteVisit,
   type InsertTestimonial,
@@ -34,12 +24,8 @@ import {
   type InsertVideo,
   type InsertBrochureDownload,
   type InsertActivity,
+  type InsertUser,
   type InsertAdminSetting,
-  type InsertUserProfile,
-  type InsertAchievement,
-  type InsertUserAchievement,
-  type InsertEngagementEvent,
-  type InsertLeaderboard,
   type UpsertUser,
 } from "@shared/schema";
 import { db } from "./db";
@@ -93,28 +79,6 @@ export interface IStorage {
   // Admin settings operations
   getAdminSetting(key: string): Promise<AdminSetting | undefined>;
   upsertAdminSetting(setting: InsertAdminSetting): Promise<AdminSetting>;
-
-  // Gamification operations
-  // User profile operations
-  getUserProfile(email: string): Promise<UserProfile | undefined>;
-  createUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
-  updateUserProfile(email: string, updates: Partial<InsertUserProfile>): Promise<UserProfile | undefined>;
-  
-  // Achievement operations
-  getAchievements(): Promise<Achievement[]>;
-  createAchievement(achievement: InsertAchievement): Promise<Achievement>;
-  getUserAchievements(userEmail: string): Promise<UserAchievement[]>;
-  unlockAchievement(userEmail: string, achievementId: string): Promise<UserAchievement>;
-  updateAchievementProgress(userEmail: string, achievementId: string, progress: number): Promise<void>;
-  
-  // Engagement tracking operations
-  recordEngagementEvent(event: InsertEngagementEvent): Promise<EngagementEvent>;
-  getUserEngagementStats(userEmail: string): Promise<any>;
-  getEngagementLeaderboard(period: 'daily' | 'weekly' | 'monthly' | 'all_time'): Promise<Leaderboard[]>;
-  updateLeaderboard(period: 'daily' | 'weekly' | 'monthly' | 'all_time'): Promise<void>;
-  
-  // Gamification analytics
-  getGamificationStats(): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -165,69 +129,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSiteVisitStats(): Promise<any> {
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
-    // Total site visits
-    const totalVisits = await db
-      .select({ count: count() })
-      .from(siteVisits);
-
-    // Today's visits
-    const todayVisits = await db
-      .select({ count: count() })
-      .from(siteVisits)
-      .where(sql`${siteVisits.createdAt} >= ${todayStart}`);
-
-    // This week's visits
-    const weekVisits = await db
-      .select({ count: count() })
-      .from(siteVisits)
-      .where(sql`${siteVisits.createdAt} >= ${weekStart}`);
-
-    // Recent visits (last 10)
-    const recentVisits = await db
-      .select()
-      .from(siteVisits)
-      .orderBy(desc(siteVisits.createdAt))
-      .limit(10);
-
-    // Visits by date (last 7 days)
-    const visitsByDate = await db
-      .select({
-        date: sql`DATE(${siteVisits.createdAt})`.as('date'),
-        visits: count(),
-      })
-      .from(siteVisits)
-      .where(sql`${siteVisits.createdAt} >= ${weekStart}`)
-      .groupBy(sql`DATE(${siteVisits.createdAt})`)
-      .orderBy(sql`DATE(${siteVisits.createdAt})`);
+    const total = await db.select({ count: count() }).from(siteVisits);
+    const thisMonth = await db.select({ count: count() }).from(siteVisits)
+      .where(sql`DATE_TRUNC('month', ${siteVisits.createdAt}) = DATE_TRUNC('month', CURRENT_DATE)`);
+    const thisWeek = await db.select({ count: count() }).from(siteVisits)
+      .where(sql`DATE_TRUNC('week', ${siteVisits.createdAt}) = DATE_TRUNC('week', CURRENT_DATE)`);
 
     return {
-      totalVisits: totalVisits[0]?.count || 0,
-      todayVisits: todayVisits[0]?.count || 0,
-      weekVisits: weekVisits[0]?.count || 0,
-      recentVisits,
-      visitsByDate,
+      total: total[0]?.count || 0,
+      thisMonth: thisMonth[0]?.count || 0,
+      thisWeek: thisWeek[0]?.count || 0,
     };
   }
 
   async updateSiteVisitStatus(id: string, status: string): Promise<SiteVisit | undefined> {
-    // Note: This would require adding a status field to the siteVisits table
-    // For now, this is a placeholder for future implementation
-    const [visit] = await db.select().from(siteVisits).where(eq(siteVisits.id, id));
-    return visit || undefined;
+    const [updatedVisit] = await db
+      .update(siteVisits)
+      .set({ status })
+      .where(eq(siteVisits.id, id))
+      .returning();
+    return updatedVisit || undefined;
   }
 
   async deleteSiteVisit(id: string): Promise<boolean> {
     const result = await db.delete(siteVisits).where(eq(siteVisits.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    return result.rowCount > 0;
   }
 
   // Testimonial operations
   async getTestimonials(): Promise<Testimonial[]> {
-    return await db.select().from(testimonials);
+    return await db.select().from(testimonials).orderBy(desc(testimonials.id));
   }
 
   async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
@@ -246,7 +177,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTestimonial(id: string): Promise<boolean> {
     const result = await db.delete(testimonials).where(eq(testimonials.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return result.rowCount > 0;
   }
 
   // Brochure operations
@@ -271,96 +202,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getBrochureDownloads(): Promise<BrochureDownload[]> {
-    return await db
-      .select({
-        id: brochureDownloads.id,
-        brochureId: brochureDownloads.brochureId,
-        userName: brochureDownloads.userName,
-        userEmail: brochureDownloads.userEmail,
-        userPhone: brochureDownloads.userPhone,
-        downloadedAt: brochureDownloads.downloadedAt,
-        ipAddress: brochureDownloads.ipAddress,
-        userAgent: brochureDownloads.userAgent,
-        brochureTitle: brochures.title,
-      })
-      .from(brochureDownloads)
-      .leftJoin(brochures, eq(brochureDownloads.brochureId, brochures.id))
-      .orderBy(desc(brochureDownloads.downloadedAt));
+    return await db.select().from(brochureDownloads).orderBy(desc(brochureDownloads.downloadedAt));
   }
 
   async getBrochureDownloadStats(): Promise<any> {
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    // Total downloads
-    const totalDownloads = await db
-      .select({ count: count() })
-      .from(brochureDownloads);
-
-    // Today's downloads
-    const todayDownloads = await db
-      .select({ count: count() })
-      .from(brochureDownloads)
-      .where(sql`${brochureDownloads.downloadedAt} >= ${todayStart}`);
-
-    // Unique users
-    const uniqueUsers = await db
-      .select({ count: count(sql`DISTINCT ${brochureDownloads.userEmail}`) })
-      .from(brochureDownloads);
-
-    // Top brochures
-    const topBrochures = await db
-      .select({
-        id: brochureDownloads.brochureId,
-        title: brochures.title,
-        downloadCount: count(),
-      })
-      .from(brochureDownloads)
-      .leftJoin(brochures, eq(brochureDownloads.brochureId, brochures.id))
-      .groupBy(brochureDownloads.brochureId, brochures.title)
-      .orderBy(desc(count()))
-      .limit(5);
-
-    // Recent downloads
-    const recentDownloads = await db
-      .select({
-        id: brochureDownloads.id,
-        brochureId: brochureDownloads.brochureId,
-        brochureTitle: brochures.title,
-        userName: brochureDownloads.userName,
-        userEmail: brochureDownloads.userEmail,
-        userPhone: brochureDownloads.userPhone,
-        downloadedAt: brochureDownloads.downloadedAt,
-      })
-      .from(brochureDownloads)
-      .leftJoin(brochures, eq(brochureDownloads.brochureId, brochures.id))
-      .orderBy(desc(brochureDownloads.downloadedAt))
-      .limit(10);
-
-    // Downloads by date (last 7 days)
-    const downloadsByDate = await db
-      .select({
-        date: sql`DATE(${brochureDownloads.downloadedAt})`.as('date'),
-        downloads: count(),
-      })
-      .from(brochureDownloads)
-      .where(sql`${brochureDownloads.downloadedAt} >= ${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)}`)
-      .groupBy(sql`DATE(${brochureDownloads.downloadedAt})`)
-      .orderBy(sql`DATE(${brochureDownloads.downloadedAt})`);
+    const total = await db.select({ count: count() }).from(brochureDownloads);
+    const thisMonth = await db.select({ count: count() }).from(brochureDownloads)
+      .where(sql`DATE_TRUNC('month', ${brochureDownloads.downloadedAt}) = DATE_TRUNC('month', CURRENT_DATE)`);
+    const thisWeek = await db.select({ count: count() }).from(brochureDownloads)
+      .where(sql`DATE_TRUNC('week', ${brochureDownloads.downloadedAt}) = DATE_TRUNC('week', CURRENT_DATE)`);
 
     return {
-      totalDownloads: totalDownloads[0]?.count || 0,
-      todayDownloads: todayDownloads[0]?.count || 0,
-      uniqueUsers: uniqueUsers[0]?.count || 0,
-      topBrochures,
-      recentDownloads,
-      downloadsByDate,
+      total: total[0]?.count || 0,
+      thisMonth: thisMonth[0]?.count || 0,
+      thisWeek: thisWeek[0]?.count || 0,
     };
   }
 
   async deleteBrochureDownload(id: string): Promise<boolean> {
     const result = await db.delete(brochureDownloads).where(eq(brochureDownloads.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    return result.rowCount > 0;
   }
 
   // Video operations
@@ -373,25 +234,15 @@ export class DatabaseStorage implements IStorage {
     return newVideo;
   }
 
-  async clearAllVideos(): Promise<void> {
-    await db.delete(videos);
-  }
-
   // Activity operations
   async getActivities(): Promise<Activity[]> {
     return await db.select().from(activities).orderBy(desc(activities.createdAt));
   }
 
   async getRecentActivities(): Promise<Activity[]> {
-    // Get activities from today and yesterday
-    const twoDaysAgo = new Date();
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-    
-    return await db
-      .select()
-      .from(activities)
-      .where(sql`${activities.createdAt} >= ${twoDaysAgo}`)
-      .orderBy(desc(activities.createdAt));
+    return await db.select().from(activities)
+      .orderBy(desc(activities.createdAt))
+      .limit(10);
   }
 
   async createActivity(activity: InsertActivity): Promise<Activity> {
@@ -399,23 +250,18 @@ export class DatabaseStorage implements IStorage {
     return newActivity;
   }
 
-  async updateActivity(id: string, activityData: InsertActivity): Promise<Activity | undefined> {
+  async updateActivity(id: string, activity: InsertActivity): Promise<Activity | undefined> {
     const [updatedActivity] = await db
       .update(activities)
-      .set(activityData)
+      .set(activity)
       .where(eq(activities.id, id))
       .returning();
     return updatedActivity || undefined;
   }
 
   async deleteActivity(id: string): Promise<boolean> {
-    try {
-      const result = await db.delete(activities).where(eq(activities.id, id));
-      return true; // If no error, deletion was successful
-    } catch (error) {
-      console.error('Error deleting activity:', error);
-      return false;
-    }
+    const result = await db.delete(activities).where(eq(activities.id, id));
+    return result.rowCount > 0;
   }
 
   // Admin settings operations
@@ -425,7 +271,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertAdminSetting(setting: InsertAdminSetting): Promise<AdminSetting> {
-    const [upsertedSetting] = await db
+    const [newSetting] = await db
       .insert(adminSettings)
       .values(setting)
       .onConflictDoUpdate({
@@ -436,119 +282,123 @@ export class DatabaseStorage implements IStorage {
         },
       })
       .returning();
-    return upsertedSetting;
+    return newSetting;
   }
 
-  // Initialize with sample data
-  async initializeData() {
-    // Check if data already exists first
-    const existingBrochures = await this.getBrochures();
-    const isFirstRun = existingBrochures.length === 0;
-    
-    // Always reset videos regardless of other data
-    await this.resetVideos(isFirstRun);
-    
-    if (!isFirstRun) return;
+  // Initialize default data
+  async initializeData(): Promise<void> {
+    try {
+      // Initialize plots if none exist
+      const existingPlots = await this.getPlots();
+      if (existingPlots.length === 0) {
+        const samplePlots = [
+          {
+            plotNumber: "A-001",
+            size: 500,
+            pricePerSqYd: 3000,
+            roadWidth: 20,
+            category: "premium",
+            features: ["Water Connection", "Electricity", "Road Access", "Fertile Soil"],
+            available: true,
+            location: "gate_facing",
+          },
+          {
+            plotNumber: "B-002",
+            size: 750,
+            pricePerSqYd: 3000,
+            roadWidth: 30,
+            category: "premium",
+            features: ["Water Connection", "Electricity", "Road Access", "Organic Certified"],
+            available: true,
+            location: "corner",
+          },
+          {
+            plotNumber: "C-003",
+            size: 1000,
+            pricePerSqYd: 3000,
+            roadWidth: 40,
+            category: "cottage",
+            features: ["Water Connection", "Electricity", "Corner Plot", "Prime Location"],
+            available: false,
+            location: "pool_facing",
+          },
+        ];
 
-    // Initialize brochures
-    const brochureData = [
-      {
-        title: "Khushalipur Project Brochure",
-        description: "Complete project overview with pricing, amenities, and location advantages.",
-        downloadUrl: "#",
-        fileSize: "2.5 MB"
-      },
-      {
-        title: "Price List & Payment Plans",
-        description: "Detailed pricing for all plot categories with flexible payment options.",
-        downloadUrl: "#",
-        fileSize: "1.8 MB"
-      },
-      {
-        title: "Legal Documentation",
-        description: "Registry, clearance certificates, and legal compliance documents.",
-        downloadUrl: "#",
-        fileSize: "3.2 MB"
-      },
-      {
-        title: "Master Plan Layout",
-        description: "Detailed site plan showing plot numbers, roads, and amenities.",
-        downloadUrl: "#",
-        fileSize: "4.1 MB"
-      },
-      {
-        title: "Amenities Guide",
-        description: "Complete guide to all amenities and recreational facilities.",
-        downloadUrl: "#",
-        fileSize: "2.9 MB"
+        for (const plot of samplePlots) {
+          await this.createPlot(plot);
+        }
       }
-    ];
 
-    for (const brochure of brochureData) {
-      await this.createBrochure(brochure);
-    }
+      // Initialize testimonials if none exist
+      const existingTestimonials = await this.getTestimonials();
+      if (existingTestimonials.length === 0) {
+        const sampleTestimonials = [
+          {
+            name: "Rajesh Kumar",
+            content: "Investing in Khushalipur was the best decision I made. The returns are excellent and the location is perfect for agriculture.",
+            rating: 5,
+            location: "Delhi",
+          },
+          {
+            name: "Priya Sharma",
+            content: "The team at Felicity Hills made the entire process smooth and transparent. Highly recommended for agricultural investments.",
+            rating: 5,
+            location: "Mumbai",
+          },
+          {
+            name: "Amit Singh",
+            content: "Great investment opportunity with excellent infrastructure and support. The agricultural potential is tremendous.",
+            rating: 4,
+            location: "Bangalore",
+          },
+        ];
 
-    // Initialize testimonials
-    const testimonialData = [
-      {
-        name: "Rahul Sharma",
-        location: "Delhi",
-        investment: 1500000,
-        plotSize: 400,
-        returns: 18,
-        duration: "18 months",
-        review: "Excellent investment opportunity with great returns. The location is perfect for future growth."
-      },
-      {
-        name: "Priya Gupta",
-        location: "Mumbai",
-        investment: 800000,
-        plotSize: 200,
-        returns: 22,
-        duration: "2 years",
-        review: "Very satisfied with my investment. The team is professional and transparent."
-      },
-      {
-        name: "Amit Singh",
-        location: "Bangalore",
-        investment: 1200000,
-        plotSize: 300,
-        returns: 20,
-        duration: "15 months",
-        review: "Great project with excellent amenities. Highly recommend for long-term investment."
+        for (const testimonial of sampleTestimonials) {
+          await this.createTestimonial(testimonial);
+        }
       }
-    ];
 
-    for (const testimonial of testimonialData) {
-      await db.insert(testimonials).values(testimonial);
+      // Initialize activities if none exist
+      const existingActivities = await this.getActivities();
+      if (existingActivities.length === 0) {
+        const sampleActivities = [
+          {
+            title: "New plot reservation",
+            description: "Plot A-15 reserved by customer for site visit",
+            type: "visit",
+          },
+          {
+            title: "Investment inquiry",
+            description: "Customer inquired about agricultural land pricing",
+            type: "inquiry",
+          },
+          {
+            title: "Site visit completed",
+            description: "Successful site visit for Plot B-23",
+            type: "visit",
+          },
+        ];
+
+        for (const activity of sampleActivities) {
+          await this.createActivity(activity);
+        }
+      }
+
+      console.log("Default data initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize data:", error);
     }
-
-    // Videos are handled in resetVideos() method
   }
 
-  // Reset videos to current configuration
-  async resetVideos(includeInitialData: boolean = false) {
-    // Clear all existing videos
-    await this.clearAllVideos();
-    
-    // Add the single video
-    const videoData = [
-      {
-        title: "Project Video",
-        description: "Watch our project overview video",
-        videoUrl: "https://drive.google.com/file/d/12OIaXhanE8S2aoB1JQCwe00ODNLNVwsR/preview",
-        thumbnailUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=450",
-        duration: "2:27",
-        category: "project"
+  // Initialize sample brochure downloads
+  async initializeBrochureDownloads(): Promise<void> {
+    try {
+      const downloadsSetting = await this.getAdminSetting('brochure_downloads_initialized');
+      if (downloadsSetting) {
+        console.log("Sample brochure downloads already initialized");
+        return;
       }
-    ];
 
-    for (const video of videoData) {
-      await this.createVideo(video);
-    }
-
-    // Only initialize sample brochure downloads on first run
-    if (includeInitialData) {
       const sampleDownloads = [
         {
           brochureId: (await this.getBrochures())[0]?.id,
@@ -581,409 +431,15 @@ export class DatabaseStorage implements IStorage {
           await this.createBrochureDownload(download);
         }
       }
-    }
-  }
 
-  // Gamification implementation
-  // User profile operations
-  async getUserProfile(email: string): Promise<UserProfile | undefined> {
-    const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.email, email));
-    return profile || undefined;
-  }
-
-  async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
-    const [newProfile] = await db.insert(userProfiles).values(profile).returning();
-    return newProfile;
-  }
-
-  async updateUserProfile(email: string, updates: Partial<InsertUserProfile>): Promise<UserProfile | undefined> {
-    const [updatedProfile] = await db
-      .update(userProfiles)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(userProfiles.email, email))
-      .returning();
-    return updatedProfile || undefined;
-  }
-
-  // Achievement operations
-  async getAchievements(): Promise<Achievement[]> {
-    return await db.select().from(achievements).orderBy(achievements.category, achievements.pointsRequired);
-  }
-
-  async createAchievement(achievement: InsertAchievement): Promise<Achievement> {
-    const [newAchievement] = await db.insert(achievements).values(achievement).returning();
-    return newAchievement;
-  }
-
-  async getUserAchievements(userEmail: string): Promise<UserAchievement[]> {
-    return await db
-      .select({
-        id: userAchievements.id,
-        userEmail: userAchievements.userEmail,
-        achievementId: userAchievements.achievementId,
-        unlockedAt: userAchievements.unlockedAt,
-        progress: userAchievements.progress,
-        isCompleted: userAchievements.isCompleted,
-        achievementName: achievements.name,
-        achievementDescription: achievements.description,
-        achievementIcon: achievements.icon,
-        achievementCategory: achievements.category,
-        achievementRarity: achievements.rarity,
-        pointsRequired: achievements.pointsRequired,
-      })
-      .from(userAchievements)
-      .leftJoin(achievements, eq(userAchievements.achievementId, achievements.id))
-      .where(eq(userAchievements.userEmail, userEmail))
-      .orderBy(userAchievements.unlockedAt);
-  }
-
-  async unlockAchievement(userEmail: string, achievementId: string): Promise<UserAchievement> {
-    const [userAchievement] = await db
-      .insert(userAchievements)
-      .values({
-        userEmail,
-        achievementId,
-        progress: 100,
-        isCompleted: true,
-      })
-      .onConflictDoUpdate({
-        target: [userAchievements.userEmail, userAchievements.achievementId],
-        set: {
-          progress: 100,
-          isCompleted: true,
-          unlockedAt: new Date(),
-        },
-      })
-      .returning();
-    return userAchievement;
-  }
-
-  async updateAchievementProgress(userEmail: string, achievementId: string, progress: number): Promise<void> {
-    await db
-      .insert(userAchievements)
-      .values({
-        userEmail,
-        achievementId,
-        progress,
-        isCompleted: progress >= 100,
-      })
-      .onConflictDoUpdate({
-        target: [userAchievements.userEmail, userAchievements.achievementId],
-        set: {
-          progress,
-          isCompleted: progress >= 100,
-          unlockedAt: progress >= 100 ? new Date() : sql`${userAchievements.unlockedAt}`,
-        },
+      await this.upsertAdminSetting({
+        key: 'brochure_downloads_initialized',
+        value: 'true'
       });
-  }
 
-  // Engagement tracking operations
-  async recordEngagementEvent(event: InsertEngagementEvent): Promise<EngagementEvent> {
-    const [newEvent] = await db.insert(engagementEvents).values(event).returning();
-    
-    // Update user profile with new activity
-    const profile = await this.getUserProfile(event.userEmail);
-    if (profile) {
-      const newPoints = profile.totalPoints + (event.pointsEarned || 0);
-      const newLevel = Math.floor(newPoints / 100) + 1; // Level up every 100 points
-      
-      // Calculate streak
-      const today = new Date();
-      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-      const lastActivity = profile.lastActivityDate ? new Date(profile.lastActivityDate) : null;
-      
-      let currentStreak = profile.currentStreak;
-      if (!lastActivity || lastActivity < yesterday) {
-        currentStreak = 1; // Reset streak
-      } else if (lastActivity.toDateString() === yesterday.toDateString()) {
-        currentStreak += 1; // Continue streak
-      }
-      
-      await this.updateUserProfile(event.userEmail, {
-        totalPoints: newPoints,
-        level: newLevel,
-        currentStreak,
-        longestStreak: Math.max(profile.longestStreak, currentStreak),
-        lastActivityDate: today,
-      });
-    } else {
-      // Create new profile if it doesn't exist
-      await this.createUserProfile({
-        email: event.userEmail,
-        name: event.userEmail.split('@')[0], // Use email prefix as default name
-        totalPoints: event.pointsEarned || 0,
-        level: 1,
-        currentStreak: 1,
-        longestStreak: 1,
-        lastActivityDate: today,
-      });
-    }
-    
-    return newEvent;
-  }
-
-  async getUserEngagementStats(userEmail: string): Promise<any> {
-    const profile = await this.getUserProfile(userEmail);
-    const achievements = await this.getUserAchievements(userEmail);
-    
-    // Get recent events (last 30 days)
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const recentEvents = await db
-      .select()
-      .from(engagementEvents)
-      .where(sql`${engagementEvents.userEmail} = ${userEmail} AND ${engagementEvents.createdAt} >= ${thirtyDaysAgo}`)
-      .orderBy(desc(engagementEvents.createdAt));
-
-    // Calculate engagement stats
-    const totalEvents = recentEvents.length;
-    const totalPoints = recentEvents.reduce((sum, event) => sum + (event.pointsEarned || 0), 0);
-    const eventsByType = recentEvents.reduce((acc, event) => {
-      acc[event.eventType] = (acc[event.eventType] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    const completedAchievements = achievements.filter(a => a.isCompleted).length;
-    const totalAchievements = await db.select({ count: count() }).from(achievements);
-
-    return {
-      profile,
-      achievements,
-      stats: {
-        totalEvents,
-        totalPoints,
-        eventsByType,
-        completedAchievements,
-        totalAchievements: totalAchievements[0]?.count || 0,
-        recentEvents: recentEvents.slice(0, 10),
-      },
-    };
-  }
-
-  async getEngagementLeaderboard(period: 'daily' | 'weekly' | 'monthly' | 'all_time'): Promise<Leaderboard[]> {
-    return await db
-      .select()
-      .from(leaderboards)
-      .where(eq(leaderboards.period, period))
-      .orderBy(leaderboards.rank)
-      .limit(50);
-  }
-
-  async updateLeaderboard(period: 'daily' | 'weekly' | 'monthly' | 'all_time'): Promise<void> {
-    // Calculate date range based on period
-    const now = new Date();
-    let startDate = new Date();
-    
-    switch (period) {
-      case 'daily':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        break;
-      case 'weekly':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case 'monthly':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'all_time':
-        startDate = new Date(0);
-        break;
-    }
-
-    // Get user points for the period
-    const userStats = await db
-      .select({
-        userEmail: engagementEvents.userEmail,
-        points: sql`SUM(${engagementEvents.pointsEarned})`.as('points'),
-        events: count(),
-      })
-      .from(engagementEvents)
-      .where(sql`${engagementEvents.createdAt} >= ${startDate}`)
-      .groupBy(engagementEvents.userEmail)
-      .orderBy(sql`SUM(${engagementEvents.pointsEarned}) DESC`)
-      .limit(100);
-
-    // Clear existing leaderboard for this period
-    await db.delete(leaderboards).where(eq(leaderboards.period, period));
-
-    // Insert new leaderboard entries
-    if (userStats.length > 0) {
-      const leaderboardEntries = userStats.map((stat, index) => ({
-        period,
-        userEmail: stat.userEmail,
-        userName: stat.userEmail.split('@')[0], // Use email prefix as name
-        points: Number(stat.points) || 0,
-        rank: index + 1,
-        achievements: 0, // Will be calculated separately
-      }));
-
-      await db.insert(leaderboards).values(leaderboardEntries);
-    }
-  }
-
-  async getGamificationStats(): Promise<any> {
-    const totalUsers = await db.select({ count: count() }).from(userProfiles);
-    const totalEvents = await db.select({ count: count() }).from(engagementEvents);
-    const totalAchievements = await db.select({ count: count() }).from(achievements);
-    const totalPoints = await db
-      .select({ sum: sql`SUM(${userProfiles.totalPoints})`.as('sum') })
-      .from(userProfiles);
-
-    // Top users by level
-    const topUsers = await db
-      .select()
-      .from(userProfiles)
-      .orderBy(desc(userProfiles.level), desc(userProfiles.totalPoints))
-      .limit(10);
-
-    // Most popular events
-    const popularEvents = await db
-      .select({
-        eventType: engagementEvents.eventType,
-        count: count(),
-        totalPoints: sql`SUM(${engagementEvents.pointsEarned})`.as('totalPoints'),
-      })
-      .from(engagementEvents)
-      .groupBy(engagementEvents.eventType)
-      .orderBy(desc(count()))
-      .limit(10);
-
-    return {
-      overview: {
-        totalUsers: totalUsers[0]?.count || 0,
-        totalEvents: totalEvents[0]?.count || 0,
-        totalAchievements: totalAchievements[0]?.count || 0,
-        totalPoints: Number(totalPoints[0]?.sum) || 0,
-      },
-      topUsers,
-      popularEvents,
-    };
-  }
-
-  // Initialize sample achievements
-  async initializeGamificationData(): Promise<void> {
-    try {
-      // Check if achievements already exist
-      const existingAchievements = await this.getAchievements();
-      if (existingAchievements.length > 0) {
-        return; // Already initialized
-      }
-
-      // Create sample achievements
-      const sampleAchievements = [
-        // Download achievements
-        {
-          name: "First Download",
-          description: "Download your first brochure",
-          icon: "Download",
-          category: "downloads",
-          pointsRequired: 0,
-          condition: JSON.stringify({ type: 'download_count', target: 1 }),
-          rarity: "common",
-        },
-        {
-          name: "Information Seeker",
-          description: "Download 5 different brochures",
-          icon: "BookOpen",
-          category: "downloads",
-          pointsRequired: 0,
-          condition: JSON.stringify({ type: 'download_count', target: 5 }),
-          rarity: "rare",
-        },
-        {
-          name: "Document Collector",
-          description: "Download 10 different brochures",
-          icon: "FolderOpen",
-          category: "downloads",
-          pointsRequired: 0,
-          condition: JSON.stringify({ type: 'download_count', target: 10 }),
-          rarity: "epic",
-        },
-
-        // Visit booking achievements
-        {
-          name: "Site Visitor",
-          description: "Book your first site visit",
-          icon: "MapPin",
-          category: "visits",
-          pointsRequired: 0,
-          condition: JSON.stringify({ type: 'visit_count', target: 1 }),
-          rarity: "common",
-        },
-        {
-          name: "Serious Investor",
-          description: "Book 3 site visits",
-          icon: "Building",
-          category: "visits",
-          pointsRequired: 0,
-          condition: JSON.stringify({ type: 'visit_count', target: 3 }),
-          rarity: "rare",
-        },
-
-        // Engagement achievements
-        {
-          name: "Points Collector",
-          description: "Earn your first 100 points",
-          icon: "Star",
-          category: "engagement",
-          pointsRequired: 100,
-          condition: JSON.stringify({ type: 'points', target: 100 }),
-          rarity: "common",
-        },
-        {
-          name: "Rising Investor",
-          description: "Earn 500 points",
-          icon: "TrendingUp",
-          category: "engagement",
-          pointsRequired: 500,
-          condition: JSON.stringify({ type: 'points', target: 500 }),
-          rarity: "rare",
-        },
-        {
-          name: "Investment Expert",
-          description: "Earn 1000 points",
-          icon: "Award",
-          category: "engagement",
-          pointsRequired: 1000,
-          condition: JSON.stringify({ type: 'points', target: 1000 }),
-          rarity: "epic",
-        },
-        {
-          name: "Elite Investor",
-          description: "Earn 2500 points",
-          icon: "Crown",
-          category: "engagement",
-          pointsRequired: 2500,
-          condition: JSON.stringify({ type: 'points', target: 2500 }),
-          rarity: "legendary",
-        },
-
-        // Streak achievements
-        {
-          name: "Consistent Visitor",
-          description: "Maintain a 7-day activity streak",
-          icon: "Calendar",
-          category: "engagement",
-          pointsRequired: 0,
-          condition: JSON.stringify({ type: 'streak', target: 7 }),
-          rarity: "rare",
-        },
-        {
-          name: "Dedicated Explorer",
-          description: "Maintain a 30-day activity streak",
-          icon: "Flame",
-          category: "engagement",
-          pointsRequired: 0,
-          condition: JSON.stringify({ type: 'streak', target: 30 }),
-          rarity: "legendary",
-        },
-      ];
-
-      for (const achievement of sampleAchievements) {
-        await this.createAchievement(achievement);
-      }
-
-      console.log("Gamification achievements initialized successfully");
+      console.log("Sample brochure downloads initialized successfully");
     } catch (error) {
-      console.error("Failed to initialize gamification data:", error);
+      console.error("Failed to initialize brochure downloads:", error);
     }
   }
 }
@@ -992,6 +448,3 @@ export const storage = new DatabaseStorage();
 
 // Initialize data when the module is loaded
 storage.initializeData().catch(console.error);
-
-// Initialize gamification data
-storage.initializeGamificationData().catch(console.error);

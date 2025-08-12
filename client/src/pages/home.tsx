@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Navigation from "../components/navigation";
-import { UserEngagementTracker, LeaderboardDisplay } from "../components/gamification";
 import HeroSection from "../components/hero-section";
 import RecentActivitySection from "../components/recent-activity-section";
 import LocationAdvantages from "../components/location-advantages";
@@ -35,15 +34,6 @@ export default function Home() {
       <FAQSection />
       <ContactSection />
       <Footer />
-      
-      {/* Floating Gamification UI */}
-      <div className="fixed top-20 right-4 z-40 space-y-4 max-w-xs">
-        <UserEngagementTracker 
-          userEmail="demo@example.com" 
-          className="hidden lg:block"
-        />
-        <LeaderboardDisplay className="hidden xl:block" />
-      </div>
       
       {/* WhatsApp Float Button */}
       <a 
