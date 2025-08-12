@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -607,69 +608,120 @@ export default function AdminDashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          <Card className="bg-white dark:bg-gray-800 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Total Downloads
-              </CardTitle>
-              <Download className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats?.totalDownloads || 0}
-              </div>
-            </CardContent>
-          </Card>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-700 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">
+                      Total Downloads
+                    </CardTitle>
+                    <Download className="h-4 w-4 text-green-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-900 dark:text-green-100">
+                      {stats?.totalDownloads || 0}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-center">
+                  <p className="font-semibold">All-time Downloads</p>
+                  <p className="text-sm text-gray-400 mt-1">Total brochures downloaded since launch</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-          <Card className="bg-white dark:bg-gray-800 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Today's Downloads
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-teal-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats?.todayDownloads || 0}
-              </div>
-              {getDownloadTrend() !== 0 && (
-                <p className={`text-xs ${getDownloadTrend() > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {getDownloadTrend() > 0 ? '+' : ''}{getDownloadTrend().toFixed(1)}% from yesterday
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/20 dark:to-teal-800/20 border-teal-200 dark:border-teal-700 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-teal-700 dark:text-teal-300">
+                      Today's Downloads
+                    </CardTitle>
+                    <TrendingUp className="h-4 w-4 text-teal-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-teal-900 dark:text-teal-100">
+                      {stats?.todayDownloads || 0}
+                    </div>
+                    {getDownloadTrend() !== 0 && (
+                      <p className={`text-xs ${getDownloadTrend() > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {getDownloadTrend() > 0 ? '+' : ''}{getDownloadTrend().toFixed(1)}% from yesterday
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-center">
+                  <p className="font-semibold">Today's Activity</p>
+                  <p className="text-sm text-gray-400 mt-1">Downloads received today so far</p>
+                  <p className="text-xs text-gray-500 mt-1">Updates every 5 minutes</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-          <Card className="bg-white dark:bg-gray-800 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Unique Users
-              </CardTitle>
-              <Users className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {stats?.uniqueUsers || 0}
-              </div>
-            </CardContent>
-          </Card>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-700 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                      Unique Users
+                    </CardTitle>
+                    <Users className="h-4 w-4 text-blue-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                      {stats?.uniqueUsers || 0}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-center">
+                  <p className="font-semibold">Engaged Prospects</p>
+                  <p className="text-sm text-gray-400 mt-1">Individual people who downloaded materials</p>
+                  <p className="text-xs text-gray-500 mt-1">Based on unique email addresses</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-          <Card className="bg-white dark:bg-gray-800 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Site Visit Bookings
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {siteVisitStats?.totalVisits || 0}
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {siteVisitStats?.todayVisits || 0} booked today
-              </p>
-            </CardContent>
-          </Card>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-700 shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                      Site Visit Bookings
+                    </CardTitle>
+                    <Calendar className="h-4 w-4 text-purple-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                      {siteVisitStats?.totalVisits || 0}
+                    </div>
+                    <p className="text-xs text-purple-600 dark:text-purple-400">
+                      {siteVisitStats?.todayVisits || 0} booked today
+                    </p>
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-center">
+                  <p className="font-semibold">Site Visit Requests</p>
+                  <p className="text-sm text-gray-400 mt-1">Total booking requests received</p>
+                  <p className="text-xs text-gray-500 mt-1">Includes customer contact details</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Main Content */}
@@ -1012,25 +1064,56 @@ export default function AdminDashboard() {
                     <p>No brochure data available yet</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {stats.topBrochures.map((brochure, index) => (
-                      <div key={brochure.id} className="flex items-center justify-between p-4 border rounded-lg dark:border-gray-700">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold">
-                            #{index + 1}
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-gray-900 dark:text-white">
-                              {brochure.title}
-                            </h3>
-                          </div>
-                        </div>
-                        <Badge className="bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200">
-                          {brochure.downloadCount} downloads
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
+                  <TooltipProvider>
+                    <div className="space-y-4">
+                      {stats.topBrochures.map((brochure, index) => (
+                        <Tooltip key={brochure.id}>
+                          <TooltipTrigger asChild>
+                            <div className="flex items-center justify-between p-4 border rounded-lg dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                              <div className="flex items-center gap-3">
+                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold">
+                                  #{index + 1}
+                                </div>
+                                <div>
+                                  <h3 className="font-medium text-gray-900 dark:text-white">
+                                    {brochure.title}
+                                  </h3>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge className="bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200">
+                                  {brochure.downloadCount} downloads
+                                </Badge>
+                                {stats.totalDownloads > 0 && (
+                                  <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2 ml-2">
+                                    <div 
+                                      className="bg-teal-500 h-2 rounded-full transition-all duration-300" 
+                                      style={{ 
+                                        width: `${(brochure.downloadCount / stats.totalDownloads) * 100}%` 
+                                      }}
+                                    ></div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <div className="text-center">
+                              <p className="font-semibold">{brochure.title}</p>
+                              <p className="text-sm text-gray-400 mt-1">
+                                {brochure.downloadCount} total downloads
+                              </p>
+                              {stats.totalDownloads > 0 && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {((brochure.downloadCount / stats.totalDownloads) * 100).toFixed(1)}% of all downloads
+                                </p>
+                              )}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      ))}
+                    </div>
+                  </TooltipProvider>
                 )}
               </CardContent>
             </Card>
@@ -1038,6 +1121,77 @@ export default function AdminDashboard() {
 
           {/* Analytics */}
           <TabsContent value="analytics" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800 hover:shadow-lg transition-shadow cursor-pointer">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300 flex items-center gap-2">
+                          <Download className="h-4 w-4" />
+                          Total Downloads
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                          {stats?.totalDownloads || 0}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Total number of brochure downloads across all materials</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800 hover:shadow-lg transition-shadow cursor-pointer">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300 flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          Unique Users
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-900 dark:text-green-100">
+                          {stats?.uniqueUsers || 0}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Number of unique users who have downloaded materials</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800 hover:shadow-lg transition-shadow cursor-pointer">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          Today's Downloads
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                          {stats?.todayDownloads || 0}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Downloads received today so far</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            
             <Card className="bg-white dark:bg-gray-800 shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1052,28 +1206,70 @@ export default function AdminDashboard() {
                     <p>Not enough data for trends analysis</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {stats.downloadsByDate.slice(-7).map((day) => (
-                      <div key={day.date} className="flex items-center justify-between p-3 border rounded-lg dark:border-gray-700">
-                        <div className="font-medium text-gray-900 dark:text-white">
-                          {format(new Date(day.date), "MMM dd, yyyy")}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div 
-                              className="bg-green-500 h-2 rounded-full" 
-                              style={{ 
-                                width: `${stats.totalDownloads > 0 ? (day.downloads / stats.totalDownloads) * 100 : 0}%` 
-                              }}
-                            ></div>
-                          </div>
-                          <span className="font-bold text-green-600 dark:text-green-400 min-w-[3rem] text-right">
-                            {day.downloads}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <TooltipProvider>
+                    <div className="space-y-4">
+                      {stats.downloadsByDate.slice(-7).map((day, index) => {
+                        const maxDownloads = Math.max(...stats.downloadsByDate.slice(-7).map(d => d.downloads));
+                        const percentage = maxDownloads > 0 ? (day.downloads / maxDownloads) * 100 : 0;
+                        const isToday = format(new Date(day.date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+                        const isYesterday = format(new Date(day.date), "yyyy-MM-dd") === format(subDays(new Date(), 1), "yyyy-MM-dd");
+                        
+                        return (
+                          <Tooltip key={day.date}>
+                            <TooltipTrigger asChild>
+                              <div className={`flex items-center justify-between p-3 border rounded-lg dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${
+                                isToday ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20' : 
+                                isYesterday ? 'border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20' : ''
+                              }`}>
+                                <div className="flex items-center gap-3">
+                                  <div className="font-medium text-gray-900 dark:text-white">
+                                    {isToday ? 'Today' : isYesterday ? 'Yesterday' : format(new Date(day.date), "MMM dd")}
+                                  </div>
+                                  {isToday && (
+                                    <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs">
+                                      Today
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-3 relative overflow-hidden">
+                                    <div 
+                                      className={`h-3 rounded-full transition-all duration-500 ${
+                                        isToday ? 'bg-blue-500' :
+                                        day.downloads > 0 ? 'bg-green-500' : 'bg-gray-300'
+                                      }`}
+                                      style={{ width: `${percentage}%` }}
+                                    ></div>
+                                  </div>
+                                  <span className={`font-bold min-w-[3rem] text-right ${
+                                    isToday ? 'text-blue-600 dark:text-blue-400' :
+                                    'text-green-600 dark:text-green-400'
+                                  }`}>
+                                    {day.downloads}
+                                  </span>
+                                </div>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <div className="text-center">
+                                <p className="font-semibold">
+                                  {format(new Date(day.date), "EEEE, MMM dd, yyyy")}
+                                </p>
+                                <p className="text-sm mt-1">
+                                  {day.downloads} {day.downloads === 1 ? 'download' : 'downloads'}
+                                </p>
+                                {maxDownloads > 0 && (
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    {percentage.toFixed(1)}% of peak day ({maxDownloads} downloads)
+                                  </p>
+                                )}
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
+                    </div>
+                  </TooltipProvider>
                 )}
               </CardContent>
             </Card>
