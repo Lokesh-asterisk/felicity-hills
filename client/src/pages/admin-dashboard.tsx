@@ -33,16 +33,17 @@ interface BrochureDownload {
 }
 
 interface BrochureStats {
-  totalDownloads: number;
-  todayDownloads: number;
-  uniqueUsers: number;
-  topBrochures: Array<{
+  total: number;
+  thisMonth: number;
+  thisWeek: number;
+  uniqueUsers?: number;
+  topBrochures?: Array<{
     id: string;
     title: string;
     downloadCount: number;
   }>;
-  recentDownloads: Array<BrochureDownload>;
-  downloadsByDate: Array<{
+  recentDownloads?: Array<BrochureDownload>;
+  downloadsByDate?: Array<{
     date: string;
     downloads: number;
   }>;
@@ -1134,7 +1135,7 @@ export default function AdminDashboard() {
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
-                          {stats?.totalDownloads || 0}
+                          {stats?.total || 0}
                         </div>
                       </CardContent>
                     </Card>
@@ -1208,8 +1209,8 @@ export default function AdminDashboard() {
                 ) : (
                   <TooltipProvider>
                     <div className="space-y-4">
-                      {stats.downloadsByDate.slice(-7).map((day, index) => {
-                        const maxDownloads = Math.max(...stats.downloadsByDate.slice(-7).map(d => d.downloads));
+                      {stats.downloadsByDate!.slice(-7).map((day, index) => {
+                        const maxDownloads = Math.max(...stats.downloadsByDate!.slice(-7).map(d => d.downloads));
                         const percentage = maxDownloads > 0 ? (day.downloads / maxDownloads) * 100 : 0;
                         const isToday = format(new Date(day.date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
                         const isYesterday = format(new Date(day.date), "yyyy-MM-dd") === format(subDays(new Date(), 1), "yyyy-MM-dd");
