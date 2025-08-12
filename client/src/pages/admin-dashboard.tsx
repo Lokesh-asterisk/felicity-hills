@@ -763,9 +763,13 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
+                    <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                      Showing {downloads.length} entries
+                    </div>
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead>Sr. No.</TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>User</TableHead>
                           <TableHead>Email</TableHead>
@@ -775,8 +779,11 @@ export default function AdminDashboard() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {downloads.map((download) => (
+                        {downloads.map((download, index) => (
                           <TableRow key={download.id}>
+                            <TableCell className="font-medium text-center">
+                              {index + 1}
+                            </TableCell>
                             <TableCell className="font-medium">
                               {formatRelativeDate(new Date(download.downloadedAt))}
                               <div className="text-xs text-gray-500 dark:text-gray-400">
