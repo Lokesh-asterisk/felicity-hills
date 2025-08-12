@@ -19,28 +19,32 @@ export default function AmenitiesSection() {
       title: "Swimming Pool",
       description: "With modern filtration system",
       image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-      bgColor: "from-blue-50 to-blue-100"
+      bgColor: "from-blue-50 to-blue-100",
+      altText: "Modern outdoor swimming pool with crystal clear blue water and contemporary design at Khushalipur"
     },
     {
       icon: Home,
       title: "Club House",
       description: "For community activities",
       image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-      bgColor: "from-green-50 to-green-100"
+      bgColor: "from-green-50 to-green-100",
+      altText: "Elegant clubhouse interior with modern furnishing and spacious layout for community gatherings"
     },
     {
       icon: Shield,
       title: "Security",
       description: "24x7 Guard & CCTV",
       image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-      bgColor: "from-purple-50 to-purple-100"
+      bgColor: "from-purple-50 to-purple-100",
+      altText: "Professional security personnel and modern CCTV surveillance system ensuring 24x7 safety"
     },
     {
       icon: Baby,
       title: "Kids Play Area",
       description: "Safe play equipment",
       image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-      bgColor: "from-orange-50 to-orange-100"
+      bgColor: "from-orange-50 to-orange-100",
+      altText: "Colorful and safe children's playground with modern equipment in a secure environment"
     }
   ];
 
@@ -76,7 +80,7 @@ export default function AmenitiesSection() {
             >
               <img 
                 src={amenity.image} 
-                alt={`${amenity.title} - ${amenity.description}`}
+                alt={amenity.altText}
                 className="w-full h-48 object-cover"
               />
               <CardContent className="p-6">
