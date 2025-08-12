@@ -328,6 +328,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Bulk delete brochure downloads
+  app.delete("/api/admin/brochure-downloads", async (req, res) => {
+    try {
+      const { ids } = req.body;
+      if (!ids || !Array.isArray(ids)) {
+        return res.status(400).json({ message: "Invalid request: 'ids' array is required" });
+      }
+      
+      let deletedCount = 0;
+      const failures = [];
+      
+      for (const id of ids) {
+        try {
+          const success = await storage.deleteBrochureDownload(id);
+          if (success) {
+            deletedCount++;
+          } else {
+            failures.push(id);
+          }
+        } catch (error) {
+          failures.push(id);
+        }
+      }
+      
+      res.json({ 
+        message: `Successfully deleted ${deletedCount} download records`,
+        deletedCount,
+        failures: failures.length > 0 ? failures : undefined
+      });
+    } catch (error) {
+      console.error("Error bulk deleting brochure downloads:", error);
+      res.status(500).json({ message: "Failed to bulk delete download records" });
+    }
+  });
+
   // Admin password management
   app.post("/api/admin/change-password", async (req, res) => {
     try {

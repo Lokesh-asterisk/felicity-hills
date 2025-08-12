@@ -481,6 +481,36 @@ export default function AdminDashboard() {
     XLSX.writeFile(wb, fileName);
   };
 
+  // Bulk delete mutation
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      await apiRequest("DELETE", "/api/admin/brochure-downloads", { ids });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-downloads"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/brochure-stats"] });
+      // Clear selection after deletion
+      setSelectedDownloads(new Set());
+      setSelectAll(false);
+    },
+  });
+
+  // Bulk delete selected downloads
+  const handleBulkDelete = () => {
+    const itemsToDelete = selectedDownloads.size > 0 ? selectedDownloads.size : downloads.length;
+    const deleteMessage = selectedDownloads.size > 0 
+      ? `Are you sure you want to delete ${selectedDownloads.size} selected download records?`
+      : `Are you sure you want to delete ALL ${downloads.length} download records? This action cannot be undone.`;
+      
+    if (confirm(deleteMessage)) {
+      const idsToDelete = selectedDownloads.size > 0 
+        ? Array.from(selectedDownloads)
+        : downloads.map(d => d.id);
+        
+      bulkDeleteMutation.mutate(idsToDelete);
+    }
+  };
+
   // Only fetch data if authenticated
   const { data: stats, isLoading } = useQuery<BrochureStats>({
     queryKey: ["/api/admin/brochure-stats"],
@@ -826,6 +856,17 @@ export default function AdminDashboard() {
                             {selectedDownloads.size} selected
                           </span>
                         )}
+                        <Button
+                          onClick={handleBulkDelete}
+                          variant="destructive"
+                          size="sm"
+                          className="flex items-center gap-2"
+                          disabled={downloads.length === 0 || bulkDeleteMutation.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          {bulkDeleteMutation.isPending ? "Deleting..." : 
+                           selectedDownloads.size > 0 ? `Delete Selected (${selectedDownloads.size})` : 'Delete All'}
+                        </Button>
                         <Button
                           onClick={exportToExcel}
                           variant="outline"
