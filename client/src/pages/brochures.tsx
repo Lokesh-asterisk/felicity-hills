@@ -74,8 +74,19 @@ export default function BrochuresPage() {
       
       // Trigger the actual file download
       if (response.success && response.downloadUrl) {
-        // Create download link
-        window.open(response.downloadUrl, '_blank');
+        // Create a proper download link with full URL
+        const downloadUrl = response.downloadUrl.startsWith('http') 
+          ? response.downloadUrl 
+          : `${window.location.origin}${response.downloadUrl}`;
+        
+        // Create a temporary anchor element to trigger download
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = selectedBrochure?.title || 'brochure.pdf';
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
       
       // Reset form and close dialog
