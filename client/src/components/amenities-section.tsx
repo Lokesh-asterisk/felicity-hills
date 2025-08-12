@@ -34,9 +34,9 @@ export default function AmenitiesSection() {
       icon: Shield,
       title: "Security",
       description: "24x7 Guard & CCTV",
-      image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "/security-cctv.jpg",
       bgColor: "from-purple-50 to-purple-100",
-      altText: "Professional security monitoring room with multiple CCTV screens and surveillance equipment"
+      altText: "Professional CCTV security camera for 24x7 surveillance and monitoring"
     },
     {
       icon: Baby,
