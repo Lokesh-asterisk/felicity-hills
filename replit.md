@@ -12,6 +12,10 @@ This is a full-stack React application for Khushalipur - a real estate landing p
 - ✅ Implemented complete customer testimonials management system in admin dashboard
 - ✅ Added Customer Stories tab with full CRUD functionality (create, read, update, delete)
 - ✅ Fixed API integration for testimonial management with proper form validation
+- ✅ Updated clubhouse image in modern amenities section with new architectural photo
+- ✅ Fixed duplicate brochure download entries issue by preventing sample data recreation on restart
+- ✅ Added serial number column to admin dashboard brochure downloads table
+- ✅ Cleaned up 171 duplicate sample entries from database
 - ✅ Ready for deployment to custom domain (felicityhills.com)
 
 # User Preferences
