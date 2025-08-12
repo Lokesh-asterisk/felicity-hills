@@ -18,33 +18,33 @@ export default function AmenitiesSection() {
       icon: Waves,
       title: "Swimming Pool",
       description: "With modern filtration system",
-      image: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
       bgColor: "from-blue-50 to-blue-100",
-      altText: "Modern resort-style swimming pool with lounge chairs and clear blue water"
+      altText: "Crystal clear swimming pool with modern tiles and pool deck area"
     },
     {
       icon: Home,
       title: "Club House",
       description: "For community activities",
-      image: "https://images.unsplash.com/photo-1582037928769-181f2644ecb7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "https://images.unsplash.com/photo-1555992336-03a23c73c1eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
       bgColor: "from-green-50 to-green-100",
-      altText: "Modern clubhouse community hall with contemporary seating and event space"
+      altText: "Spacious clubhouse interior with modern furniture and community gathering space"
     },
     {
       icon: Shield,
       title: "Security",
       description: "24x7 Guard & CCTV",
-      image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
       bgColor: "from-purple-50 to-purple-100",
-      altText: "Security guard monitoring CCTV surveillance system for 24x7 protection"
+      altText: "Professional security monitoring room with multiple CCTV screens and surveillance equipment"
     },
     {
       icon: Baby,
       title: "Kids Play Area",
       description: "Safe play equipment",
-      image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
       bgColor: "from-orange-50 to-orange-100",
-      altText: "Modern children's playground with colorful slides and safe play equipment"
+      altText: "Bright and colorful children's playground with slides, swings and safe play structures"
     }
   ];
 
