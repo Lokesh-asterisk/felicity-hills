@@ -91,7 +91,7 @@ export default function LocationAdvantages() {
                     <TreePine className="text-primary text-xl mr-3 w-6 h-6" />
                     <div>
                       <div className="font-semibold">Mussoorie Hills</div>
-                      <div className="text-sm text-gray-600">30 km scenic drive</div>
+                      <div className="text-sm text-gray-600">52 km scenic drive</div>
                     </div>
                   </div>
                   
