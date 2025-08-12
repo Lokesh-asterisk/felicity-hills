@@ -16,6 +16,12 @@ This is a full-stack React application for Khushalipur - a real estate landing p
 - ✅ Fixed duplicate brochure download entries issue by preventing sample data recreation on restart
 - ✅ Added serial number column to admin dashboard brochure downloads table
 - ✅ Cleaned up 171 duplicate sample entries from database
+- ✅ Added individual row selection checkboxes and "Select All" functionality for brochure downloads
+- ✅ Implemented Excel export feature for selected or all download data using xlsx library
+- ✅ Added bulk delete functionality with confirmation dialogs for selected items or all records
+- ✅ Implemented comprehensive responsive design for mobile admin dashboard with optimized layouts
+- ✅ Enhanced mobile table layouts with collapsible columns and mobile-friendly controls
+- ✅ Improved form dialogs and buttons for mobile interaction
 - ✅ Ready for deployment to custom domain (felicityhills.com)
 
 # User Preferences

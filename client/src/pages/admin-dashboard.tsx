@@ -574,36 +574,36 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">
               Admin Dashboard
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Khushalipur Brochure Download Analytics
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1 sm:mt-2">
+              Khushalipur Analytics
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs sm:text-sm">
               Live Data
             </Badge>
             <Button
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1 sm:gap-2 ml-auto sm:ml-0"
             >
-              <LogOut className="h-4 w-4" />
-              Logout
+              <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <Card className="bg-white dark:bg-gray-800 shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
@@ -698,26 +698,26 @@ export default function AdminDashboard() {
           {/* Recent Activity */}
           <TabsContent value="activity" className="space-y-6">
             <Card className="bg-white dark:bg-gray-800 shadow-lg">
-              <CardHeader>
-                <div className="flex items-center justify-between">
+              <CardHeader className="pb-3 sm:pb-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-green-600" />
-                    <CardTitle>Recent Activity</CardTitle>
+                    <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                    <CardTitle className="text-base sm:text-lg">Recent Activity</CardTitle>
                   </div>
                   <Dialog open={showAddActivity} onOpenChange={(open) => {
                     if (!open) handleCancelEdit();
                     setShowAddActivity(open);
                   }}>
                     <DialogTrigger asChild>
-                      <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Activity
+                      <Button size="sm" className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        <span className="text-xs sm:text-sm">Add Activity</span>
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
-                        <DialogTitle>{editingActivity ? 'Edit Activity' : 'Add New Activity'}</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-base sm:text-lg">{editingActivity ? 'Edit Activity' : 'Add New Activity'}</DialogTitle>
+                        <DialogDescription className="text-sm">
                           {editingActivity ? 'Edit the activity details below' : 'Add a new activity to track recent events and updates.'}
                         </DialogDescription>
                       </DialogHeader>
@@ -846,62 +846,64 @@ export default function AdminDashboard() {
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         Showing {downloads.length} entries
-                      </div>
-                      <div className="flex items-center gap-2">
                         {selectedDownloads.size > 0 && (
-                          <span className="text-sm text-blue-600 dark:text-blue-400">
-                            {selectedDownloads.size} selected
+                          <span className="ml-2 text-blue-600 dark:text-blue-400">
+                            • {selectedDownloads.size} selected
                           </span>
                         )}
+                      </div>
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
                         <Button
                           onClick={handleBulkDelete}
                           variant="destructive"
                           size="sm"
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-1 flex-1 sm:flex-none"
                           disabled={downloads.length === 0 || bulkDeleteMutation.isPending}
                         >
-                          <Trash2 className="h-4 w-4" />
-                          {bulkDeleteMutation.isPending ? "Deleting..." : 
-                           selectedDownloads.size > 0 ? `Delete Selected (${selectedDownloads.size})` : 'Delete All'}
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="text-xs sm:text-sm">
+                            {bulkDeleteMutation.isPending ? "Deleting..." : 
+                             selectedDownloads.size > 0 ? `Delete (${selectedDownloads.size})` : 'Delete All'}
+                          </span>
                         </Button>
                         <Button
                           onClick={exportToExcel}
                           variant="outline"
                           size="sm"
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-1 flex-1 sm:flex-none"
                           disabled={downloads.length === 0}
                         >
-                          <FileSpreadsheet className="h-4 w-4" />
-                          Export Excel
+                          <FileSpreadsheet className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="text-xs sm:text-sm">Excel</span>
                         </Button>
                       </div>
                     </div>
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="w-12">
+                          <TableHead className="w-8 sm:w-12">
                             <Checkbox
                               checked={selectAll}
                               onCheckedChange={handleSelectAll}
                               aria-label="Select all downloads"
                             />
                           </TableHead>
-                          <TableHead>Sr. No.</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead>User</TableHead>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Phone</TableHead>
-                          <TableHead>Brochure</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead className="hidden sm:table-cell">Sr. No.</TableHead>
+                          <TableHead className="text-xs sm:text-sm">Date</TableHead>
+                          <TableHead className="text-xs sm:text-sm">User</TableHead>
+                          <TableHead className="hidden md:table-cell text-xs sm:text-sm">Email</TableHead>
+                          <TableHead className="hidden lg:table-cell text-xs sm:text-sm">Phone</TableHead>
+                          <TableHead className="hidden sm:table-cell text-xs sm:text-sm">Brochure</TableHead>
+                          <TableHead className="text-right text-xs sm:text-sm w-16 sm:w-auto">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {downloads.map((download, index) => (
                           <TableRow key={download.id}>
-                            <TableCell>
+                            <TableCell className="p-2 sm:p-4">
                               <Checkbox
                                 checked={selectedDownloads.has(download.id)}
                                 onCheckedChange={(checked) => 
@@ -910,37 +912,51 @@ export default function AdminDashboard() {
                                 aria-label={`Select download ${index + 1}`}
                               />
                             </TableCell>
-                            <TableCell className="font-medium text-center">
+                            <TableCell className="hidden sm:table-cell font-medium text-center text-xs sm:text-sm">
                               {index + 1}
                             </TableCell>
-                            <TableCell className="font-medium">
-                              {formatRelativeDate(new Date(download.downloadedAt))}
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
-                                {format(new Date(download.downloadedAt), "HH:mm")}
+                            <TableCell className="font-medium p-2 sm:p-4">
+                              <div className="text-xs sm:text-sm">
+                                {formatRelativeDate(new Date(download.downloadedAt))}
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  {format(new Date(download.downloadedAt), "HH:mm")}
+                                </div>
                               </div>
                             </TableCell>
-                            <TableCell>{download.userName}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
+                            <TableCell className="p-2 sm:p-4">
+                              <div className="text-xs sm:text-sm">
+                                {download.userName}
+                                <div className="sm:hidden text-xs text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                                  {download.userEmail}
+                                </div>
+                                <div className="sm:hidden text-xs text-gray-500 dark:text-gray-400">
+                                  {download.userPhone}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell p-2 sm:p-4">
+                              <div className="flex items-center gap-1 text-xs sm:text-sm">
                                 <Mail className="h-3 w-3" />
-                                {download.userEmail}
+                                <span className="truncate max-w-[150px]">{download.userEmail}</span>
                               </div>
                             </TableCell>
-                            <TableCell>{download.userPhone}</TableCell>
-                            <TableCell>
+                            <TableCell className="hidden lg:table-cell p-2 sm:p-4 text-xs sm:text-sm">
+                              {download.userPhone}
+                            </TableCell>
+                            <TableCell className="hidden sm:table-cell p-2 sm:p-4">
                               <Badge variant="outline" className="text-xs">
                                 {download.brochureTitle}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right p-2 sm:p-4">
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDeleteDownload(download.id)}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 h-6 w-6 sm:h-8 sm:w-8 p-0"
                                 disabled={deleteDownloadMutation.isPending}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -1037,27 +1053,27 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Customer Stories Management */}
-          <TabsContent value="testimonials" className="space-y-6">
+          <TabsContent value="testimonials" className="space-y-4 sm:space-y-6">
             <Card className="bg-white dark:bg-gray-800 shadow-lg">
-              <CardHeader>
-                <div className="flex items-center justify-between">
+              <CardHeader className="pb-3 sm:pb-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-600" />
-                    <CardTitle>Customer Stories Management</CardTitle>
+                    <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
+                    <CardTitle className="text-base sm:text-lg">Customer Stories Management</CardTitle>
                   </div>
                   <Dialog open={showTestimonialDialog} onOpenChange={setShowTestimonialDialog}>
                     <DialogTrigger asChild>
-                      <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Customer Story
+                      <Button size="sm" className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        <span className="text-xs sm:text-sm">Add Customer Story</span>
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
-                        <DialogTitle>
+                        <DialogTitle className="text-base sm:text-lg">
                           {editingTestimonial ? "Edit Customer Story" : "Add New Customer Story"}
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-sm">
                           {editingTestimonial 
                             ? "Update the customer story details below." 
                             : "Add a new customer success story to showcase on the website."
@@ -1067,7 +1083,7 @@ export default function AdminDashboard() {
                       
                       <Form {...testimonialForm}>
                         <form onSubmit={testimonialForm.handleSubmit(onTestimonialSubmit)} className="space-y-4">
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
                               control={testimonialForm.control}
                               name="name"
@@ -1096,7 +1112,7 @@ export default function AdminDashboard() {
                             />
                           </div>
 
-                          <div className="grid grid-cols-3 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             <FormField
                               control={testimonialForm.control}
                               name="investment"
@@ -1290,8 +1306,8 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Site Visits Tab */}
-          <TabsContent value="sitevisits" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <TabsContent value="sitevisits" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-6">
               <Card className="bg-white dark:bg-gray-800">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
@@ -1333,8 +1349,8 @@ export default function AdminDashboard() {
             </div>
 
             <Card className="bg-white dark:bg-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+              <CardHeader className="pb-3 sm:pb-6">
+                <CardTitle className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                   Site Visit Bookings
                 </CardTitle>
               </CardHeader>
@@ -1354,77 +1370,91 @@ export default function AdminDashboard() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Mobile</TableHead>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Preferred Date</TableHead>
-                          <TableHead>Plot Size</TableHead>
-                          <TableHead>Budget</TableHead>
-                          <TableHead>Booked On</TableHead>
-                          <TableHead className="text-center">Actions</TableHead>
+                          <TableHead className="text-xs sm:text-sm">Name</TableHead>
+                          <TableHead className="text-xs sm:text-sm">Mobile</TableHead>
+                          <TableHead className="hidden md:table-cell text-xs sm:text-sm">Email</TableHead>
+                          <TableHead className="hidden sm:table-cell text-xs sm:text-sm">Preferred Date</TableHead>
+                          <TableHead className="hidden lg:table-cell text-xs sm:text-sm">Plot Size</TableHead>
+                          <TableHead className="hidden lg:table-cell text-xs sm:text-sm">Budget</TableHead>
+                          <TableHead className="hidden sm:table-cell text-xs sm:text-sm">Booked On</TableHead>
+                          <TableHead className="text-center text-xs sm:text-sm w-16 sm:w-auto">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {siteVisits.map((visit) => (
                           <TableRow key={visit.id}>
-                            <TableCell className="font-medium">{visit.name}</TableCell>
-                            <TableCell>
+                            <TableCell className="font-medium p-2 sm:p-4">
+                              <div className="text-xs sm:text-sm">
+                                {visit.name}
+                                <div className="md:hidden text-xs text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
+                                  {visit.email || 'No email'}
+                                </div>
+                                <div className="sm:hidden text-xs text-gray-500 dark:text-gray-400">
+                                  {visit.preferredDate || 'Date not set'}
+                                </div>
+                                <div className="lg:hidden text-xs text-gray-500 dark:text-gray-400">
+                                  {visit.plotSize && `Size: ${visit.plotSize}`}
+                                  {visit.budget && ` • Budget: ${visit.budget}`}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="p-2 sm:p-4">
                               <a 
                                 href={`tel:${visit.mobile}`}
-                                className="text-blue-600 hover:underline"
+                                className="text-blue-600 hover:underline text-xs sm:text-sm"
                               >
                                 {visit.mobile}
                               </a>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden md:table-cell p-2 sm:p-4">
                               {visit.email ? (
                                 <a 
                                   href={`mailto:${visit.email}`}
-                                  className="text-blue-600 hover:underline"
+                                  className="text-blue-600 hover:underline text-xs sm:text-sm truncate max-w-[150px] block"
                                 >
                                   {visit.email}
                                 </a>
                               ) : (
-                                <span className="text-gray-400">Not provided</span>
+                                <span className="text-gray-400 text-xs sm:text-sm">Not provided</span>
                               )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden sm:table-cell p-2 sm:p-4">
                               {visit.preferredDate ? (
-                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
                                   {visit.preferredDate}
                                 </Badge>
                               ) : (
-                                <span className="text-gray-400">Not specified</span>
+                                <span className="text-gray-400 text-xs">Not specified</span>
                               )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden lg:table-cell p-2 sm:p-4">
                               {visit.plotSize ? (
-                                <Badge variant="outline">{visit.plotSize}</Badge>
+                                <Badge variant="outline" className="text-xs">{visit.plotSize}</Badge>
                               ) : (
-                                <span className="text-gray-400">Not specified</span>
+                                <span className="text-gray-400 text-xs">Not specified</span>
                               )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden lg:table-cell p-2 sm:p-4">
                               {visit.budget ? (
-                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
                                   {visit.budget}
                                 </Badge>
                               ) : (
-                                <span className="text-gray-400">Not specified</span>
+                                <span className="text-gray-400 text-xs">Not specified</span>
                               )}
                             </TableCell>
-                            <TableCell className="text-sm text-gray-500">
+                            <TableCell className="hidden sm:table-cell text-xs text-gray-500 p-2 sm:p-4">
                               {visit.createdAt ? formatRelativeDate(new Date(visit.createdAt)) : 'Unknown'}
                             </TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center p-2 sm:p-4">
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDeleteSiteVisit(visit.id, visit.name)}
-                                className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                className="text-red-600 hover:text-red-800 hover:bg-red-50 h-6 w-6 sm:h-8 sm:w-8 p-0"
                                 disabled={deleteSiteVisitMutation.isPending}
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -1448,12 +1478,12 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
+          <TabsContent value="settings" className="space-y-4 sm:space-y-6">
             <Card className="bg-white dark:bg-gray-800 shadow-lg">
-              <CardHeader>
+              <CardHeader className="pb-3 sm:pb-6">
                 <div className="flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-blue-600" />
-                  <CardTitle>Admin Settings</CardTitle>
+                  <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                  <CardTitle className="text-base sm:text-lg">Admin Settings</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
