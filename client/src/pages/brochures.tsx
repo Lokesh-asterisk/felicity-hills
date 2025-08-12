@@ -104,12 +104,12 @@ export default function BrochuresPage() {
           }, 100);
           
         } catch (error) {
-          console.error("Download error:", error);
+
           // Fallback: just open in new tab
           window.open(downloadUrl, '_blank');
         }
       } else {
-        console.error("Invalid response:", response);
+
         toast({
           title: "Download Error", 
           description: "Invalid response from server",

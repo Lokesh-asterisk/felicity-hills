@@ -21,7 +21,7 @@ export class PdfService {
 
       // Launch browser with additional Chrome/Chromium environment setup
       browser = await puppeteer.launch({
-        headless: 'new',
+        headless: true,
         executablePath: '/nix/store/*/bin/chromium',
         args: [
           '--no-sandbox',
