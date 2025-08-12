@@ -670,30 +670,56 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main Content */}
-        <Tabs defaultValue="activity" className="space-y-6">
-          <TabsList className="flex flex-wrap justify-center md:justify-start gap-1 w-full h-auto p-1">
-            <TabsTrigger value="activity" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
-              Activity
-            </TabsTrigger>
-            <TabsTrigger value="recent" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
-              Downloads
-            </TabsTrigger>
-            <TabsTrigger value="popular" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
-              Popular
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
-              Analytics
-            </TabsTrigger>
-            <TabsTrigger value="testimonials" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
-              Customer Stories
-            </TabsTrigger>
-            <TabsTrigger value="sitevisits" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
-              Site Visits
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex-1 min-w-0 px-2 py-2 text-xs sm:text-sm">
-              Settings
-            </TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="activity" className="space-y-4 sm:space-y-6">
+          <div className="w-full">
+            {/* Mobile dropdown for tabs on very small screens */}
+            <div className="block sm:hidden mb-4">
+              <select 
+                className="w-full p-2 border rounded-lg bg-white dark:bg-gray-800 text-sm"
+                onChange={(e) => {
+                  // Find the tab trigger and click it
+                  const tabValue = e.target.value;
+                  const trigger = document.querySelector(`[data-state][value="${tabValue}"]`) as HTMLElement;
+                  if (trigger) trigger.click();
+                }}
+              >
+                <option value="activity">📊 Activity</option>
+                <option value="recent">💾 Downloads</option>
+                <option value="popular">⭐ Popular</option>
+                <option value="analytics">📈 Analytics</option>
+                <option value="testimonials">💬 Stories</option>
+                <option value="sitevisits">📅 Visits</option>
+                <option value="settings">⚙️ Settings</option>
+              </select>
+            </div>
+            
+            {/* Regular tabs for larger screens */}
+            <div className="hidden sm:block">
+              <TabsList className="grid grid-cols-7 gap-1 w-full h-auto p-1">
+                <TabsTrigger value="activity" className="px-2 py-2 text-sm">
+                  Activity
+                </TabsTrigger>
+                <TabsTrigger value="recent" className="px-2 py-2 text-sm">
+                  Downloads
+                </TabsTrigger>
+                <TabsTrigger value="popular" className="px-2 py-2 text-sm">
+                  Popular
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="px-2 py-2 text-sm">
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger value="testimonials" className="px-2 py-2 text-sm">
+                  Stories
+                </TabsTrigger>
+                <TabsTrigger value="sitevisits" className="px-2 py-2 text-sm">
+                  Visits
+                </TabsTrigger>
+                <TabsTrigger value="settings" className="px-2 py-2 text-sm">
+                  Settings
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          </div>
 
           {/* Recent Activity */}
           <TabsContent value="activity" className="space-y-6">
