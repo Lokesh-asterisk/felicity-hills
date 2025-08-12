@@ -1,10 +1,19 @@
 import sgMail from '@sendgrid/mail';
 
-if (!process.env.SENDGRID_API_KEY) {
-  throw new Error("SENDGRID_API_KEY environment variable must be set");
+// Initialize SendGrid only if API key is available
+let isEmailEnabled = false;
+try {
+  if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    isEmailEnabled = true;
+    console.log('✅ SendGrid email service initialized');
+  } else {
+    console.warn('⚠️  SENDGRID_API_KEY not found - email service disabled');
+  }
+} catch (error) {
+  console.error('❌ Failed to initialize SendGrid:', error);
+  isEmailEnabled = false;
 }
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export interface BookingDetails {
   name: string;
@@ -27,6 +36,11 @@ export class EmailService {
   }
 
   async sendBookingConfirmation(bookingDetails: BookingDetails): Promise<boolean> {
+    if (!isEmailEnabled) {
+      console.log('📧 Email service disabled - booking confirmation would be sent to:', bookingDetails.email);
+      return false;
+    }
+
     try {
       const msg = {
         to: bookingDetails.email,
@@ -46,15 +60,20 @@ export class EmailService {
       };
 
       await sgMail.send(msg);
-      console.log(`Confirmation email sent to ${bookingDetails.email}`);
+      console.log(`✅ Confirmation email sent to ${bookingDetails.email}`);
       return true;
     } catch (error) {
-      console.error('Error sending confirmation email:', error);
+      console.error('❌ Error sending confirmation email:', error);
       return false;
     }
   }
 
   async sendAdminAlert(bookingDetails: BookingDetails): Promise<boolean> {
+    if (!isEmailEnabled) {
+      console.log('📧 Email service disabled - admin alert would be sent for booking from:', bookingDetails.name);
+      return false;
+    }
+
     try {
       const msg = {
         to: 'lokesh.mvt@gmail.com',
@@ -74,10 +93,10 @@ export class EmailService {
       };
 
       await sgMail.send(msg);
-      console.log('Admin alert email sent');
+      console.log('✅ Admin alert email sent');
       return true;
     } catch (error) {
-      console.error('Error sending admin alert email:', error);
+      console.error('❌ Error sending admin alert email:', error);
       return false;
     }
   }
