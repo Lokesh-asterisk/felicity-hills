@@ -775,7 +775,7 @@ export default function AdminDashboard() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {downloads.slice(0, 10).map((download) => (
+                        {downloads.map((download) => (
                           <TableRow key={download.id}>
                             <TableCell className="font-medium">
                               {formatRelativeDate(new Date(download.downloadedAt))}
