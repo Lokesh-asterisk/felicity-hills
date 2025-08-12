@@ -404,12 +404,14 @@ export class DatabaseStorage implements IStorage {
 
   // Initialize with sample data
   async initializeData() {
-    // Always reset videos regardless of other data
-    await this.resetVideos();
-    
-    // Check if data already exists
+    // Check if data already exists first
     const existingBrochures = await this.getBrochures();
-    if (existingBrochures.length > 0) return;
+    const isFirstRun = existingBrochures.length === 0;
+    
+    // Always reset videos regardless of other data
+    await this.resetVideos(isFirstRun);
+    
+    if (!isFirstRun) return;
 
     // Initialize brochures
     const brochureData = [
@@ -488,7 +490,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Reset videos to current configuration
-  async resetVideos() {
+  async resetVideos(includeInitialData: boolean = false) {
     // Clear all existing videos
     await this.clearAllVideos();
     
@@ -508,37 +510,39 @@ export class DatabaseStorage implements IStorage {
       await this.createVideo(video);
     }
 
-    // Initialize sample brochure downloads for testing
-    const sampleDownloads = [
-      {
-        brochureId: (await this.getBrochures())[0]?.id,
-        userName: "Rajesh Kumar",
-        userEmail: "rajesh.kumar@example.com",
-        userPhone: "+91 98765 43210",
-        ipAddress: "192.168.1.100",
-        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-      },
-      {
-        brochureId: (await this.getBrochures())[1]?.id,
-        userName: "Priya Sharma",
-        userEmail: "priya.sharma@example.com", 
-        userPhone: "+91 87654 32109",
-        ipAddress: "192.168.1.101",
-        userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15"
-      },
-      {
-        brochureId: (await this.getBrochures())[2]?.id,
-        userName: "Amit Singh",
-        userEmail: "amit.singh@example.com",
-        userPhone: "+91 76543 21098", 
-        ipAddress: "192.168.1.102",
-        userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
-      }
-    ];
+    // Only initialize sample brochure downloads on first run
+    if (includeInitialData) {
+      const sampleDownloads = [
+        {
+          brochureId: (await this.getBrochures())[0]?.id,
+          userName: "Rajesh Kumar",
+          userEmail: "rajesh.kumar@example.com",
+          userPhone: "+91 98765 43210",
+          ipAddress: "192.168.1.100",
+          userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        },
+        {
+          brochureId: (await this.getBrochures())[1]?.id,
+          userName: "Priya Sharma",
+          userEmail: "priya.sharma@example.com", 
+          userPhone: "+91 87654 32109",
+          ipAddress: "192.168.1.101",
+          userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15"
+        },
+        {
+          brochureId: (await this.getBrochures())[2]?.id,
+          userName: "Amit Singh",
+          userEmail: "amit.singh@example.com",
+          userPhone: "+91 76543 21098", 
+          ipAddress: "192.168.1.102",
+          userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+        }
+      ];
 
-    for (const download of sampleDownloads) {
-      if (download.brochureId) {
-        await this.createBrochureDownload(download);
+      for (const download of sampleDownloads) {
+        if (download.brochureId) {
+          await this.createBrochureDownload(download);
+        }
       }
     }
   }
