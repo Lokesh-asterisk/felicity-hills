@@ -12,7 +12,6 @@ import Videos from "@/pages/videos";
 import Brochures from "@/pages/brochures";
 import BookVisit from "@/pages/book-visit";
 import AdminDashboard from "@/pages/admin-dashboard";
-import InvestmentRecommendations from "@/pages/investment-recommendations";
 
 // Hook to scroll to top on route change
 function useScrollToTop() {
@@ -34,7 +33,6 @@ function Router() {
       <Route path="/videos" component={Videos} />
       <Route path="/brochures" component={Brochures} />
       <Route path="/book-visit" component={BookVisit} />
-      <Route path="/ai-recommendations" component={InvestmentRecommendations} />
       <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>

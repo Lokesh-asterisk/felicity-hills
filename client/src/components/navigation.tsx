@@ -67,9 +67,6 @@ export default function Navigation() {
             <Link href="/brochures" className="text-gray-700 hover:text-primary transition-colors">
               Brochures
             </Link>
-            <Link href="/ai-recommendations" className="text-gray-700 hover:text-primary transition-colors font-medium">
-              AI Recommendations
-            </Link>
             <button 
               onClick={() => scrollToSection('calculator')} 
               className="text-gray-700 hover:text-primary transition-colors"
@@ -140,12 +137,6 @@ export default function Navigation() {
               className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
             >
               Brochures
-            </button>
-            <button 
-              onClick={() => handleNavigation('/ai-recommendations')}
-              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors font-medium"
-            >
-              AI Recommendations
             </button>
             <button 
               onClick={() => scrollToSection('calculator')}
