@@ -26,9 +26,9 @@ export default function AmenitiesSection() {
       icon: Home,
       title: "Club House",
       description: "For community activities",
-      image: "https://images.unsplash.com/photo-1555992336-03a23c73c1eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
       bgColor: "from-green-50 to-green-100",
-      altText: "Spacious clubhouse interior with modern furniture and community gathering space"
+      altText: "Modern clubhouse with elegant seating and community gathering space"
     },
     {
       icon: Shield,
@@ -42,9 +42,9 @@ export default function AmenitiesSection() {
       icon: Baby,
       title: "Kids Play Area",
       description: "Safe play equipment",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
       bgColor: "from-orange-50 to-orange-100",
-      altText: "Bright and colorful children's playground with slides, swings and safe play structures"
+      altText: "Colorful children's playground with safe play equipment and slides"
     }
   ];
 
