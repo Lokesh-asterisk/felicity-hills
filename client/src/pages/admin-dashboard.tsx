@@ -104,6 +104,9 @@ export default function AdminDashboard() {
   const [showTestimonialDialog, setShowTestimonialDialog] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   
+  // Current tab state for mobile dropdown
+  const [currentTab, setCurrentTab] = useState("activity");
+  
   const queryClient = useQueryClient();
   
   // Get testimonials data
@@ -670,17 +673,15 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main Content */}
-        <Tabs defaultValue="activity" className="space-y-4 sm:space-y-6">
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-4 sm:space-y-6">
           <div className="w-full">
             {/* Mobile dropdown for tabs on very small screens */}
             <div className="block sm:hidden mb-4">
               <select 
+                value={currentTab}
                 className="w-full p-2 border rounded-lg bg-white dark:bg-gray-800 text-sm"
                 onChange={(e) => {
-                  // Find the tab trigger and click it
-                  const tabValue = e.target.value;
-                  const trigger = document.querySelector(`[data-state][value="${tabValue}"]`) as HTMLElement;
-                  if (trigger) trigger.click();
+                  setCurrentTab(e.target.value);
                 }}
               >
                 <option value="activity">📊 Activity</option>
