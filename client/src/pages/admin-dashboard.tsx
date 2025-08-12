@@ -620,7 +620,7 @@ export default function AdminDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-green-900 dark:text-green-100">
-                      {stats?.totalDownloads || 0}
+                      {stats?.total || 0}
                     </div>
                   </CardContent>
                 </Card>
@@ -646,7 +646,7 @@ export default function AdminDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-teal-900 dark:text-teal-100">
-                      {stats?.todayDownloads || 0}
+                      {stats?.thisWeek || 0}
                     </div>
                     {getDownloadTrend() !== 0 && (
                       <p className={`text-xs ${getDownloadTrend() > 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -1084,12 +1084,12 @@ export default function AdminDashboard() {
                                 <Badge className="bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200">
                                   {brochure.downloadCount} downloads
                                 </Badge>
-                                {stats.totalDownloads > 0 && (
+                                {stats.total > 0 && (
                                   <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2 ml-2">
                                     <div 
                                       className="bg-teal-500 h-2 rounded-full transition-all duration-300" 
                                       style={{ 
-                                        width: `${(brochure.downloadCount / stats.totalDownloads) * 100}%` 
+                                        width: `${(brochure.downloadCount / stats.total) * 100}%` 
                                       }}
                                     ></div>
                                   </div>
@@ -1103,9 +1103,9 @@ export default function AdminDashboard() {
                               <p className="text-sm text-gray-400 mt-1">
                                 {brochure.downloadCount} total downloads
                               </p>
-                              {stats.totalDownloads > 0 && (
+                              {stats.total > 0 && (
                                 <p className="text-xs text-gray-500 mt-1">
-                                  {((brochure.downloadCount / stats.totalDownloads) * 100).toFixed(1)}% of all downloads
+                                  {((brochure.downloadCount / stats.total) * 100).toFixed(1)}% of all downloads
                                 </p>
                               )}
                             </div>
@@ -1180,7 +1180,7 @@ export default function AdminDashboard() {
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
-                          {stats?.todayDownloads || 0}
+                          {stats?.thisWeek || 0}
                         </div>
                       </CardContent>
                     </Card>

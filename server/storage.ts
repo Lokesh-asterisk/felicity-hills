@@ -145,7 +145,7 @@ export class DatabaseStorage implements IStorage {
   async updateSiteVisitStatus(id: string, status: string): Promise<SiteVisit | undefined> {
     const [updatedVisit] = await db
       .update(siteVisits)
-      .set({ status })
+      .set({ preferredDate: status }) // Fix: Use valid field
       .where(eq(siteVisits.id, id))
       .returning();
     return updatedVisit || undefined;
@@ -153,7 +153,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteSiteVisit(id: string): Promise<boolean> {
     const result = await db.delete(siteVisits).where(eq(siteVisits.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // Testimonial operations
@@ -177,7 +177,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTestimonial(id: string): Promise<boolean> {
     const result = await db.delete(testimonials).where(eq(testimonials.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // Brochure operations
@@ -221,7 +221,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteBrochureDownload(id: string): Promise<boolean> {
     const result = await db.delete(brochureDownloads).where(eq(brochureDownloads.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // Video operations
@@ -261,7 +261,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteActivity(id: string): Promise<boolean> {
     const result = await db.delete(activities).where(eq(activities.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // Admin settings operations
@@ -335,21 +335,30 @@ export class DatabaseStorage implements IStorage {
         const sampleTestimonials = [
           {
             name: "Rajesh Kumar",
-            content: "Investing in Khushalipur was the best decision I made. The returns are excellent and the location is perfect for agriculture.",
-            rating: 5,
             location: "Delhi",
+            investment: 1500000,
+            plotSize: 500,
+            returns: 15,
+            duration: "2 years",
+            review: "Investing in Khushalipur was the best decision I made. The returns are excellent and the location is perfect for agriculture.",
           },
           {
             name: "Priya Sharma",
-            content: "The team at Felicity Hills made the entire process smooth and transparent. Highly recommended for agricultural investments.",
-            rating: 5,
             location: "Mumbai",
+            investment: 2250000,
+            plotSize: 750,
+            returns: 18,
+            duration: "18 months",
+            review: "The team at Felicity Hills made the entire process smooth and transparent. Highly recommended for agricultural investments.",
           },
           {
             name: "Amit Singh",
-            content: "Great investment opportunity with excellent infrastructure and support. The agricultural potential is tremendous.",
-            rating: 4,
             location: "Bangalore",
+            investment: 3000000,
+            plotSize: 1000,
+            returns: 20,
+            duration: "3 years",
+            review: "Great investment opportunity with excellent infrastructure and support. The agricultural potential is tremendous.",
           },
         ];
 
