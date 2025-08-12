@@ -92,13 +92,13 @@ export default function HeroSection() {
             <div className="relative">
               <img 
                 src="/khushalipur-site.jpg" 
-                alt="Khushalipur Agricultural Plots - Real site showing entrance gates and development" 
+                alt="Khushalipur - Real site showing entrance gates and development" 
                 className="rounded-2xl shadow-2xl w-full"
               />
               {/* Image Caption */}
               <div className="absolute bottom-4 left-4 right-4 p-3">
                 <p className="text-base font-bold text-white text-center" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)'}}>
-                  Khushalipur Agricultural Plots - Real site showing entrance gates and development
+                  Khushalipur - Real site showing entrance gates and development
                 </p>
               </div>
             </div>
