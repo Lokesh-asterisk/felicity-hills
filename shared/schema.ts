@@ -13,6 +13,12 @@ export const plots = pgTable("plots", {
   features: text("features").array().default([]),
   available: boolean("available").default(true),
   location: text("location"), // 'gate_facing', 'pool_facing', 'corner', etc.
+  sizeInSqft: integer("size_in_sqft").notNull(), // size in square feet for AI calculations
+  pricePerSqft: integer("price_per_sqft").notNull(), // price per square foot
+  soilType: text("soil_type"), // 'clay', 'sandy', 'loamy', etc.
+  waterAccess: boolean("water_access").default(false),
+  roadAccess: text("road_access"), // 'paved', 'gravel', 'dirt'
+  nearbyAmenities: text("nearby_amenities").array().default([]),
 });
 
 export const siteVisits = pgTable("site_visits", {
@@ -133,5 +139,40 @@ export type InsertAdminSetting = z.infer<typeof insertAdminSettingSchema>;
 
 
 export type UpsertUser = typeof users.$inferInsert;
+
+// Investment Recommendations Schema
+export const investmentProfiles = pgTable("investment_profiles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userEmail: varchar("user_email").notNull(),
+  budget: integer("budget").notNull(),
+  investmentGoal: varchar("investment_goal").notNull(),
+  riskTolerance: varchar("risk_tolerance").notNull(),
+  timeHorizon: varchar("time_horizon").notNull(),
+  preferredSize: varchar("preferred_size").notNull(),
+  location: varchar("location").notNull(),
+  experience: varchar("experience").notNull(),
+  priorities: text("priorities").array().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const aiRecommendations = pgTable("ai_recommendations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  profileId: varchar("profile_id").references(() => investmentProfiles.id),
+  plotId: varchar("plot_id").references(() => plots.id),
+  matchScore: integer("match_score").notNull(),
+  reasons: text("reasons").array().notNull(),
+  aiInsights: text("ai_insights").notNull(),
+  projectedROI: text("projected_roi").notNull(),
+  riskAssessment: text("risk_assessment").notNull(),
+  marketInsights: text("market_insights"),
+  investmentAdvice: text("investment_advice"),
+  alternativeOptions: text("alternative_options"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type InvestmentProfile = typeof investmentProfiles.$inferSelect;
+export type InsertInvestmentProfile = typeof investmentProfiles.$inferInsert;
+export type AIRecommendation = typeof aiRecommendations.$inferSelect;
+export type InsertAIRecommendation = typeof aiRecommendations.$inferInsert;
 
 

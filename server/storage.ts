@@ -8,6 +8,8 @@ import {
   activities,
   users,
   adminSettings,
+  investmentProfiles,
+  aiRecommendations,
   type Plot,
   type SiteVisit,
   type Testimonial,
@@ -17,6 +19,8 @@ import {
   type Activity,
   type User,
   type AdminSetting,
+  type InvestmentProfile,
+  type AIRecommendation,
   type InsertPlot,
   type InsertSiteVisit,
   type InsertTestimonial,
@@ -26,6 +30,8 @@ import {
   type InsertActivity,
   type InsertUser,
   type InsertAdminSetting,
+  type InsertInvestmentProfile,
+  type InsertAIRecommendation,
   type UpsertUser,
 } from "@shared/schema";
 import { db } from "./db";
@@ -79,6 +85,12 @@ export interface IStorage {
   // Admin settings operations
   getAdminSetting(key: string): Promise<AdminSetting | undefined>;
   upsertAdminSetting(setting: InsertAdminSetting): Promise<AdminSetting>;
+  
+  // AI Investment Recommendations
+  createInvestmentProfile(profile: InsertInvestmentProfile): Promise<InvestmentProfile>;
+  getInvestmentProfile(userEmail: string): Promise<InvestmentProfile | undefined>;
+  createAIRecommendation(recommendation: InsertAIRecommendation): Promise<AIRecommendation>;
+  getAIRecommendations(profileId: string): Promise<AIRecommendation[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -450,6 +462,31 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Failed to initialize brochure downloads:", error);
     }
+  }
+
+  // AI Investment Recommendations implementation
+  async createInvestmentProfile(profile: InsertInvestmentProfile): Promise<InvestmentProfile> {
+    const [result] = await db.insert(investmentProfiles).values(profile).returning();
+    return result;
+  }
+
+  async getInvestmentProfile(userEmail: string): Promise<InvestmentProfile | undefined> {
+    const [profile] = await db.select().from(investmentProfiles)
+      .where(eq(investmentProfiles.userEmail, userEmail))
+      .orderBy(desc(investmentProfiles.createdAt))
+      .limit(1);
+    return profile;
+  }
+
+  async createAIRecommendation(recommendation: InsertAIRecommendation): Promise<AIRecommendation> {
+    const [result] = await db.insert(aiRecommendations).values(recommendation).returning();
+    return result;
+  }
+
+  async getAIRecommendations(profileId: string): Promise<AIRecommendation[]> {
+    return await db.select().from(aiRecommendations)
+      .where(eq(aiRecommendations.profileId, profileId))
+      .orderBy(desc(aiRecommendations.createdAt));
   }
 }
 

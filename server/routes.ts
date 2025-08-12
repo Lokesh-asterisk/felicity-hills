@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertSiteVisitSchema, insertTestimonialSchema, insertActivitySchema, insertAdminSettingSchema } from "@shared/schema";
+import { generateInvestmentRecommendations, generateInvestmentInsights, type InvestmentProfile } from "./aiRecommendations";
 import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { EmailService } from "./emailService";
 import { z } from "zod";
@@ -455,6 +456,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(videos);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch videos" });
+    }
+  });
+
+  // AI Investment Recommendations
+  app.post("/api/investment-recommendations", async (req, res) => {
+    try {
+      const profileData: InvestmentProfile = req.body;
+      
+      // Validate required fields
+      if (!profileData.budget || !profileData.investmentGoal || !profileData.userEmail) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Save investment profile
+      const profile = await storage.createInvestmentProfile({
+        userEmail: profileData.userEmail,
+        budget: profileData.budget,
+        investmentGoal: profileData.investmentGoal,
+        riskTolerance: profileData.riskTolerance,
+        timeHorizon: profileData.timeHorizon,
+        preferredSize: profileData.preferredSize,
+        location: profileData.location,
+        experience: profileData.experience,
+        priorities: profileData.priorities,
+      });
+
+      // Get available plots
+      const plots = await storage.getPlots();
+      
+      // Generate AI recommendations
+      const recommendations = await generateInvestmentRecommendations(profileData, plots);
+      
+      // Save recommendations to database
+      for (const rec of recommendations.recommendations) {
+        await storage.createAIRecommendation({
+          profileId: profile.id,
+          plotId: rec.plot.id,
+          matchScore: rec.matchScore,
+          reasons: rec.reasons,
+          aiInsights: rec.aiInsights,
+          projectedROI: rec.projectedROI,
+          riskAssessment: rec.riskAssessment,
+          marketInsights: recommendations.marketInsights,
+          investmentAdvice: recommendations.investmentAdvice,
+          alternativeOptions: recommendations.alternativeOptions,
+        });
+      }
+
+      res.json({
+        profileId: profile.id,
+        ...recommendations
+      });
+    } catch (error) {
+      console.error("Error generating investment recommendations:", error);
+      res.status(500).json({ 
+        message: "Failed to generate recommendations", 
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Get investment insights
+  app.post("/api/investment-insights", async (req, res) => {
+    try {
+      const { budget, goals } = req.body;
+      
+      if (!budget || !goals) {
+        return res.status(400).json({ message: "Budget and goals are required" });
+      }
+
+      const insights = await generateInvestmentInsights(budget, goals);
+      res.json(insights);
+    } catch (error) {
+      console.error("Error generating investment insights:", error);
+      res.status(500).json({ 
+        message: "Failed to generate insights", 
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Get user's investment profile
+  app.get("/api/investment-profile/:email", async (req, res) => {
+    try {
+      const { email } = req.params;
+      const profile = await storage.getInvestmentProfile(email);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Investment profile not found" });
+      }
+
+      const recommendations = await storage.getAIRecommendations(profile.id);
+      res.json({
+        profile,
+        recommendations
+      });
+    } catch (error) {
+      console.error("Error fetching investment profile:", error);
+      res.status(500).json({ message: "Failed to fetch investment profile" });
     }
   });
 
