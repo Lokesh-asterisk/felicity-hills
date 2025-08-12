@@ -94,6 +94,65 @@ export const adminSettings = pgTable("admin_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Gamification Tables
+export const userProfiles = pgTable("user_profiles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email").notNull().unique(),
+  name: varchar("name").notNull(),
+  phone: varchar("phone"),
+  totalPoints: integer("total_points").default(0),
+  level: integer("level").default(1),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  lastActivityDate: timestamp("last_activity_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const achievements = pgTable("achievements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name").notNull(),
+  description: text("description").notNull(),
+  icon: varchar("icon").notNull(),
+  category: varchar("category").notNull(), // 'downloads', 'visits', 'engagement', 'social'
+  pointsRequired: integer("points_required").default(0),
+  condition: text("condition").notNull(), // JSON string defining achievement conditions
+  rarity: varchar("rarity").notNull().default("common"), // 'common', 'rare', 'epic', 'legendary'
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userAchievements = pgTable("user_achievements", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userEmail: varchar("user_email").notNull(),
+  achievementId: varchar("achievement_id").notNull(),
+  unlockedAt: timestamp("unlocked_at").defaultNow(),
+  progress: integer("progress").default(0),
+  isCompleted: boolean("is_completed").default(false),
+});
+
+export const engagementEvents = pgTable("engagement_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userEmail: varchar("user_email").notNull(),
+  eventType: varchar("event_type").notNull(), // 'download', 'visit_booking', 'page_view', 'video_watch', 'share'
+  eventData: text("event_data"), // JSON string with additional event data
+  pointsEarned: integer("points_earned").default(0),
+  sessionId: varchar("session_id"),
+  ipAddress: varchar("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const leaderboards = pgTable("leaderboards", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  period: varchar("period").notNull(), // 'daily', 'weekly', 'monthly', 'all_time'
+  userEmail: varchar("user_email").notNull(),
+  userName: varchar("user_name").notNull(),
+  points: integer("points").notNull(),
+  rank: integer("rank").notNull(),
+  achievements: integer("achievements").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertPlotSchema = createInsertSchema(plots).omit({ id: true });
 export const insertSiteVisitSchema = createInsertSchema(siteVisits).omit({ id: true, createdAt: true });
 export const insertTestimonialSchema = createInsertSchema(testimonials).omit({ id: true });
@@ -104,6 +163,13 @@ export const insertActivitySchema = createInsertSchema(activities).omit({ id: tr
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAdminSettingSchema = createInsertSchema(adminSettings).omit({ id: true, updatedAt: true });
 
+// Gamification insert schemas
+export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAchievementSchema = createInsertSchema(achievements).omit({ id: true, createdAt: true });
+export const insertUserAchievementSchema = createInsertSchema(userAchievements).omit({ id: true, unlockedAt: true });
+export const insertEngagementEventSchema = createInsertSchema(engagementEvents).omit({ id: true, createdAt: true });
+export const insertLeaderboardSchema = createInsertSchema(leaderboards).omit({ id: true, createdAt: true });
+
 export type Plot = typeof plots.$inferSelect;
 export type SiteVisit = typeof siteVisits.$inferSelect;
 export type Testimonial = typeof testimonials.$inferSelect;
@@ -113,6 +179,14 @@ export type BrochureDownload = typeof brochureDownloads.$inferSelect;
 export type Activity = typeof activities.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type AdminSetting = typeof adminSettings.$inferSelect;
+
+// Gamification types
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type Achievement = typeof achievements.$inferSelect;
+export type UserAchievement = typeof userAchievements.$inferSelect;
+export type EngagementEvent = typeof engagementEvents.$inferSelect;
+export type Leaderboard = typeof leaderboards.$inferSelect;
+
 export type InsertPlot = z.infer<typeof insertPlotSchema>;
 export type InsertSiteVisit = z.infer<typeof insertSiteVisitSchema>;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
@@ -122,4 +196,27 @@ export type InsertBrochureDownload = z.infer<typeof insertBrochureDownloadSchema
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertAdminSetting = z.infer<typeof insertAdminSettingSchema>;
+
+// Gamification insert types
+export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
+export type InsertEngagementEvent = z.infer<typeof insertEngagementEventSchema>;
+export type InsertLeaderboard = z.infer<typeof insertLeaderboardSchema>;
+
 export type UpsertUser = typeof users.$inferInsert;
+
+// Engagement Stats interface
+export interface EngagementStats {
+  totalEvents: number;
+  totalPoints: number;
+  eventsThisWeek: number;
+  eventsThisMonth: number;
+  averagePointsPerEvent: number;
+  mostActiveDay: string;
+  eventTypeBreakdown: Array<{
+    eventType: string;
+    count: number;
+    totalPoints: number;
+  }>;
+}

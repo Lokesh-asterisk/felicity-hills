@@ -1,7 +1,15 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertSiteVisitSchema, insertTestimonialSchema, insertActivitySchema, insertAdminSettingSchema } from "@shared/schema";
+import { 
+  insertSiteVisitSchema, 
+  insertTestimonialSchema, 
+  insertActivitySchema, 
+  insertAdminSettingSchema,
+  insertEngagementEventSchema,
+  insertUserProfileSchema,
+  insertAchievementSchema 
+} from "@shared/schema";
 import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { EmailService } from "./emailService";
 import { z } from "zod";
@@ -231,12 +239,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn('Failed to send alert email to admin');
       }
       
+      // Record gamification event if email provided
+      if (siteVisit.email) {
+        try {
+          await storage.recordEngagementEvent({
+            userEmail: siteVisit.email,
+            eventType: 'visit_booking',
+            eventData: JSON.stringify({ 
+              plotSize: siteVisit.plotSize,
+              budget: siteVisit.budget,
+              preferredDate: siteVisit.preferredDate,
+              name: siteVisit.name 
+            }),
+            pointsEarned: 25, // 25 points for booking a site visit
+            sessionId: null,
+            ipAddress: req.ip || req.connection.remoteAddress || null,
+            userAgent: req.get('User-Agent'),
+          });
+        } catch (gamificationError) {
+          console.error("Error recording gamification event:", gamificationError);
+          // Don't fail the main booking if gamification fails
+        }
+      }
+
       res.status(201).json({
         ...siteVisit,
         emailStatus: {
           userNotified: siteVisit.email ? true : false,
           adminNotified: adminEmailSent
-        }
+        },
+        pointsEarned: siteVisit.email ? 25 : 0
       });
     } catch (error) {
       console.error('Site visit booking error:', error);
@@ -283,10 +315,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userAgent: req.get('User-Agent'),
       });
 
+      // Record gamification event
+      try {
+        await storage.recordEngagementEvent({
+          userEmail,
+          eventType: 'download',
+          eventData: JSON.stringify({ 
+            brochureId: id, 
+            brochureTitle: brochure.title,
+            userName 
+          }),
+          pointsEarned: 10, // 10 points for downloading a brochure
+          sessionId: null,
+          ipAddress: req.ip || req.connection.remoteAddress || null,
+          userAgent: req.get('User-Agent'),
+        });
+      } catch (gamificationError) {
+        console.error("Error recording gamification event:", gamificationError);
+        // Don't fail the main download if gamification fails
+      }
+
       res.json({ 
         success: true, 
         downloadUrl: brochure.downloadUrl,
-        message: "Download tracked successfully" 
+        message: "Download tracked successfully",
+        pointsEarned: 10
       });
     } catch (error) {
       console.error("Error tracking brochure download:", error);
@@ -455,6 +508,144 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(videos);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch videos" });
+    }
+  });
+
+  // =============================
+  // GAMIFICATION ROUTES
+  // =============================
+
+  // Get user profile
+  app.get("/api/gamification/profile/:email", async (req, res) => {
+    try {
+      const { email } = req.params;
+      const profile = await storage.getUserProfile(email);
+      if (!profile) {
+        return res.status(404).json({ message: "User profile not found" });
+      }
+      res.json(profile);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      res.status(500).json({ message: "Failed to fetch user profile" });
+    }
+  });
+
+  // Create or update user profile
+  app.post("/api/gamification/profile", async (req, res) => {
+    try {
+      const profileData = insertUserProfileSchema.parse(req.body);
+      
+      // Check if profile exists
+      const existingProfile = await storage.getUserProfile(profileData.email);
+      if (existingProfile) {
+        const updated = await storage.updateUserProfile(profileData.email, profileData);
+        res.json(updated);
+      } else {
+        const newProfile = await storage.createUserProfile(profileData);
+        res.json(newProfile);
+      }
+    } catch (error) {
+      console.error("Error creating/updating user profile:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create/update user profile" });
+      }
+    }
+  });
+
+  // Record engagement event
+  app.post("/api/gamification/engage", async (req, res) => {
+    try {
+      const eventData = insertEngagementEventSchema.parse(req.body);
+      const event = await storage.recordEngagementEvent(eventData);
+      res.json(event);
+    } catch (error) {
+      console.error("Error recording engagement event:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to record engagement event" });
+      }
+    }
+  });
+
+  // Get user engagement stats
+  app.get("/api/gamification/stats/:email", async (req, res) => {
+    try {
+      const { email } = req.params;
+      const stats = await storage.getUserEngagementStats(email);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching user engagement stats:", error);
+      res.status(500).json({ message: "Failed to fetch engagement stats" });
+    }
+  });
+
+  // Get all achievements
+  app.get("/api/gamification/achievements", async (_req, res) => {
+    try {
+      const achievements = await storage.getAchievements();
+      res.json(achievements);
+    } catch (error) {
+      console.error("Error fetching achievements:", error);
+      res.status(500).json({ message: "Failed to fetch achievements" });
+    }
+  });
+
+  // Get user achievements
+  app.get("/api/gamification/achievements/:email", async (req, res) => {
+    try {
+      const { email } = req.params;
+      const achievements = await storage.getUserAchievements(email);
+      res.json(achievements);
+    } catch (error) {
+      console.error("Error fetching user achievements:", error);
+      res.status(500).json({ message: "Failed to fetch user achievements" });
+    }
+  });
+
+  // Get leaderboard
+  app.get("/api/gamification/leaderboard/:period", async (req, res) => {
+    try {
+      const { period } = req.params;
+      if (!['daily', 'weekly', 'monthly', 'all_time'].includes(period)) {
+        return res.status(400).json({ message: "Invalid period" });
+      }
+      
+      await storage.updateLeaderboard(period as 'daily' | 'weekly' | 'monthly' | 'all_time');
+      const leaderboard = await storage.getEngagementLeaderboard(period as 'daily' | 'weekly' | 'monthly' | 'all_time');
+      res.json(leaderboard);
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+      res.status(500).json({ message: "Failed to fetch leaderboard" });
+    }
+  });
+
+  // Admin: Get gamification stats
+  app.get("/api/admin/gamification-stats", async (_req, res) => {
+    try {
+      const stats = await storage.getGamificationStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching gamification stats:", error);
+      res.status(500).json({ message: "Failed to fetch gamification stats" });
+    }
+  });
+
+  // Admin: Create achievement
+  app.post("/api/admin/achievements", async (req, res) => {
+    try {
+      const achievementData = insertAchievementSchema.parse(req.body);
+      const achievement = await storage.createAchievement(achievementData);
+      res.json(achievement);
+    } catch (error) {
+      console.error("Error creating achievement:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create achievement" });
+      }
     }
   });
 
