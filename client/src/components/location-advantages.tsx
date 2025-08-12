@@ -120,7 +120,7 @@ export default function LocationAdvantages() {
                     <Bus className="text-primary text-xl mr-3 w-6 h-6" />
                     <div>
                       <div className="font-semibold">Bus Stop</div>
-                      <div className="text-sm text-gray-600">Just 1 km away</div>
+                      <div className="text-sm text-gray-600">Just 2.5 km away</div>
                     </div>
                   </div>
                 </div>
