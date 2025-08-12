@@ -42,9 +42,9 @@ export default function AmenitiesSection() {
       icon: Baby,
       title: "Kids Play Area",
       description: "Safe play equipment",
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+      image: "/kids-play-area.png",
       bgColor: "from-orange-50 to-orange-100",
-      altText: "Colorful children's playground with safe play equipment and slides"
+      altText: "Happy child playing on colorful playground with yellow slide and green play equipment"
     }
   ];
 
