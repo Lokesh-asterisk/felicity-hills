@@ -37,6 +37,7 @@ export default function BrochuresPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedBrochure, setSelectedBrochure] = useState<Brochure | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: brochures, isLoading } = useQuery<Brochure[]>({
     queryKey: ["/api/brochures"],
@@ -73,8 +74,6 @@ export default function BrochuresPage() {
       return result as { success: boolean; downloadUrl: string; message: string };
     },
     onSuccess: (response) => {
-      console.log("Download response:", response);
-      
       toast({
         title: "Download Started",
         description: "Your download request has been processed successfully.",
@@ -86,8 +85,6 @@ export default function BrochuresPage() {
         const downloadUrl = response.downloadUrl.startsWith('http') 
           ? response.downloadUrl 
           : `${window.location.origin}${response.downloadUrl}`;
-        
-        console.log("Attempting download from URL:", downloadUrl);
         
         // Try multiple approaches to ensure download works
         try {
@@ -123,6 +120,7 @@ export default function BrochuresPage() {
       // Reset form and close dialog
       form.reset();
       setSelectedBrochure(null);
+      setIsDialogOpen(false);
     },
     onError: (error) => {
       toast({
@@ -194,11 +192,14 @@ export default function BrochuresPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Dialog>
+                <Dialog open={isDialogOpen && selectedBrochure?.id === brochure.id} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <Button
                       className="w-full bg-green-600 hover:bg-green-700"
-                      onClick={() => setSelectedBrochure(brochure)}
+                      onClick={() => {
+                        setSelectedBrochure(brochure);
+                        setIsDialogOpen(true);
+                      }}
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Download Now
@@ -260,6 +261,7 @@ export default function BrochuresPage() {
                             onClick={() => {
                               form.reset();
                               setSelectedBrochure(null);
+                              setIsDialogOpen(false);
                             }}
                           >
                             Cancel
