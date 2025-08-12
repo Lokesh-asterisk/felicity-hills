@@ -64,9 +64,17 @@ export default function BrochuresPage() {
           userPhone: data.userPhone,
         }
       );
-      return response as { success: boolean; downloadUrl: string; message: string };
+      
+      if (!response.ok) {
+        throw new Error('Download request failed');
+      }
+      
+      const result = await response.json();
+      return result as { success: boolean; downloadUrl: string; message: string };
     },
     onSuccess: (response) => {
+      console.log("Download response:", response);
+      
       toast({
         title: "Download Started",
         description: "Your download request has been processed successfully.",
@@ -79,14 +87,37 @@ export default function BrochuresPage() {
           ? response.downloadUrl 
           : `${window.location.origin}${response.downloadUrl}`;
         
-        // Create a temporary anchor element to trigger download
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = selectedBrochure?.title || 'brochure.pdf';
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        console.log("Attempting download from URL:", downloadUrl);
+        
+        // Try multiple approaches to ensure download works
+        try {
+          // Method 1: Create a temporary anchor element to trigger download
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = selectedBrochure?.title?.replace(/[^a-zA-Z0-9\s]/g, '') || 'brochure';
+          link.target = '_blank';
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Method 2: Also try window.open as backup
+          setTimeout(() => {
+            window.open(downloadUrl, '_blank');
+          }, 100);
+          
+        } catch (error) {
+          console.error("Download error:", error);
+          // Fallback: just open in new tab
+          window.open(downloadUrl, '_blank');
+        }
+      } else {
+        console.error("Invalid response:", response);
+        toast({
+          title: "Download Error", 
+          description: "Invalid response from server",
+          variant: "destructive"
+        });
       }
       
       // Reset form and close dialog
