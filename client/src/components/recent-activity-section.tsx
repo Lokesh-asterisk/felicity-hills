@@ -77,7 +77,9 @@ export default function RecentActivitySection() {
                       <span>Auto-refreshing every 5 seconds</span>
                     </div>
                     <div className="text-xs text-green-600 font-medium">
-                      {recentActivities.length} activities today
+                      {recentActivities.filter(activity => 
+                        activity.createdAt && isToday(new Date(activity.createdAt))
+                      ).length} activities today
                     </div>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
