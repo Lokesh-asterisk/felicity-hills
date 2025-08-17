@@ -31,13 +31,13 @@ export default function ComparisonTable() {
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                      <span className="text-green-600 font-semibold">₹8,100/गज</span>
+                      <span className="text-green-600 font-semibold">₹8,100/sq yd</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <XCircle className="w-5 h-5 text-red-500 mr-2" />
-                      <span className="text-red-500">₹12,000-15,000/गज</span>
+                      <span className="text-red-500">₹12,000-15,000/sq yd</span>
                     </div>
                   </td>
                 </tr>
@@ -47,13 +47,13 @@ export default function ComparisonTable() {
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                      <span className="text-green-600 font-semibold">15-20% सालाना</span>
+                      <span className="text-green-600 font-semibold">15-20% annually</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <XCircle className="w-5 h-5 text-red-500 mr-2" />
-                      <span className="text-red-500">8-12% सालाना</span>
+                      <span className="text-red-500">8-12% annually</span>
                     </div>
                   </td>
                 </tr>
@@ -63,13 +63,13 @@ export default function ComparisonTable() {
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                      <span className="text-green-600 font-semibold">220 किमी</span>
+                      <span className="text-green-600 font-semibold">220 km</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center">
                       <XCircle className="w-5 h-5 text-red-500 mr-2" />
-                      <span className="text-red-500">300-400 किमी</span>
+                      <span className="text-red-500">300-400 km</span>
                     </div>
                   </td>
                 </tr>
