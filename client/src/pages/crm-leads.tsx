@@ -272,14 +272,28 @@ export default function CRMLeads() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type === 'text/csv') {
-      setImportFile(file);
-    } else {
-      toast({
-        title: "Error",
-        description: "Please select a valid CSV file",
-        variant: "destructive",
-      });
+    if (file) {
+      const fileName = file.name.toLowerCase();
+      const validMimeTypes = [
+        'text/csv',
+        'application/csv',
+        'text/plain',
+        'application/vnd.ms-excel',
+        'text/comma-separated-values'
+      ];
+      
+      const isValidExtension = fileName.endsWith('.csv');
+      const isValidMimeType = validMimeTypes.includes(file.type) || file.type === '';
+      
+      if (isValidExtension && (isValidMimeType || file.type === '')) {
+        setImportFile(file);
+      } else {
+        toast({
+          title: "Error",
+          description: "Please select a valid CSV file (.csv extension required)",
+          variant: "destructive",
+        });
+      }
     }
   };
 
