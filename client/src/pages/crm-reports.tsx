@@ -295,8 +295,22 @@ export default function CRMReports() {
   }
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
-      <div className="max-w-7xl mx-auto p-3 sm:p-6 w-full">
+    <>
+      <style>
+        {`
+          @media (max-width: 640px) {
+            * {
+              max-width: 100vw !important;
+              box-sizing: border-box !important;
+            }
+            .crm-reports-container * {
+              overflow-x: hidden !important;
+            }
+          }
+        `}
+      </style>
+      <div className="min-h-screen bg-white overflow-x-hidden">
+        <div className="crm-reports-container max-w-7xl mx-auto p-3 sm:p-6 w-full max-w-[100vw]">
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div>
@@ -313,7 +327,7 @@ export default function CRMReports() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="grid grid-cols-2 sm:grid-cols-2 gap-1 sm:gap-2">
+                <div className="grid grid-cols-2 gap-1 w-full max-w-full overflow-hidden">
                   <Button 
                     onClick={exportLeads}
                     className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1.5 sm:px-3 sm:py-2 h-auto"
@@ -356,12 +370,12 @@ export default function CRMReports() {
           </div>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
+        <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
           {/* Mobile dropdown for tabs on very small screens */}
           <div className="block sm:hidden mb-4">
             <select 
               defaultValue="overview"
-              className="w-full p-2 border rounded-lg bg-white text-sm"
+              className="w-full p-2 border rounded-lg bg-white text-sm max-w-full"
               onChange={(e) => {
                 // Handle tab change for mobile
                 const tabs = document.querySelectorAll('[data-state="active"]');
@@ -379,17 +393,17 @@ export default function CRMReports() {
 
           {/* Regular tabs for larger screens */}
           <div className="hidden sm:block">
-            <TabsList className="grid grid-cols-4 gap-1 w-full h-auto p-1">
-              <TabsTrigger value="overview" className="px-2 sm:px-4 py-2 text-xs sm:text-sm">
+            <TabsList className="grid grid-cols-4 gap-1 w-full h-auto p-1 max-w-full overflow-hidden">
+              <TabsTrigger value="overview" className="px-1 sm:px-4 py-2 text-xs sm:text-sm min-w-0 truncate">
                 Overview
               </TabsTrigger>
-              <TabsTrigger value="leads" className="px-2 sm:px-4 py-2 text-xs sm:text-sm">
-                Lead Analytics
+              <TabsTrigger value="leads" className="px-1 sm:px-4 py-2 text-xs sm:text-sm min-w-0 truncate">
+                Leads
               </TabsTrigger>
-              <TabsTrigger value="appointments" className="px-2 sm:px-4 py-2 text-xs sm:text-sm">
+              <TabsTrigger value="appointments" className="px-1 sm:px-4 py-2 text-xs sm:text-sm min-w-0 truncate">
                 Appointments
               </TabsTrigger>
-              <TabsTrigger value="performance" className="px-2 sm:px-4 py-2 text-xs sm:text-sm">
+              <TabsTrigger value="performance" className="px-1 sm:px-4 py-2 text-xs sm:text-sm min-w-0 truncate">
                 Performance
               </TabsTrigger>
             </TabsList>
@@ -824,7 +838,8 @@ export default function CRMReports() {
             </div>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
