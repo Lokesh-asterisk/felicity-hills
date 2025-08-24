@@ -9,9 +9,10 @@ import type { Appointment, FollowUp, Lead } from "@shared/schema";
 interface CRMDashboardProps {
   onNavigateToLeads?: () => void;
   onCreateNewLead?: () => void;
+  setCurrentView?: (view: string) => void;
 }
 
-export default function CRMDashboard({ onNavigateToLeads, onCreateNewLead }: CRMDashboardProps) {
+export default function CRMDashboard({ onNavigateToLeads, onCreateNewLead, setCurrentView }: CRMDashboardProps) {
   const { data: todaysAppointments, isLoading: appointmentsLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/appointments/today"],
   });
@@ -86,7 +87,7 @@ export default function CRMDashboard({ onNavigateToLeads, onCreateNewLead }: CRM
               <Plus className="w-4 h-4 mr-2" />
               New Lead
             </Button>
-            <Button variant="outline" data-testid="button-new-appointment" disabled>
+            <Button variant="outline" data-testid="button-new-appointment" onClick={() => setCurrentView?.("crm-appointments")}>
               <Calendar className="w-4 h-4 mr-2" />
               Schedule Appointment
             </Button>
@@ -359,7 +360,7 @@ export default function CRMDashboard({ onNavigateToLeads, onCreateNewLead }: CRM
               </CardHeader>
             </Card>
 
-          <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-appointments">
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-appointments" onClick={() => setCurrentView?.("crm-appointments")}>
             <CardHeader>
               <CardTitle className="text-lg flex items-center">
                 <Calendar className="w-5 h-5 mr-2" />
@@ -371,7 +372,7 @@ export default function CRMDashboard({ onNavigateToLeads, onCreateNewLead }: CRM
             </CardHeader>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-followups">
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-followups" onClick={() => setCurrentView?.("crm-followups")}>
             <CardHeader>
               <CardTitle className="text-lg flex items-center">
                 <Clock className="w-5 h-5 mr-2" />

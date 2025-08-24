@@ -23,6 +23,8 @@ import { format, isToday, isYesterday, subDays, startOfDay } from "date-fns";
 import AdminLogin from "@/components/admin-login";
 import CRMDashboard from "@/pages/crm-dashboard";
 import CRMLeads from "@/pages/crm-leads";
+import CRMAppointments from "@/pages/crm-appointments";
+import CRMFollowUps from "@/pages/crm-followups";
 
 interface BrochureDownload {
   id: string;
@@ -83,7 +85,7 @@ const testimonialFormSchema = z.object({
 // Password verification is now handled via API
 
 export default function AdminDashboard() {
-  const [currentView, setCurrentView] = useState<"dashboard" | "crm" | "crm-leads">("dashboard");
+  const [currentView, setCurrentView] = useState<"dashboard" | "crm" | "crm-leads" | "crm-appointments" | "crm-followups" | "crm-dashboard">("dashboard");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [, setLocation] = useLocation();
@@ -603,6 +605,7 @@ export default function AdminDashboard() {
           <CRMDashboard 
             onNavigateToLeads={() => setCurrentView("crm-leads")}
             onCreateNewLead={() => setCurrentView("crm-leads")}
+            setCurrentView={setCurrentView}
           />
         </div>
       </div>
@@ -628,6 +631,54 @@ export default function AdminDashboard() {
             </h1>
           </div>
           <CRMLeads />
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === "crm-appointments") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentView("crm")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to CRM
+            </Button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              Appointment Management
+            </h1>
+          </div>
+          <CRMAppointments />
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === "crm-followups") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentView("crm")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to CRM
+            </Button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              Follow-up Management
+            </h1>
+          </div>
+          <CRMFollowUps />
         </div>
       </div>
     );
