@@ -474,7 +474,7 @@ export default function CRMReports() {
                       <p className="text-xs text-orange-600 mt-1">Total budget</p>
                     </div>
                     <div className="p-2 sm:p-3 bg-orange-50 rounded-lg">
-                      <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
+                      <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
                     </div>
                   </div>
                 </CardContent>
