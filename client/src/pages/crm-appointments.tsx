@@ -41,6 +41,7 @@ const appointmentStatuses = [
 export default function CRMAppointments() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
 
@@ -215,25 +216,39 @@ export default function CRMAppointments() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 space-y-4 lg:space-y-0">
+    <div className="space-y-6">
+      <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 space-y-4 lg:space-y-0">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 via-teal-600 to-green-800 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Appointment Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
+            <p className="text-gray-600 dark:text-gray-400">
               Schedule and manage client appointments with ease
             </p>
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <Calendar className="w-4 h-4" />
-              <span>Real-time scheduling system</span>
-            </div>
           </div>
-          <div className="flex space-x-4">
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded-lg border">
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className={viewMode === "list" ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                📋 List
+              </Button>
+              <Button
+                variant={viewMode === "calendar" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("calendar")}
+                className={viewMode === "calendar" ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                📅 Calendar
+              </Button>
+            </div>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={openCreateDialog} data-testid="button-new-appointment">
+                <Button onClick={openCreateDialog} className="bg-green-600 hover:bg-green-700" data-testid="button-new-appointment">
                   <Plus className="w-4 h-4 mr-2" />
                   New Appointment
                 </Button>

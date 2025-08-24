@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, TrendingUp, Users, Calendar, DollarSign, Target, Phone, Mail, MapPin, Clock, CheckCircle, XCircle } from "lucide-react";
+import { BarChart3, TrendingUp, Users, Calendar, DollarSign, Target, Phone, Mail, MapPin, Clock, CheckCircle, XCircle, Download } from "lucide-react";
 
 interface Lead {
   id: string;
@@ -88,6 +89,102 @@ export default function CRMReports() {
   });
 
   const isLoading = leadsLoading || appointmentsLoading || followUpsLoading || statsLoading;
+
+  // CSV Export Functions
+  const exportToCSV = (data: any[], filename: string) => {
+    if (!data || data.length === 0) return;
+    
+    const headers = Object.keys(data[0]);
+    const csvContent = [
+      headers.join(','),
+      ...data.map(row => 
+        headers.map(header => {
+          const value = row[header];
+          if (typeof value === 'string' && value.includes(',')) {
+            return `"${value}"`;
+          }
+          return value || '';
+        }).join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const exportLeads = () => {
+    if (!leads) return;
+    const exportData = leads.map(lead => ({
+      'First Name': lead.firstName,
+      'Last Name': lead.lastName,
+      'Email': lead.email,
+      'Phone': lead.phone,
+      'Status': lead.status,
+      'Source': lead.source,
+      'Budget': lead.budget || '',
+      'Created Date': new Date(lead.createdAt).toLocaleDateString(),
+      'Notes': lead.notes || ''
+    }));
+    exportToCSV(exportData, 'crm-leads');
+  };
+
+  const exportAppointments = () => {
+    if (!appointments) return;
+    const exportData = appointments.map(appointment => ({
+      'Title': appointment.title,
+      'Date': new Date(appointment.appointmentDate).toLocaleDateString(),
+      'Time': new Date(appointment.appointmentDate).toLocaleTimeString(),
+      'Status': appointment.status,
+      'Type': appointment.type,
+      'Location': appointment.location || '',
+      'Description': appointment.description || '',
+      'Notes': appointment.notes || ''
+    }));
+    exportToCSV(exportData, 'crm-appointments');
+  };
+
+  const exportFollowUps = () => {
+    if (!followUps) return;
+    const exportData = followUps.map(followUp => ({
+      'Title': followUp.title,
+      'Due Date': new Date(followUp.dueDate).toLocaleDateString(),
+      'Priority': followUp.priority,
+      'Status': followUp.status,
+      'Type': followUp.type,
+      'Description': followUp.description || '',
+      'Notes': followUp.notes || ''
+    }));
+    exportToCSV(exportData, 'crm-followups');
+  };
+
+  const exportAllData = () => {
+    if (!leads || !appointments || !followUps) return;
+    const summary = {
+      'Report Generated': new Date().toLocaleDateString(),
+      'Total Leads': leads.length,
+      'Total Appointments': appointments.length,
+      'Total Follow-ups': followUps.length,
+      'Converted Leads': leadStats?.converted || 0,
+      'Pending Follow-ups': followUps.filter(f => f.status === 'pending').length,
+      'This Week Appointments': appointments.filter(a => {
+        const appointmentDate = new Date(a.appointmentDate);
+        const today = new Date();
+        const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+        const weekEnd = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+        return appointmentDate >= weekStart && appointmentDate <= weekEnd;
+      }).length
+    };
+    exportToCSV([summary], 'crm-summary-report');
+  };
 
   // Calculate analytics
   const getLeadSourceBreakdown = () => {

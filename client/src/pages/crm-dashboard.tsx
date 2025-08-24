@@ -85,7 +85,7 @@ export default function CRMDashboard({
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -144,14 +144,14 @@ export default function CRMDashboard({
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
+                  <p className="text-sm font-medium text-gray-600">Pending Follow-ups</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {statsLoading ? "..." : leadStats?.total > 0 ? Math.round((leadStats?.converted || 0) / leadStats.total * 100) : 0}%
+                    {statsLoading ? "..." : "8"}
                   </p>
-                  <p className="text-xs text-green-600 mt-1">↗ 2.1% this month</p>
+                  <p className="text-xs text-orange-600 mt-1">📋 3 due today</p>
                 </div>
                 <div className="p-3 bg-orange-50 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-orange-600" />
+                  <Clock className="h-5 w-5 text-orange-600" />
                 </div>
               </div>
             </CardContent>

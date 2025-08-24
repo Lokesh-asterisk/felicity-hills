@@ -244,25 +244,21 @@ export default function CRMFollowUps() {
   }) || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 space-y-4 lg:space-y-0">
+    <div className="space-y-6">
+      <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 space-y-4 lg:space-y-0">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-orange-800 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Follow-up Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
+            <p className="text-gray-600 dark:text-gray-400">
               Track and complete follow-up tasks efficiently
             </p>
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <Clock className="w-4 h-4" />
-              <span>Task tracking system</span>
-            </div>
           </div>
-          <div className="flex space-x-4">
+          <div className="flex space-x-3">
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={openCreateDialog} data-testid="button-new-followup">
+                <Button onClick={openCreateDialog} className="bg-green-600 hover:bg-green-700" data-testid="button-new-followup">
                   <Plus className="w-4 h-4 mr-2" />
                   New Follow-up
                 </Button>
@@ -423,6 +419,7 @@ export default function CRMFollowUps() {
                       <Button
                         type="submit"
                         disabled={createMutation.isPending || updateMutation.isPending}
+                        className="bg-green-600 hover:bg-green-700"
                         data-testid="button-save-followup"
                       >
                         {createMutation.isPending || updateMutation.isPending ? "Saving..." : editingFollowUp ? "Update" : "Create"}
@@ -434,6 +431,40 @@ export default function CRMFollowUps() {
             </Dialog>
           </div>
         </div>
+
+        {/* Upcoming Follow-ups Alert */}
+        {filteredFollowUps.some(f => {
+          const dueDate = new Date(f.dueDate);
+          const today = new Date();
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+          return (dueDate.toDateString() === today.toDateString() || dueDate.toDateString() === tomorrow.toDateString()) && f.status === 'pending';
+        }) && (
+          <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                <h3 className="font-semibold text-yellow-800 dark:text-yellow-200">Upcoming Follow-ups</h3>
+              </div>
+              <div className="mt-2 space-y-1">
+                {filteredFollowUps
+                  .filter(f => {
+                    const dueDate = new Date(f.dueDate);
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+                    return (dueDate.toDateString() === today.toDateString() || dueDate.toDateString() === tomorrow.toDateString()) && f.status === 'pending';
+                  })
+                  .map(f => (
+                    <div key={f.id} className="text-sm text-yellow-700 dark:text-yellow-300">
+                      <strong>{f.title}</strong> - {getLeadName(f.leadId)} 
+                      ({new Date(f.dueDate).toDateString() === new Date().toDateString() ? 'Today' : 'Tomorrow'})
+                    </div>
+                  ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -488,7 +519,7 @@ export default function CRMFollowUps() {
             </div>
           ) : filteredFollowUps && filteredFollowUps.length > 0 ? (
             filteredFollowUps.map((followUp) => (
-              <Card key={followUp.id} className={`cursor-pointer hover:shadow-md transition-shadow ${isOverdue(followUp.dueDate) && followUp.status === 'pending' ? 'border-red-200' : ''}`} data-testid={`card-followup-${followUp.id}`}>
+              <Card key={followUp.id} className={`hover:shadow-md transition-shadow bg-white dark:bg-gray-800 ${isOverdue(followUp.dueDate) && followUp.status === 'pending' ? 'border-red-200 bg-red-50 dark:bg-red-900/20' : ''}`} data-testid={`card-followup-${followUp.id}`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">

@@ -684,35 +684,33 @@ export default function AdminDashboard() {
 
   // CRM Top Navigation Component
   const CRMTopNav = ({ activeTab }: { activeTab: string }) => (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-semibold text-gray-900">🏠 RealEstate CRM</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">🏠 Felicityhills CRM</h1>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search leads, properties..."
-                className="w-64 pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm"
-              />
-              <div className="absolute left-2 top-2.5">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">1</div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                JS
-              </div>
-              <span className="text-sm font-medium text-gray-700">John Smith</span>
-            </div>
+          <div className="flex items-center space-x-3">
+            <Button
+              onClick={() => setCurrentView("dashboard")}
+              variant="outline"
+              className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Admin
+            </Button>
+            <Button
+              onClick={() => {
+                setIsAuthenticated(false);
+                setLocation('/');
+              }}
+              variant="outline"
+              className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
           </div>
         </div>
 
@@ -776,7 +774,7 @@ export default function AdminDashboard() {
   // Handle CRM view rendering
   if (currentView === "crm") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
         <CRMTopNav activeTab="crm" />
         <div className="max-w-7xl mx-auto px-4 py-6">
           <CRMDashboard 
@@ -791,11 +789,11 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-leads") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
         <CRMTopNav activeTab="crm-leads" />
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Leads Management</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Leads Management</h1>
             <Button 
               onClick={() => setCurrentView("crm-leads")}
               className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -812,11 +810,11 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-appointments") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
         <CRMTopNav activeTab="crm-appointments" />
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Appointments</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Appointments</h1>
             <Button 
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
@@ -832,11 +830,11 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-followups") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
         <CRMTopNav activeTab="crm-followups" />
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900">Follow-ups</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Follow-ups</h1>
             <Button 
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
@@ -852,7 +850,7 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-reports") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
         <CRMTopNav activeTab="crm-reports" />
         <div className="max-w-7xl mx-auto px-4 py-6">
           <CRMReports />
