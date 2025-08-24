@@ -110,6 +110,7 @@ export const leads = pgTable("leads", {
   company: text("company"),
   status: text("status").notNull().default("new"), // new, contacted, qualified, showing_scheduled, not_interested, converted
   source: text("source").notNull(), // website, referral, social_media, advertisement, cold_call, walk_in
+  interestLevel: text("interest_level").notNull().default("medium"), // low, medium, high, very_high
   propertyInterests: text("property_interests").array().default([]), // types of properties they're interested in
   budget: text("budget"),
   notes: text("notes"),

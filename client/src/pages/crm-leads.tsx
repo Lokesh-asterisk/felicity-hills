@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,7 @@ const leadSchema = z.object({
   company: z.string().optional(),
   status: z.string().min(1, "Status is required"),
   source: z.string().min(1, "Source is required"),
+  interestLevel: z.string().min(1, "Interest level is required"),
   propertyInterests: z.array(z.string()).default([]),
   budget: z.string().optional(),
   notes: z.string().optional(),
@@ -48,6 +50,13 @@ const leadSources = [
   { value: "walk_in", label: "Walk-in" },
 ];
 
+const interestLevels = [
+  { value: "low", label: "Low Interest", color: "bg-gray-100 text-gray-800" },
+  { value: "medium", label: "Medium Interest", color: "bg-blue-100 text-blue-800" },
+  { value: "high", label: "High Interest", color: "bg-orange-100 text-orange-800" },
+  { value: "very_high", label: "Very High Interest", color: "bg-red-100 text-red-800" },
+];
+
 export default function CRMLeads() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -68,6 +77,7 @@ export default function CRMLeads() {
       company: "",
       status: "new",
       source: "website",
+      interestLevel: "medium",
       propertyInterests: [],
       budget: "",
       notes: "",
@@ -184,6 +194,7 @@ export default function CRMLeads() {
       company: lead.company || "",
       status: lead.status,
       source: lead.source,
+      interestLevel: lead.interestLevel || "medium",
       budget: lead.budget?.toString() || "",
       notes: lead.notes || "",
     });
@@ -210,6 +221,14 @@ export default function CRMLeads() {
 
   const getSourceLabel = (source: string) => {
     return leadSources.find(s => s.value === source)?.label || source;
+  };
+
+  const getInterestLevelColor = (interestLevel: string) => {
+    return interestLevels.find(i => i.value === interestLevel)?.color || "bg-gray-100 text-gray-800";
+  };
+
+  const getInterestLevelLabel = (interestLevel: string) => {
+    return interestLevels.find(i => i.value === interestLevel)?.label || interestLevel;
   };
 
   return (
@@ -309,6 +328,9 @@ export default function CRMLeads() {
                   <div className="flex items-center space-x-4">
                     <Badge className={getStatusColor(lead.status)}>
                       {getStatusLabel(lead.status)}
+                    </Badge>
+                    <Badge className={getInterestLevelColor(lead.interestLevel || 'medium')}>
+                      {getInterestLevelLabel(lead.interestLevel || 'medium')}
                     </Badge>
                     <div className="flex space-x-2">
                       <Button variant="outline" size="sm" onClick={() => handleEdit(lead)}>
@@ -464,6 +486,26 @@ export default function CRMLeads() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="interestLevel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Interest Level</FormLabel>
+                    <FormControl>
+                      <select {...field} className="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        {interestLevels.map((level) => (
+                          <option key={level.value} value={level.value}>
+                            {level.label}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
