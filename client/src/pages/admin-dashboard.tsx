@@ -116,7 +116,7 @@ export default function AdminDashboard() {
       case "crm-appointments": return [
         { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
         { label: "CRM Dashboard", href: "#", onClick: () => setCurrentView("crm") },
-        { label: "Appointments", href: "#" }
+        { label: "", href: "#" }
       ];
       case "crm-followups": return [
         { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
@@ -744,7 +744,7 @@ export default function AdminDashboard() {
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            📅 Appointments
+            📅
           </button>
           <button
             onClick={() => setCurrentView("crm-followups")}
@@ -814,13 +814,6 @@ export default function AdminDashboard() {
         <CRMTopNav activeTab="crm-appointments" />
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Appointments</h1>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Schedule Appointment
-            </Button>
           </div>
           <CRMAppointments />
         </div>
