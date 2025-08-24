@@ -70,7 +70,17 @@ export default function CRMLeads() {
   const queryClient = useQueryClient();
 
   const { data: leads, isLoading } = useQuery<Lead[]>({
-    queryKey: ["/api/leads", { search: searchTerm, status: statusFilter, source: sourceFilter }],
+    queryKey: ["/api/leads", searchTerm, statusFilter, sourceFilter],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (searchTerm) params.append("search", searchTerm);
+      if (statusFilter) params.append("status", statusFilter);
+      if (sourceFilter) params.append("source", sourceFilter);
+      
+      const response = await fetch(`/api/leads?${params.toString()}`);
+      if (!response.ok) throw new Error("Failed to fetch leads");
+      return response.json();
+    },
   });
 
   const form = useForm<LeadFormData>({
