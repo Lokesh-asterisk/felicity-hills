@@ -833,15 +833,6 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
         <CRMTopNav activeTab="crm-followups" />
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Follow-ups</h1>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Follow-up
-            </Button>
-          </div>
           <CRMFollowUps />
         </div>
       </div>
