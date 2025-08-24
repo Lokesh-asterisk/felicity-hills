@@ -16,8 +16,14 @@ import { z } from "zod";
 import express from "express";
 import path from "path";
 import bcrypt from "bcryptjs";
+import multer from "multer";
+import csv from "csv-parser";
+import { Readable } from "stream";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Configure multer for file uploads
+  const upload = multer({ storage: multer.memoryStorage() });
   
   // Serve static files (PDFs, HTML brochures, and images)
   app.use('/pdfs', express.static(path.join(process.cwd(), 'public', 'pdfs')));
@@ -545,6 +551,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting lead:", error);
       res.status(500).json({ message: "Failed to delete lead" });
+    }
+  });
+
+  // Import leads from CSV
+  app.post("/api/leads/import", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const results: any[] = [];
+      const stream = Readable.from(req.file.buffer);
+      
+      stream
+        .pipe(csv())
+        .on('data', (data) => results.push(data))
+        .on('end', async () => {
+          try {
+            let importedCount = 0;
+            let errorCount = 0;
+
+            for (const row of results) {
+              try {
+                // Map CSV columns to lead schema
+                const leadData = {
+                  firstName: row.firstName || row.first_name || '',
+                  lastName: row.lastName || row.last_name || '',
+                  email: row.email || '',
+                  phone: row.phone || '',
+                  company: row.company || '',
+                  status: row.status || 'new',
+                  source: row.source || 'import',
+                  interestLevel: row.interestLevel || row.interest_level || 'medium',
+                  budget: row.budget || '',
+                  notes: row.notes || ''
+                };
+
+                // Validate required fields
+                if (!leadData.firstName || !leadData.lastName || !leadData.phone) {
+                  errorCount++;
+                  continue;
+                }
+
+                // Validate and parse with schema
+                const validatedData = insertLeadSchema.parse(leadData);
+                await storage.createLead(validatedData);
+                importedCount++;
+              } catch (error) {
+                console.error("Error importing lead row:", error);
+                errorCount++;
+              }
+            }
+
+            res.json({ 
+              count: importedCount, 
+              errors: errorCount,
+              message: `Successfully imported ${importedCount} leads${errorCount > 0 ? ` (${errorCount} errors)` : ''}`
+            });
+          } catch (error) {
+            console.error("Error processing CSV:", error);
+            res.status(500).json({ message: "Failed to process CSV data" });
+          }
+        })
+        .on('error', (error) => {
+          console.error("CSV parsing error:", error);
+          res.status(400).json({ message: "Invalid CSV format" });
+        });
+    } catch (error) {
+      console.error("Error importing leads:", error);
+      res.status(500).json({ message: "Failed to import leads" });
     }
   });
 

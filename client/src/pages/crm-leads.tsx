@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Search, Edit, Trash2, Users } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Users, Upload } from "lucide-react";
 import type { Lead } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -65,7 +65,9 @@ export default function CRMLeads() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
 
   const form = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
@@ -176,6 +178,38 @@ export default function CRMLeads() {
     },
   });
 
+  // Import mutation
+  const importMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch('/api/leads/import', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Import failed');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: `Successfully imported ${data.count} leads`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/leads'] });
+      setIsImportDialogOpen(false);
+      setImportFile(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to import leads: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSubmit = (data: LeadFormData) => {
     if (editingLead) {
       updateMutation.mutate(data);
@@ -231,6 +265,24 @@ export default function CRMLeads() {
     return interestLevels.find(i => i.value === interestLevel)?.label || interestLevel;
   };
 
+  const handleImport = () => {
+    if (!importFile) return;
+    importMutation.mutate(importFile);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'text/csv') {
+      setImportFile(file);
+    } else {
+      toast({
+        title: "Error",
+        description: "Please select a valid CSV file",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="bg-white">
       <div className="mb-6">
@@ -282,17 +334,27 @@ export default function CRMLeads() {
             <CardTitle className="text-lg font-semibold text-gray-900">
               All Leads ({filteredLeads?.length || 0})
             </CardTitle>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => {
-                setEditingLead(null);
-                form.reset();
-                setIsCreateDialogOpen(true);
-              }}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add New Lead
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                variant="outline" 
+                className="border-green-600 text-green-600 hover:bg-green-50"
+                onClick={() => setIsImportDialogOpen(true)}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Import Leads
+              </Button>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => {
+                  setEditingLead(null);
+                  form.reset();
+                  setIsCreateDialogOpen(true);
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add New Lead
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -552,6 +614,63 @@ export default function CRMLeads() {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Leads Dialog */}
+      <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Import Leads</DialogTitle>
+            <DialogDescription>
+              Upload a CSV file to import multiple leads at once. The CSV should have columns: firstName, lastName, email, phone, company, status, source, interestLevel, budget, notes.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="csv-file" className="block text-sm font-medium text-gray-700 mb-2">
+                Select CSV File
+              </label>
+              <input
+                id="csv-file"
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                data-testid="input-csv-file"
+              />
+            </div>
+            {importFile && (
+              <div className="text-sm text-gray-600">
+                Selected: {importFile.name} ({Math.round(importFile.size / 1024)} KB)
+              </div>
+            )}
+            <div className="text-xs text-gray-500">
+              <p className="mb-1"><strong>CSV Format Example:</strong></p>
+              <p>firstName,lastName,email,phone,company,status,source,interestLevel,budget,notes</p>
+              <p>John,Doe,john@example.com,1234567890,ABC Corp,new,website,high,50000,Interested in plots</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsImportDialogOpen(false);
+                setImportFile(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleImport}
+              disabled={!importFile || importMutation.isPending}
+              className="bg-green-600 hover:bg-green-700 text-white"
+              data-testid="button-import"
+            >
+              {importMutation.isPending ? "Importing..." : "Import Leads"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
