@@ -48,6 +48,7 @@ const leadSources = [
   { value: "advertising", label: "Advertising" },
   { value: "cold_call", label: "Cold Call" },
   { value: "walk_in", label: "Walk-in" },
+  { value: "import", label: "CSV Import" },
 ];
 
 const interestLevels = [
