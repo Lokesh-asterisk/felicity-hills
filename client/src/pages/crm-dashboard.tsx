@@ -62,6 +62,33 @@ export default function CRMDashboard({
     retry: false,
   });
 
+  // Fetch follow-ups
+  const { data: followUps, isLoading: followUpsLoading } = useQuery({
+    queryKey: ['/api/follow-ups'],
+    retry: false,
+  });
+
+  // Get pending and overdue follow-ups
+  const getPendingFollowUps = () => {
+    if (!followUps) return [];
+    const now = new Date();
+    return followUps.filter((followUp: any) => {
+      if (followUp.status === 'completed') return false;
+      const dueDate = new Date(followUp.dueDate);
+      return dueDate >= now || dueDate.toDateString() === now.toDateString();
+    }).slice(0, 3);
+  };
+
+  const getOverdueFollowUps = () => {
+    if (!followUps) return [];
+    const now = new Date();
+    return followUps.filter((followUp: any) => {
+      if (followUp.status === 'completed') return false;
+      const dueDate = new Date(followUp.dueDate);
+      return dueDate < now && dueDate.toDateString() !== now.toDateString();
+    });
+  };
+
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('en-US', {
       hour: 'numeric',
@@ -253,14 +280,66 @@ export default function CRMDashboard({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
           {/* Follow-up Tasks */}
           <Card className="border border-gray-200 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Follow-up Tasks</CardTitle>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold text-gray-900">Follow-up Tasks</CardTitle>
+                <Button variant="link" className="text-blue-600 text-sm font-medium p-0" onClick={() => setCurrentView?.("crm-followups")}>
+                  View All
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Clock className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-500 text-sm">No pending follow-ups</p>
-              </div>
+              {followUpsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                </div>
+              ) : getPendingFollowUps().length === 0 ? (
+                <div className="text-center py-8">
+                  <Clock className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-gray-500 text-sm">No pending follow-ups</p>
+                  <Button 
+                    onClick={() => setCurrentView?.("crm-followups")}
+                    className="bg-blue-600 hover:bg-blue-700 text-white mt-4"
+                    size="sm"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Follow-up
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {getPendingFollowUps().map((followUp: any) => {
+                    const isOverdue = getOverdueFollowUps().some((o: any) => o.id === followUp.id);
+                    const dueDate = new Date(followUp.dueDate);
+                    const isToday = dueDate.toDateString() === new Date().toDateString();
+                    
+                    return (
+                      <div key={followUp.id} className="flex items-center p-3 border border-gray-100 rounded-lg">
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{followUp.title}</p>
+                          <p className="text-sm text-gray-500">
+                            Due: {dueDate.toLocaleDateString()} 
+                            {isToday && <span className="text-orange-600 font-medium ml-1">(Today)</span>}
+                            {isOverdue && <span className="text-red-600 font-medium ml-1">(Overdue)</span>}
+                          </p>
+                        </div>
+                        <Badge className={`text-xs ${
+                          isOverdue ? 'bg-red-100 text-red-800' : 
+                          isToday ? 'bg-orange-100 text-orange-800' : 
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {followUp.priority}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                  {getOverdueFollowUps().length > 0 && (
+                    <div className="mt-2 text-sm text-red-600 font-medium">
+                      {getOverdueFollowUps().length} overdue task{getOverdueFollowUps().length !== 1 ? 's' : ''}
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -270,8 +349,38 @@ export default function CRMDashboard({
               <CardTitle className="text-lg font-semibold text-gray-900">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <p className="text-gray-500 text-sm">Quick actions and shortcuts</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  onClick={() => setCurrentView?.("crm-leads")}
+                  className="bg-green-600 hover:bg-green-700 text-white h-auto p-4 flex flex-col items-center gap-2"
+                >
+                  <Users className="w-5 h-5" />
+                  <span className="text-sm">Add Lead</span>
+                </Button>
+                
+                <Button 
+                  onClick={() => setCurrentView?.("crm-appointments")}
+                  className="bg-blue-600 hover:bg-blue-700 text-white h-auto p-4 flex flex-col items-center gap-2"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span className="text-sm">Schedule</span>
+                </Button>
+                
+                <Button 
+                  onClick={() => setCurrentView?.("crm-followups")}
+                  className="bg-orange-600 hover:bg-orange-700 text-white h-auto p-4 flex flex-col items-center gap-2"
+                >
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="text-sm">Follow-up</span>
+                </Button>
+                
+                <Button 
+                  onClick={() => setCurrentView?.("crm-reports")}
+                  className="bg-purple-600 hover:bg-purple-700 text-white h-auto p-4 flex flex-col items-center gap-2"
+                >
+                  <TrendingUp className="w-5 h-5" />
+                  <span className="text-sm">Reports</span>
+                </Button>
               </div>
             </CardContent>
           </Card>
