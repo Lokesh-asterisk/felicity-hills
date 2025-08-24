@@ -27,6 +27,7 @@ import CRMDashboard from "@/pages/crm-dashboard";
 import CRMLeads from "@/pages/crm-leads";
 import CRMAppointments from "@/pages/crm-appointments";
 import CRMFollowUps from "@/pages/crm-followups";
+import CRMReports from "@/pages/crm-reports";
 
 interface BrochureDownload {
   id: string;
@@ -87,7 +88,7 @@ const testimonialFormSchema = z.object({
 // Password verification is now handled via API
 
 export default function AdminDashboard() {
-  const [currentView, setCurrentView] = useState<"dashboard" | "crm" | "crm-leads" | "crm-appointments" | "crm-followups" | "crm-dashboard">("dashboard");
+  const [currentView, setCurrentView] = useState<"dashboard" | "crm" | "crm-leads" | "crm-appointments" | "crm-followups" | "crm-reports" | "crm-dashboard">("dashboard");
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   // Navigation items for CRM
@@ -96,6 +97,7 @@ export default function AdminDashboard() {
     { id: "crm-leads" as const, label: "Leads", icon: Users, description: "Manage leads pipeline" },
     { id: "crm-appointments" as const, label: "Appointments", icon: Calendar, description: "Schedule & manage" },
     { id: "crm-followups" as const, label: "Follow-ups", icon: Clock, description: "Track tasks" },
+    { id: "crm-reports" as const, label: "Reports", icon: TrendingUp, description: "Analytics & insights" },
   ];
 
   // Breadcrumb navigation
@@ -120,6 +122,11 @@ export default function AdminDashboard() {
         { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
         { label: "CRM Dashboard", href: "#", onClick: () => setCurrentView("crm") },
         { label: "Follow-ups", href: "#" }
+      ];
+      case "crm-reports": return [
+        { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
+        { label: "CRM Dashboard", href: "#", onClick: () => setCurrentView("crm") },
+        { label: "Reports", href: "#" }
       ];
       default: return [{ label: "Admin Dashboard", href: "#" }];
     }
@@ -752,7 +759,12 @@ export default function AdminDashboard() {
             📋 Follow-ups
           </button>
           <button
-            className="px-1 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+            onClick={() => setCurrentView("crm-reports")}
+            className={`px-1 py-4 text-sm font-medium border-b-2 ${
+              activeTab === "crm-reports" 
+                ? "border-blue-600 text-blue-600" 
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
           >
             📊 Reports
           </button>
@@ -833,6 +845,17 @@ export default function AdminDashboard() {
             </Button>
           </div>
           <CRMFollowUps />
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === "crm-reports") {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <CRMTopNav activeTab="crm-reports" />
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <CRMReports />
         </div>
       </div>
     );
