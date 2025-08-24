@@ -325,10 +325,10 @@ export class DatabaseStorage implements IStorage {
     const conditions = [];
     
     if (filters) {
-      if (filters.status) {
+      if (filters.status && filters.status !== "all") {
         conditions.push(eq(leads.status, filters.status));
       }
-      if (filters.source) {
+      if (filters.source && filters.source !== "all") {
         conditions.push(eq(leads.source, filters.source));
       }
       if (filters.search) {

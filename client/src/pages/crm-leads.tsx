@@ -61,8 +61,8 @@ const propertyTypes = [
 
 export default function CRMLeads() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [sourceFilter, setSourceFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
@@ -217,8 +217,8 @@ export default function CRMLeads() {
 
   const clearFilters = () => {
     setSearchTerm("");
-    setStatusFilter("");
-    setSourceFilter("");
+    setStatusFilter("all");
+    setSourceFilter("all");
   };
 
   const openCreateDialog = () => {
@@ -458,7 +458,7 @@ export default function CRMLeads() {
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
+                  <SelectItem value="all">All Statuses</SelectItem>
                   {leadStatuses.map((status) => (
                     <SelectItem key={status.value} value={status.value}>
                       {status.label}
@@ -471,7 +471,7 @@ export default function CRMLeads() {
                   <SelectValue placeholder="Filter by source" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Sources</SelectItem>
+                  <SelectItem value="all">All Sources</SelectItem>
                   {leadSources.map((source) => (
                     <SelectItem key={source.value} value={source.value}>
                       {source.label}
