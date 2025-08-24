@@ -298,8 +298,58 @@ export default function CRMReports() {
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto p-3 sm:p-6">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">CRM Reports & Analytics</h1>
-          <p className="text-sm sm:text-base text-gray-600">Comprehensive insights into your sales pipeline and performance</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">CRM Reports & Analytics</h1>
+              <p className="text-sm sm:text-base text-gray-600">Comprehensive insights into your sales pipeline and performance</p>
+            </div>
+            
+            {/* Export Section */}
+            <Card className="border border-gray-200 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Export Data
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    onClick={exportLeads}
+                    className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-2 h-auto"
+                    data-testid="button-export-leads"
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    Leads
+                  </Button>
+                  <Button 
+                    onClick={exportAppointments}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 h-auto"
+                    data-testid="button-export-appointments"
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    Appointments
+                  </Button>
+                  <Button 
+                    onClick={exportFollowUps}
+                    className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-3 py-2 h-auto"
+                    data-testid="button-export-followups"
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    Follow-ups
+                  </Button>
+                  <Button 
+                    onClick={exportAllData}
+                    className="bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-2 h-auto"
+                    data-testid="button-export-summary"
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    Summary
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
@@ -466,6 +516,22 @@ export default function CRMReports() {
 
           {/* Lead Analytics Tab */}
           <TabsContent value="leads" className="space-y-4 sm:space-y-6">
+            {/* Lead Export Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Export Lead Data</h3>
+                <p className="text-xs text-gray-600">Download all lead information with status, source, and contact details</p>
+              </div>
+              <Button 
+                onClick={exportLeads}
+                className="bg-green-600 hover:bg-green-700 text-white"
+                data-testid="button-export-leads-tab"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Leads CSV
+              </Button>
+            </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Lead Status Breakdown */}
               <Card className="border border-gray-200 shadow-sm">
@@ -556,6 +622,32 @@ export default function CRMReports() {
 
           {/* Appointments Tab */}
           <TabsContent value="appointments" className="space-y-4 sm:space-y-6">
+            {/* Appointments Export Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Export Appointment Data</h3>
+                <p className="text-xs text-gray-600">Download all appointment schedules with dates, status, and details</p>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={exportAppointments}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  data-testid="button-export-appointments-tab"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Appointments
+                </Button>
+                <Button 
+                  onClick={exportFollowUps}
+                  className="bg-orange-600 hover:bg-orange-700 text-white"
+                  data-testid="button-export-followups-tab"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Follow-ups
+                </Button>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Appointment Status */}
               <Card className="border border-gray-200 shadow-sm">
@@ -614,6 +706,36 @@ export default function CRMReports() {
 
           {/* Performance Tab */}
           <TabsContent value="performance" className="space-y-4 sm:space-y-6">
+            {/* Performance Export Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Export Performance Reports</h3>
+                <p className="text-xs text-gray-600">Download comprehensive summary with key metrics and performance data</p>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={exportAllData}
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                  data-testid="button-export-summary-tab"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Summary
+                </Button>
+                <Button 
+                  onClick={() => {
+                    exportLeads();
+                    setTimeout(() => exportAppointments(), 500);
+                    setTimeout(() => exportFollowUps(), 1000);
+                  }}
+                  className="bg-gray-600 hover:bg-gray-700 text-white"
+                  data-testid="button-export-all-tab"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export All Data
+                </Button>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Performance Metrics */}
               <Card className="border border-gray-200 shadow-sm">
