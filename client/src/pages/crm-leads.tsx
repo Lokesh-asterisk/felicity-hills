@@ -433,12 +433,14 @@ export default function CRMLeads() {
           </div>
         </div>
 
-        {/* Filters */}
-        <Card className="mb-6" data-testid="card-filters">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Filter className="w-5 h-5 mr-2" />
-              Filters
+        {/* Enhanced Filters */}
+        <Card className="mb-6 border-0 shadow-lg bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-700" data-testid="card-filters">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center text-xl">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg mr-3">
+                <Filter className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              Search & Filter Leads
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -449,25 +451,28 @@ export default function CRMLeads() {
                   placeholder="Search leads..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-2 focus:border-blue-400 transition-colors"
                   data-testid="input-search"
                 />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger data-testid="select-filter-status">
+                <SelectTrigger className="border-2 focus:border-green-400 transition-colors" data-testid="select-filter-status">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
                   {leadStatuses.map((status) => (
                     <SelectItem key={status.value} value={status.value}>
-                      {status.label}
+                      <div className="flex items-center">
+                        <div className={`w-2 h-2 rounded-full mr-2 ${status.color.includes('blue') ? 'bg-blue-500' : status.color.includes('green') ? 'bg-green-500' : status.color.includes('yellow') ? 'bg-yellow-500' : status.color.includes('red') ? 'bg-red-500' : status.color.includes('purple') ? 'bg-purple-500' : 'bg-gray-500'}`}></div>
+                        {status.label}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                <SelectTrigger data-testid="select-filter-source">
+                <SelectTrigger className="border-2 focus:border-orange-400 transition-colors" data-testid="select-filter-source">
                   <SelectValue placeholder="Filter by source" />
                 </SelectTrigger>
                 <SelectContent>
@@ -479,7 +484,13 @@ export default function CRMLeads() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button variant="outline" onClick={clearFilters} data-testid="button-clear-filters">
+              <Button 
+                variant="outline" 
+                onClick={clearFilters} 
+                className="border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 transition-all duration-300" 
+                data-testid="button-clear-filters"
+              >
+                <Filter className="w-4 h-4 mr-2" />
                 Clear Filters
               </Button>
             </div>

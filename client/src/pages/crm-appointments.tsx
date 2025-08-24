@@ -215,16 +215,20 @@ export default function CRMAppointments() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 space-y-4 lg:space-y-0">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 via-teal-600 to-green-800 bg-clip-text text-transparent">
               Appointment Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Schedule and manage client appointments
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              Schedule and manage client appointments with ease
             </p>
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <Calendar className="w-4 h-4" />
+              <span>Real-time scheduling system</span>
+            </div>
           </div>
           <div className="flex space-x-4">
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -412,37 +416,58 @@ export default function CRMAppointments() {
           </div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search appointments..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-                data-testid="input-search"
-              />
+        {/* Enhanced Search and Filters */}
+        <Card className="mb-6 border-0 shadow-lg bg-gradient-to-r from-white to-green-50 dark:from-gray-800 dark:to-green-900/20">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center text-xl">
+              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg mr-3">
+                <Search className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              Search & Filter Appointments
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search appointments..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-2 focus:border-green-400 transition-colors"
+                    data-testid="input-search"
+                  />
+                </div>
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-48 border-2 focus:border-teal-400 transition-colors" data-testid="select-filter-status">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  {appointmentStatuses.map((status) => (
+                    <SelectItem key={status.value} value={status.value}>
+                      <div className="flex items-center">
+                        <div className={`w-2 h-2 rounded-full mr-2 ${status.color.includes('blue') ? 'bg-blue-500' : status.color.includes('green') ? 'bg-green-500' : status.color.includes('yellow') ? 'bg-yellow-500' : status.color.includes('red') ? 'bg-red-500' : 'bg-gray-500'}`}></div>
+                        {status.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button 
+                variant="outline" 
+                onClick={clearFilters} 
+                className="border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 transition-all duration-300"
+                data-testid="button-clear-filters"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Clear Filters
+              </Button>
             </div>
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-48" data-testid="select-filter-status">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              {appointmentStatuses.map((status) => (
-                <SelectItem key={status.value} value={status.value}>
-                  {status.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button variant="outline" onClick={clearFilters} data-testid="button-clear-filters">
-            Clear Filters
-          </Button>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Appointments List */}
         <div className="space-y-4">

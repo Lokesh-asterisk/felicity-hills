@@ -244,16 +244,20 @@ export default function CRMFollowUps() {
   }) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 space-y-4 lg:space-y-0">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 via-amber-600 to-orange-800 bg-clip-text text-transparent">
               Follow-up Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Track and complete follow-up tasks
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              Track and complete follow-up tasks efficiently
             </p>
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <Clock className="w-4 h-4" />
+              <span>Task tracking system</span>
+            </div>
           </div>
           <div className="flex space-x-4">
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
