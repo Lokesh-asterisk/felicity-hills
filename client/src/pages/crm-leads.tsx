@@ -85,7 +85,7 @@ export default function CRMLeads() {
     const matchesSearch = 
       lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.email.toLowerCase().includes(searchTerm.toLowerCase());
+      (lead.email || "").toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
     const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
@@ -96,7 +96,7 @@ export default function CRMLeads() {
   // Create mutation
   const createMutation = useMutation({
     mutationFn: async (data: LeadFormData) => {
-      await apiRequest('/api/leads', 'POST', data);
+      await apiRequest('POST', '/api/leads', data);
     },
     onSuccess: () => {
       toast({
@@ -119,7 +119,7 @@ export default function CRMLeads() {
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async (data: LeadFormData) => {
-      await apiRequest(`/api/leads/${editingLead?.id}`, 'PUT', data);
+      await apiRequest('PUT', `/api/leads/${editingLead?.id}`, data);
     },
     onSuccess: () => {
       toast({
@@ -144,7 +144,7 @@ export default function CRMLeads() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       console.log('Attempting to delete lead with ID:', id);
-      const response = await apiRequest(`/api/leads/${id}`, 'DELETE');
+      const response = await apiRequest('DELETE', `/api/leads/${id}`);
       console.log('Delete response:', response);
       return response;
     },
