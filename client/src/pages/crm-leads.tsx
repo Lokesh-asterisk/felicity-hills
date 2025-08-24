@@ -240,11 +240,6 @@ export default function CRMLeads() {
             </p>
           </div>
           <div className="flex space-x-4">
-            <Link href="/crm">
-              <Button variant="outline" data-testid="button-back-dashboard">
-                Back to Dashboard
-              </Button>
-            </Link>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button onClick={openCreateDialog} data-testid="button-new-lead">

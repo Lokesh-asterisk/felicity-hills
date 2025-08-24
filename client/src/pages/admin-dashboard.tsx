@@ -602,14 +602,7 @@ export default function AdminDashboard() {
           </div>
           <CRMDashboard 
             onNavigateToLeads={() => setCurrentView("crm-leads")}
-            onCreateNewLead={() => {
-              setCurrentView("crm-leads");
-              // Auto-trigger create dialog when navigating for new lead
-              setTimeout(() => {
-                const createButton = document.querySelector('[data-testid="button-new-lead"]') as HTMLButtonElement;
-                if (createButton) createButton.click();
-              }, 100);
-            }}
+            onCreateNewLead={() => setCurrentView("crm-leads")}
           />
         </div>
       </div>
