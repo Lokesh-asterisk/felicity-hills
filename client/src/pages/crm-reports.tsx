@@ -263,7 +263,10 @@ export default function CRMReports() {
 
   const getTotalBudgetValue = () => {
     if (!leads) return 0;
-    return leads.reduce((total, lead) => total + (lead.budget || 0), 0);
+    return leads.reduce((total, lead) => {
+      const budget = lead.budget ? parseFloat(lead.budget.toString().replace(/[^\d.-]/g, '')) : 0;
+      return total + (isNaN(budget) ? 0 : budget);
+    }, 0);
   };
 
   const getStatusColor = (status: string) => {
