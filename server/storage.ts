@@ -634,7 +634,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Initialize sample CRM data if none exist
-      const existingLeads = await this.getLeads();
+      const existingLeads = await this.getLeads({});
       if (existingLeads.length === 0) {
         const sampleLeads = [
           {
@@ -680,9 +680,9 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Initialize sample appointments if none exist
-      const existingAppointments = await this.getAppointments();
-      if (existingAppointments.length === 0 && existingLeads.length > 0) {
-        const leadIds = await this.getLeads();
+      const existingAppointments = await this.getAppointments({});
+      if (existingAppointments.length === 0) {
+        const leadIds = await this.getLeads({});
         if (leadIds.length > 0) {
           const sampleAppointments = [
             {
@@ -712,9 +712,9 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Initialize sample follow-ups if none exist
-      const existingFollowUps = await this.getFollowUps();
-      if (existingFollowUps.length === 0 && existingLeads.length > 0) {
-        const leadIds = await this.getLeads();
+      const existingFollowUps = await this.getFollowUps({});
+      if (existingFollowUps.length === 0) {
+        const leadIds = await this.getLeads({});
         if (leadIds.length > 0) {
           const sampleFollowUps = [
             {

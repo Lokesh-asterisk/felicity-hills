@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet } from "lucide-react";
+import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet, BarChart3 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import * as XLSX from 'xlsx';
 import { useForm } from "react-hook-form";
@@ -595,6 +595,18 @@ export default function AdminDashboard() {
             <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs sm:text-sm">
               Live Data
             </Badge>
+            <Link href="/crm">
+              <Button
+                variant="default"
+                size="sm"
+                className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700"
+                data-testid="button-crm-dashboard"
+              >
+                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">CRM Dashboard</span>
+                <span className="sm:hidden">CRM</span>
+              </Button>
+            </Link>
             <Button
               variant="outline"
               size="sm"
