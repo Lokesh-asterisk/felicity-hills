@@ -143,19 +143,24 @@ export default function CRMLeads() {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest(`/api/leads/${id}`, 'DELETE');
+      console.log('Attempting to delete lead with ID:', id);
+      const response = await apiRequest(`/api/leads/${id}`, 'DELETE');
+      console.log('Delete response:', response);
+      return response;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      console.log('Lead deleted successfully:', variables);
       toast({
         title: "Success",
         description: "Lead deleted successfully",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/leads'] });
     },
-    onError: () => {
+    onError: (error, variables) => {
+      console.error('Delete error:', error, 'Lead ID:', variables);
       toast({
         title: "Error",
-        description: "Failed to delete lead",
+        description: `Failed to delete lead: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
     },
@@ -186,7 +191,11 @@ export default function CRMLeads() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this lead?")) {
+    const lead = leads?.find(l => l.id === id);
+    const leadName = lead ? `${lead.firstName} ${lead.lastName}` : 'this lead';
+    
+    if (confirm(`Are you sure you want to delete ${leadName}? This action cannot be undone.`)) {
+      console.log('User confirmed delete for lead:', id);
       deleteMutation.mutate(id);
     }
   };
@@ -292,8 +301,18 @@ export default function CRMLeads() {
                       <Button variant="outline" size="sm" onClick={() => handleEdit(lead)}>
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleDelete(lead.id)}>
-                        <Trash2 className="w-4 h-4" />
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleDelete(lead.id)}
+                        disabled={deleteMutation.isPending}
+                        className="hover:bg-red-50 hover:text-red-600 hover:border-red-300"
+                      >
+                        {deleteMutation.isPending ? (
+                          <div className="w-4 h-4 animate-spin border-2 border-current border-t-transparent rounded-full" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </Button>
                     </div>
                   </div>
