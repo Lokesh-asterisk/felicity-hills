@@ -8,9 +8,10 @@ import type { Appointment, FollowUp, Lead } from "@shared/schema";
 
 interface CRMDashboardProps {
   onNavigateToLeads?: () => void;
+  onCreateNewLead?: () => void;
 }
 
-export default function CRMDashboard({ onNavigateToLeads }: CRMDashboardProps) {
+export default function CRMDashboard({ onNavigateToLeads, onCreateNewLead }: CRMDashboardProps) {
   const { data: todaysAppointments, isLoading: appointmentsLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/appointments/today"],
   });
@@ -81,16 +82,14 @@ export default function CRMDashboard({ onNavigateToLeads }: CRMDashboardProps) {
             </p>
           </div>
           <div className="flex space-x-4">
-            <Button data-testid="button-new-lead" onClick={onNavigateToLeads}>
+            <Button data-testid="button-new-lead" onClick={onCreateNewLead || onNavigateToLeads}>
               <Plus className="w-4 h-4 mr-2" />
               New Lead
             </Button>
-            <Link href="/crm/appointments/new">
-              <Button variant="outline" data-testid="button-new-appointment">
-                <Calendar className="w-4 h-4 mr-2" />
-                Schedule Appointment
-              </Button>
-            </Link>
+            <Button variant="outline" data-testid="button-new-appointment" disabled>
+              <Calendar className="w-4 h-4 mr-2" />
+              Schedule Appointment
+            </Button>
           </div>
         </div>
 

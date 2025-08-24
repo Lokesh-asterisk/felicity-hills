@@ -101,10 +101,13 @@ export default function CRMLeads() {
 
   const createMutation = useMutation({
     mutationFn: async (data: LeadFormData) => {
-      await apiRequest("/api/leads", {
+      const response = await fetch("/api/leads", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      if (!response.ok) throw new Error("Failed to create lead");
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
@@ -127,10 +130,7 @@ export default function CRMLeads() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<LeadFormData> }) => {
-      await apiRequest(`/api/leads/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await apiRequest("PUT", `/api/leads/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
@@ -153,9 +153,7 @@ export default function CRMLeads() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest(`/api/leads/${id}`, {
-        method: "DELETE",
-      });
+      await apiRequest("DELETE", `/api/leads/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
@@ -563,12 +561,10 @@ export default function CRMLeads() {
                     </div>
 
                     <div className="flex items-center space-x-2 ml-4">
-                      <Link href={`/crm/appointments/new?leadId=${lead.id}`}>
-                        <Button variant="outline" size="sm" data-testid={`button-schedule-${lead.id}`}>
-                          <Calendar className="w-4 h-4 mr-1" />
-                          Schedule
-                        </Button>
-                      </Link>
+                      <Button variant="outline" size="sm" data-testid={`button-schedule-${lead.id}`} disabled>
+                        <Calendar className="w-4 h-4 mr-1" />
+                        Schedule
+                      </Button>
                       <Button 
                         variant="outline" 
                         size="sm" 
