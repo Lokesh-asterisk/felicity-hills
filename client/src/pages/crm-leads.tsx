@@ -259,9 +259,22 @@ export default function CRMLeads() {
       {/* Leads Table */}
       <Card className="border border-gray-200 shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-900">
-            All Leads ({filteredLeads?.length || 0})
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold text-gray-900">
+              All Leads ({filteredLeads?.length || 0})
+            </CardTitle>
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => {
+                setEditingLead(null);
+                form.reset();
+                setIsCreateDialogOpen(true);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Lead
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
