@@ -474,16 +474,16 @@ export default function CRMReports() {
                 <CardContent>
                   <div className="space-y-3">
                     {getLeadSourceBreakdown().map((item, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-xs sm:text-sm font-medium text-gray-700 capitalize truncate max-w-[100px] sm:max-w-none">{item.source}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 sm:w-20 bg-gray-200 rounded-full h-2">
+                      <div key={index} className="flex items-center justify-between gap-2">
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 capitalize truncate flex-1 min-w-0">{item.source}</span>
+                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                          <div className="w-12 sm:w-16 bg-gray-200 rounded-full h-2">
                             <div 
                               className="bg-blue-600 h-2 rounded-full" 
                               style={{ width: `${(item.count / (leads?.length || 1)) * 100}%` }}
                             ></div>
                           </div>
-                          <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[20px]">{item.count}</span>
+                          <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[15px]">{item.count}</span>
                         </div>
                       </div>
                     ))}
@@ -544,52 +544,52 @@ export default function CRMReports() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs sm:text-sm font-medium text-gray-700">New Leads</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 sm:w-24 bg-gray-200 rounded-full h-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 flex-1 min-w-0 truncate">New Leads</span>
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <div className="w-12 sm:w-20 bg-gray-200 rounded-full h-3">
                           <div 
                             className="bg-blue-600 h-3 rounded-full" 
                             style={{ width: `${leadStats?.total && leadStats.total > 0 ? ((leadStats?.new || 0) / leadStats.total) * 100 : 0}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[20px]">{leadStats?.new || 0}</span>
+                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[15px]">{leadStats?.new || 0}</span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs sm:text-sm font-medium text-gray-700">Qualified</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 sm:w-24 bg-gray-200 rounded-full h-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 flex-1 min-w-0 truncate">Qualified</span>
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <div className="w-12 sm:w-20 bg-gray-200 rounded-full h-3">
                           <div 
                             className="bg-green-600 h-3 rounded-full" 
                             style={{ width: `${leadStats?.total && leadStats.total > 0 ? ((leadStats?.qualified || 0) / leadStats.total) * 100 : 0}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[20px]">{leadStats?.qualified || 0}</span>
+                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[15px]">{leadStats?.qualified || 0}</span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs sm:text-sm font-medium text-gray-700">Converted</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 sm:w-24 bg-gray-200 rounded-full h-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 flex-1 min-w-0 truncate">Converted</span>
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <div className="w-12 sm:w-20 bg-gray-200 rounded-full h-3">
                           <div 
                             className="bg-purple-600 h-3 rounded-full" 
                             style={{ width: `${leadStats?.total && leadStats.total > 0 ? ((leadStats?.converted || 0) / leadStats.total) * 100 : 0}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[20px]">{leadStats?.converted || 0}</span>
+                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[15px]">{leadStats?.converted || 0}</span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs sm:text-sm font-medium text-gray-700">Lost</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 sm:w-24 bg-gray-200 rounded-full h-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 flex-1 min-w-0 truncate">Lost</span>
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <div className="w-12 sm:w-20 bg-gray-200 rounded-full h-3">
                           <div 
                             className="bg-red-600 h-3 rounded-full" 
                             style={{ width: `${leadStats?.total && leadStats.total > 0 ? ((leadStats?.lost || 0) / leadStats.total) * 100 : 0}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[20px]">{leadStats?.lost || 0}</span>
+                        <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[15px]">{leadStats?.lost || 0}</span>
                       </div>
                     </div>
                   </div>
@@ -661,16 +661,16 @@ export default function CRMReports() {
                 <CardContent>
                   <div className="space-y-3">
                     {getAppointmentStatusBreakdown().map((item, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700 capitalize">{item.status}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                      <div key={index} className="flex items-center justify-between gap-2">
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 capitalize flex-1 min-w-0 truncate">{item.status}</span>
+                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                          <div className="w-12 sm:w-16 bg-gray-200 rounded-full h-2">
                             <div 
                               className="bg-purple-600 h-2 rounded-full" 
                               style={{ width: `${(item.count / (appointments?.length || 1)) * 100}%` }}
                             ></div>
                           </div>
-                          <span className="text-sm font-bold text-gray-900">{item.count}</span>
+                          <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[15px]">{item.count}</span>
                         </div>
                       </div>
                     ))}
@@ -686,10 +686,10 @@ export default function CRMReports() {
                 <CardContent>
                   <div className="space-y-3">
                     {getFollowUpPriorityBreakdown().map((item, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700 capitalize">{item.priority} Priority</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                      <div key={index} className="flex items-center justify-between gap-2">
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 capitalize flex-1 min-w-0 truncate">{item.priority} Priority</span>
+                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                          <div className="w-12 sm:w-16 bg-gray-200 rounded-full h-2">
                             <div 
                               className={`h-2 rounded-full ${
                                 item.priority === 'high' ? 'bg-red-600' :
@@ -698,7 +698,7 @@ export default function CRMReports() {
                               style={{ width: `${(item.count / (followUps?.length || 1)) * 100}%` }}
                             ></div>
                           </div>
-                          <span className="text-sm font-bold text-gray-900">{item.count}</span>
+                          <span className="text-xs sm:text-sm font-bold text-gray-900 min-w-[15px]">{item.count}</span>
                         </div>
                       </div>
                     ))}
@@ -748,38 +748,38 @@ export default function CRMReports() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 sm:space-y-4">
-                    <div className="flex items-center justify-between p-2 sm:p-3 bg-green-50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">Success Rate</span>
+                    <div className="flex items-center justify-between gap-2 p-2 sm:p-3 bg-green-50 rounded-lg">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+                        <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">Success Rate</span>
                       </div>
-                      <span className="text-base sm:text-lg font-bold text-green-600">
+                      <span className="text-sm sm:text-lg font-bold text-green-600 flex-shrink-0">
                         {leadStats?.total && leadStats.total > 0 ? Math.round(((leadStats?.converted || 0) / leadStats.total) * 100) : 0}%
                       </span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 sm:p-3 bg-blue-50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">Total Leads</span>
+                    <div className="flex items-center justify-between gap-2 p-2 sm:p-3 bg-blue-50 rounded-lg">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+                        <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">Total Leads</span>
                       </div>
-                      <span className="text-base sm:text-lg font-bold text-blue-600">{leadStats?.total || 0}</span>
+                      <span className="text-sm sm:text-lg font-bold text-blue-600 flex-shrink-0">{leadStats?.total || 0}</span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 sm:p-3 bg-purple-50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">Appointments</span>
+                    <div className="flex items-center justify-between gap-2 p-2 sm:p-3 bg-purple-50 rounded-lg">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+                        <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">Appointments</span>
                       </div>
-                      <span className="text-base sm:text-lg font-bold text-purple-600">{appointments?.length || 0}</span>
+                      <span className="text-sm sm:text-lg font-bold text-purple-600 flex-shrink-0">{appointments?.length || 0}</span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 sm:p-3 bg-orange-50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">Follow-ups</span>
+                    <div className="flex items-center justify-between gap-2 p-2 sm:p-3 bg-orange-50 rounded-lg">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+                        <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-700 truncate">Follow-ups</span>
                       </div>
-                      <span className="text-base sm:text-lg font-bold text-orange-600">{followUps?.length || 0}</span>
+                      <span className="text-sm sm:text-lg font-bold text-orange-600 flex-shrink-0">{followUps?.length || 0}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -796,9 +796,9 @@ export default function CRMReports() {
                       .sort((a, b) => b.rate - a.rate)
                       .slice(0, 5)
                       .map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 sm:p-4 border border-gray-100 rounded-lg">
-                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                          <div className={`p-1.5 sm:p-2 rounded-lg flex-shrink-0 ${
+                      <div key={index} className="flex items-center justify-between gap-2 p-2 sm:p-3 border border-gray-100 rounded-lg">
+                        <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                          <div className={`p-1 sm:p-1.5 rounded-lg flex-shrink-0 ${
                             index === 0 ? 'bg-yellow-100' :
                             index === 1 ? 'bg-gray-100' : 'bg-orange-100'
                           }`}>
@@ -807,14 +807,14 @@ export default function CRMReports() {
                               index === 1 ? 'text-gray-600' : 'text-orange-600'
                             }`} />
                           </div>
-                          <div className="min-w-0">
-                            <p className="text-sm sm:font-medium text-gray-900 capitalize truncate">{item.source}</p>
-                            <p className="text-xs sm:text-sm text-gray-500">{item.converted} conversions from {item.total} leads</p>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs sm:text-sm font-medium text-gray-900 capitalize truncate">{item.source}</p>
+                            <p className="text-xs text-gray-500 truncate">{item.converted} from {item.total} leads</p>
                           </div>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-lg sm:text-xl font-bold text-gray-900">{item.rate}%</p>
-                          <p className="text-xs sm:text-sm text-gray-500">conversion rate</p>
+                          <p className="text-sm sm:text-lg font-bold text-gray-900">{item.rate}%</p>
+                          <p className="text-xs text-gray-500">rate</p>
                         </div>
                       </div>
                     ))}
