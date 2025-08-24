@@ -11,7 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet, BarChart3, ArrowLeft } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet, BarChart3, ArrowLeft, Menu, Home, ChevronRight, Clock, UserCheck, MapPin } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import * as XLSX from 'xlsx';
 import { useForm } from "react-hook-form";
@@ -86,6 +88,72 @@ const testimonialFormSchema = z.object({
 
 export default function AdminDashboard() {
   const [currentView, setCurrentView] = useState<"dashboard" | "crm" | "crm-leads" | "crm-appointments" | "crm-followups" | "crm-dashboard">("dashboard");
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  // Navigation items for CRM
+  const crmNavItems = [
+    { id: "crm" as const, label: "CRM Dashboard", icon: BarChart3, description: "Overview & analytics" },
+    { id: "crm-leads" as const, label: "Leads", icon: Users, description: "Manage leads pipeline" },
+    { id: "crm-appointments" as const, label: "Appointments", icon: Calendar, description: "Schedule & manage" },
+    { id: "crm-followups" as const, label: "Follow-ups", icon: Clock, description: "Track tasks" },
+  ];
+
+  // Breadcrumb navigation
+  const getBreadcrumb = () => {
+    switch (currentView) {
+      case "dashboard": return [{ label: "Admin Dashboard", href: "#" }];
+      case "crm": return [
+        { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
+        { label: "CRM Dashboard", href: "#" }
+      ];
+      case "crm-leads": return [
+        { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
+        { label: "CRM Dashboard", href: "#", onClick: () => setCurrentView("crm") },
+        { label: "Leads", href: "#" }
+      ];
+      case "crm-appointments": return [
+        { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
+        { label: "CRM Dashboard", href: "#", onClick: () => setCurrentView("crm") },
+        { label: "Appointments", href: "#" }
+      ];
+      case "crm-followups": return [
+        { label: "Admin Dashboard", href: "#", onClick: () => setCurrentView("dashboard") },
+        { label: "CRM Dashboard", href: "#", onClick: () => setCurrentView("crm") },
+        { label: "Follow-ups", href: "#" }
+      ];
+      default: return [{ label: "Admin Dashboard", href: "#" }];
+    }
+  };
+
+  // Quick navigation sidebar component
+  const CRMSidebar = ({ onClose }: { onClose?: () => void }) => (
+    <div className="space-y-2">
+      <div className="px-4 py-2">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">CRM Navigation</h3>
+      </div>
+      {crmNavItems.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => {
+            setCurrentView(item.id);
+            onClose?.();
+          }}
+          className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-200 ${
+            currentView === item.id 
+              ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border-r-2 border-blue-500" 
+              : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
+          }`}
+        >
+          <item.icon className="w-5 h-5 mr-3" />
+          <div>
+            <div className="font-medium">{item.label}</div>
+            <div className="text-xs text-gray-500">{item.description}</div>
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [, setLocation] = useLocation();
@@ -583,30 +651,88 @@ export default function AdminDashboard() {
     return yesterday > 0 ? ((today - yesterday) / yesterday * 100) : 0;
   };
 
+  // Enhanced Breadcrumb Component
+  const Breadcrumb = () => {
+    const breadcrumbs = getBreadcrumb();
+    return (
+      <nav className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+        {breadcrumbs.map((crumb, index) => (
+          <div key={index} className="flex items-center">
+            {index > 0 && <ChevronRight className="w-4 h-4 mx-2" />}
+            {crumb.onClick ? (
+              <button
+                onClick={crumb.onClick}
+                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                {crumb.label}
+              </button>
+            ) : (
+              <span className="font-medium text-gray-900 dark:text-white">{crumb.label}</span>
+            )}
+          </div>
+        ))}
+      </nav>
+    );
+  };
+
   // Handle CRM view rendering
   if (currentView === "crm") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
-        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentView("dashboard")}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
-            </Button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-              CRM Dashboard
-            </h1>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
+              <div className="flex items-center flex-shrink-0 px-4 mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
+              </div>
+              <CRMSidebar />
+            </div>
           </div>
-          <CRMDashboard 
-            onNavigateToLeads={() => setCurrentView("crm-leads")}
-            onCreateNewLead={() => setCurrentView("crm-leads")}
-            setCurrentView={setCurrentView}
-          />
+
+          {/* Mobile Navigation */}
+          <div className="lg:hidden">
+            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="m-4">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64">
+                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Main Content */}
+          <div className="lg:pl-64 flex flex-col flex-1">
+            <div className="p-3 sm:p-6">
+              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+                <Breadcrumb />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentView("dashboard")}
+                      className="flex items-center gap-2 lg:hidden"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Dashboard
+                    </Button>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                      CRM Dashboard
+                    </h1>
+                  </div>
+                </div>
+                <CRMDashboard 
+                  onNavigateToLeads={() => setCurrentView("crm-leads")}
+                  onCreateNewLead={() => setCurrentView("crm-leads")}
+                  setCurrentView={setCurrentView}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -614,23 +740,55 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-leads") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
-        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentView("crm")}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to CRM
-            </Button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-              Manage Leads
-            </h1>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
+              <div className="flex items-center flex-shrink-0 px-4 mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
+              </div>
+              <CRMSidebar />
+            </div>
           </div>
-          <CRMLeads />
+
+          {/* Mobile Navigation */}
+          <div className="lg:hidden">
+            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="m-4">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64">
+                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Main Content */}
+          <div className="lg:pl-64 flex flex-col flex-1">
+            <div className="p-3 sm:p-6">
+              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+                <Breadcrumb />
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentView("crm")}
+                    className="flex items-center gap-2 lg:hidden"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to CRM
+                  </Button>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                    Manage Leads
+                  </h1>
+                </div>
+                <CRMLeads />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -638,23 +796,55 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-appointments") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
-        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentView("crm")}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to CRM
-            </Button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-              Appointment Management
-            </h1>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
+              <div className="flex items-center flex-shrink-0 px-4 mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
+              </div>
+              <CRMSidebar />
+            </div>
           </div>
-          <CRMAppointments />
+
+          {/* Mobile Navigation */}
+          <div className="lg:hidden">
+            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="m-4">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64">
+                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Main Content */}
+          <div className="lg:pl-64 flex flex-col flex-1">
+            <div className="p-3 sm:p-6">
+              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+                <Breadcrumb />
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentView("crm")}
+                    className="flex items-center gap-2 lg:hidden"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to CRM
+                  </Button>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                    Appointment Management
+                  </h1>
+                </div>
+                <CRMAppointments />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -662,23 +852,55 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-followups") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
-        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentView("crm")}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to CRM
-            </Button>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-              Follow-up Management
-            </h1>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
+        <div className="flex">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
+              <div className="flex items-center flex-shrink-0 px-4 mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
+              </div>
+              <CRMSidebar />
+            </div>
           </div>
-          <CRMFollowUps />
+
+          {/* Mobile Navigation */}
+          <div className="lg:hidden">
+            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="m-4">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64">
+                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Main Content */}
+          <div className="lg:pl-64 flex flex-col flex-1">
+            <div className="p-3 sm:p-6">
+              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+                <Breadcrumb />
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentView("crm")}
+                    className="flex items-center gap-2 lg:hidden"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to CRM
+                  </Button>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                    Follow-up Management
+                  </h1>
+                </div>
+                <CRMFollowUps />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -701,17 +923,50 @@ export default function AdminDashboard() {
             <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs sm:text-sm">
               Live Data
             </Badge>
-            <Button
-              variant="default"
-              size="sm"
-              className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700"
-              data-testid="button-crm-dashboard"
-              onClick={() => setCurrentView("crm")}
-            >
-              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">CRM Dashboard</span>
-              <span className="sm:hidden">CRM</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700"
+                data-testid="button-crm-dashboard"
+                onClick={() => setCurrentView("crm")}
+              >
+                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">CRM Dashboard</span>
+                <span className="sm:hidden">CRM</span>
+              </Button>
+              
+              {/* Quick CRM Access Dropdown */}
+              <div className="hidden md:flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView("crm-leads")}
+                  className="flex items-center gap-1 text-xs"
+                >
+                  <Users className="h-3 w-3" />
+                  Leads
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView("crm-appointments")}
+                  className="flex items-center gap-1 text-xs"
+                >
+                  <Calendar className="h-3 w-3" />
+                  Appointments
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView("crm-followups")}
+                  className="flex items-center gap-1 text-xs"
+                >
+                  <Clock className="h-3 w-3" />
+                  Follow-ups
+                </Button>
+              </div>
+            </div>
             <Button
               variant="outline"
               size="sm"
