@@ -176,7 +176,14 @@ export default function CRMDashboard({
               ) : (todaysAppointments?.length ?? 0) === 0 ? (
                 <div className="text-center py-12">
                   <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-sm">No appointments scheduled for today</p>
+                  <p className="text-gray-500 text-sm mb-6">No appointments scheduled for today</p>
+                  <Button 
+                    onClick={() => setCurrentView?.("crm-appointments")}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Schedule New Appointment
+                  </Button>
                 </div>
               ) : (
                 <div className="space-y-3">

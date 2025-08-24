@@ -219,23 +219,33 @@ export default function CRMAppointments() {
     <div className="space-y-6">
       <div className="space-y-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 space-y-4 lg:space-y-0">
-          <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded-lg border">
-            <Button
-              variant={viewMode === "list" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("list")}
-              className={viewMode === "list" ? "bg-green-600 hover:bg-green-700" : ""}
-            >
-              📋 List
-            </Button>
-            <Button
-              variant={viewMode === "calendar" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setViewMode("calendar")}
-              className={viewMode === "calendar" ? "bg-green-600 hover:bg-green-700" : ""}
-            >
-              📅 Calendar
-            </Button>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Appointment Management
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Schedule and manage client appointments with ease
+            </p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded-lg border">
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className={viewMode === "list" ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                📋 List
+              </Button>
+              <Button
+                variant={viewMode === "calendar" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("calendar")}
+                className={viewMode === "calendar" ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                📅 Calendar
+              </Button>
+            </div>
           </div>
         </div>
 
