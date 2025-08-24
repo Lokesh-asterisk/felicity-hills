@@ -38,6 +38,11 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/crm" component={CRMDashboard} />
       <Route path="/crm/leads" component={CRMLeads} />
+      <Route path="/crm/leads/:id" component={CRMLeads} />
+      <Route path="/crm/appointments" component={CRMDashboard} />
+      <Route path="/crm/appointments/:id" component={CRMDashboard} />
+      <Route path="/crm/follow-ups" component={CRMDashboard} />
+      <Route path="/crm/follow-ups/:id" component={CRMDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

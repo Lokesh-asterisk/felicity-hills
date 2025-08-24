@@ -163,9 +163,18 @@ export const insertUserSchema = createInsertSchema(users).omit({ id: true, creat
 export const insertAdminSettingSchema = createInsertSchema(adminSettings).omit({ id: true, updatedAt: true });
 
 // CRM Insert Schemas
-export const insertLeadSchema = createInsertSchema(leads).omit({ id: true, createdAt: true, updatedAt: true });
-export const insertAppointmentSchema = createInsertSchema(appointments).omit({ id: true, createdAt: true, updatedAt: true });
-export const insertFollowUpSchema = createInsertSchema(followUps).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertLeadSchema = createInsertSchema(leads).omit({ id: true, createdAt: true, updatedAt: true }).extend({
+  lastContactDate: z.string().datetime().optional().or(z.date().optional()).transform((val) => val ? new Date(val) : undefined),
+});
+
+export const insertAppointmentSchema = createInsertSchema(appointments).omit({ id: true, createdAt: true, updatedAt: true }).extend({
+  appointmentDate: z.string().datetime().or(z.date()).transform((val) => new Date(val)),
+});
+
+export const insertFollowUpSchema = createInsertSchema(followUps).omit({ id: true, createdAt: true, updatedAt: true }).extend({
+  dueDate: z.string().datetime().or(z.date()).transform((val) => new Date(val)),
+  completedAt: z.string().datetime().optional().or(z.date().optional()).transform((val) => val ? new Date(val) : undefined),
+});
 
 
 
