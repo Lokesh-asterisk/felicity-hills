@@ -484,96 +484,185 @@ export default function CRMAppointments() {
           </CardContent>
         </Card>
 
-        {/* Appointments List */}
-        <div className="space-y-4">
-          {isLoading ? (
-            <div className="text-center py-8">
-              <div className="text-gray-500">Loading appointments...</div>
-            </div>
-          ) : appointments && appointments.length > 0 ? (
-            appointments.map((appointment) => (
-              <Card key={appointment.id} className="cursor-pointer hover:shadow-md transition-shadow" data-testid={`card-appointment-${appointment.id}`}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                          {appointment.title}
-                        </h3>
-                        <Badge className={getStatusColor(appointment.status)}>
-                          {getStatusLabel(appointment.status)}
-                        </Badge>
+        {/* Appointments View */}
+        {viewMode === "list" ? (
+          /* List View */
+          <div className="space-y-4">
+            {isLoading ? (
+              <div className="text-center py-8">
+                <div className="text-gray-500">Loading appointments...</div>
+              </div>
+            ) : appointments && appointments.length > 0 ? (
+              appointments.map((appointment) => (
+                <Card key={appointment.id} className="cursor-pointer hover:shadow-md transition-shadow" data-testid={`card-appointment-${appointment.id}`}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-4 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            {appointment.title}
+                          </h3>
+                          <Badge className={getStatusColor(appointment.status)}>
+                            {getStatusLabel(appointment.status)}
+                          </Badge>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600 dark:text-gray-400">
+                          <div className="flex items-center">
+                            <User className="w-4 h-4 mr-2" />
+                            {getLeadName(appointment.leadId)}
+                          </div>
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-2" />
+                            {new Date(appointment.appointmentDate).toLocaleDateString()}
+                          </div>
+                          <div className="flex items-center">
+                            <Clock className="w-4 h-4 mr-2" />
+                            {new Date(appointment.appointmentDate).toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })} ({appointment.duration} min)
+                          </div>
+                          <div className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-2" />
+                            {appointment.location}
+                          </div>
+                        </div>
+                        
+                        {appointment.description && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            {appointment.description}
+                          </p>
+                        )}
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600 dark:text-gray-400">
-                        <div className="flex items-center">
-                          <User className="w-4 h-4 mr-2" />
-                          {getLeadName(appointment.leadId)}
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          {new Date(appointment.appointmentDate).toLocaleDateString()}
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-2" />
-                          {new Date(appointment.appointmentDate).toLocaleTimeString([], { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })} ({appointment.duration} min)
-                        </div>
-                        <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-2" />
-                          {appointment.location}
-                        </div>
+                      <div className="flex space-x-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(appointment)}
+                          data-testid={`button-edit-appointment-${appointment.id}`}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(appointment.id)}
+                          data-testid={`button-delete-appointment-${appointment.id}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
-                      
-                      {appointment.description && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                          {appointment.description}
-                        </p>
-                      )}
                     </div>
-                    
-                    <div className="flex space-x-2 ml-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(appointment)}
-                        data-testid={`button-edit-appointment-${appointment.id}`}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(appointment.id)}
-                        data-testid={`button-delete-appointment-${appointment.id}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    No appointments found
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    Get started by scheduling your first appointment.
+                  </p>
+                  <Button onClick={openCreateDialog}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Schedule Appointment
+                  </Button>
                 </CardContent>
               </Card>
-            ))
-          ) : (
-            <Card>
-              <CardContent className="p-8 text-center">
+            )}
+          </div>
+        ) : (
+          /* Calendar View */
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-6">
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-center font-semibold text-gray-600 py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            <div className="grid grid-cols-7 gap-2">
+              {Array.from({ length: 35 }, (_, index) => {
+                const today = new Date();
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const startOfWeek = new Date(startOfMonth);
+                startOfWeek.setDate(startOfMonth.getDate() - startOfMonth.getDay());
+                
+                const currentDate = new Date(startOfWeek);
+                currentDate.setDate(startOfWeek.getDate() + index);
+                
+                const dayAppointments = appointments?.filter(appointment => {
+                  const appointmentDate = new Date(appointment.appointmentDate);
+                  return appointmentDate.toDateString() === currentDate.toDateString();
+                }) || [];
+                
+                const isCurrentMonth = currentDate.getMonth() === today.getMonth();
+                const isToday = currentDate.toDateString() === today.toDateString();
+                
+                return (
+                  <div
+                    key={index}
+                    className={`min-h-[100px] p-2 border border-gray-100 ${
+                      isCurrentMonth ? 'bg-white' : 'bg-gray-50'
+                    } ${isToday ? 'ring-2 ring-green-500' : ''}`}
+                  >
+                    <div className={`text-sm font-medium mb-1 ${
+                      isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
+                    }`}>
+                      {currentDate.getDate()}
+                    </div>
+                    
+                    <div className="space-y-1">
+                      {dayAppointments.slice(0, 3).map(appointment => (
+                        <div
+                          key={appointment.id}
+                          className="text-xs p-1 rounded bg-green-100 text-green-800 cursor-pointer hover:bg-green-200 transition-colors"
+                          onClick={() => handleEdit(appointment)}
+                          title={`${appointment.title} - ${getLeadName(appointment.leadId)}`}
+                        >
+                          <div className="font-medium truncate">{appointment.title}</div>
+                          <div className="text-green-600">
+                            {new Date(appointment.appointmentDate).toLocaleTimeString([], { 
+                              hour: 'numeric', 
+                              minute: '2-digit' 
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                      {dayAppointments.length > 3 && (
+                        <div className="text-xs text-gray-500">
+                          +{dayAppointments.length - 3} more
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {(!appointments || appointments.length === 0) && (
+              <div className="text-center py-12 mt-8">
                 <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  No appointments found
+                  No appointments scheduled
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Get started by scheduling your first appointment.
+                  Start by scheduling your first appointment.
                 </p>
                 <Button onClick={openCreateDialog}>
                   <Plus className="w-4 h-4 mr-2" />
                   Schedule Appointment
                 </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
