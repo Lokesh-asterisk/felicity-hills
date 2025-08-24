@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet, BarChart3 } from "lucide-react";
+import { Download, Users, FileText, TrendingUp, Calendar, Mail, LogOut, Plus, Edit, Trash2, Star, Settings, Lock, Eye, EyeOff, FileSpreadsheet, BarChart3, ArrowLeft } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import * as XLSX from 'xlsx';
 import { useForm } from "react-hook-form";
@@ -21,6 +21,8 @@ import { apiRequest } from "@/lib/queryClient";
 import type { Testimonial, Activity, SiteVisit } from "@shared/schema";
 import { format, isToday, isYesterday, subDays, startOfDay } from "date-fns";
 import AdminLogin from "@/components/admin-login";
+import CRMDashboard from "@/pages/crm-dashboard";
+import CRMLeads from "@/pages/crm-leads";
 
 interface BrochureDownload {
   id: string;
@@ -81,6 +83,7 @@ const testimonialFormSchema = z.object({
 // Password verification is now handled via API
 
 export default function AdminDashboard() {
+  const [currentView, setCurrentView] = useState<"dashboard" | "crm" | "crm-leads">("dashboard");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [, setLocation] = useLocation();
@@ -578,6 +581,55 @@ export default function AdminDashboard() {
     return yesterday > 0 ? ((today - yesterday) / yesterday * 100) : 0;
   };
 
+  // Handle CRM view rendering
+  if (currentView === "crm") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentView("dashboard")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              CRM Dashboard
+            </h1>
+          </div>
+          <CRMDashboard onNavigateToLeads={() => setCurrentView("crm-leads")} />
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === "crm-leads") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentView("crm")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to CRM
+            </Button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              Manage Leads
+            </h1>
+          </div>
+          <CRMLeads />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950 p-3 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
@@ -595,18 +647,17 @@ export default function AdminDashboard() {
             <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs sm:text-sm">
               Live Data
             </Badge>
-            <Link href="/crm">
-              <Button
-                variant="default"
-                size="sm"
-                className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700"
-                data-testid="button-crm-dashboard"
-              >
-                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">CRM Dashboard</span>
-                <span className="sm:hidden">CRM</span>
-              </Button>
-            </Link>
+            <Button
+              variant="default"
+              size="sm"
+              className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700"
+              data-testid="button-crm-dashboard"
+              onClick={() => setCurrentView("crm")}
+            >
+              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">CRM Dashboard</span>
+              <span className="sm:hidden">CRM</span>
+            </Button>
             <Button
               variant="outline"
               size="sm"

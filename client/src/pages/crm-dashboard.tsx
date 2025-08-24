@@ -6,7 +6,11 @@ import { Calendar, Clock, Users, AlertTriangle, Plus, Phone, Mail } from "lucide
 import { Link } from "wouter";
 import type { Appointment, FollowUp, Lead } from "@shared/schema";
 
-export default function CRMDashboard() {
+interface CRMDashboardProps {
+  onNavigateToLeads?: () => void;
+}
+
+export default function CRMDashboard({ onNavigateToLeads }: CRMDashboardProps) {
   const { data: todaysAppointments, isLoading: appointmentsLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/appointments/today"],
   });
@@ -77,12 +81,10 @@ export default function CRMDashboard() {
             </p>
           </div>
           <div className="flex space-x-4">
-            <Link href="/crm/leads/new">
-              <Button data-testid="button-new-lead">
-                <Plus className="w-4 h-4 mr-2" />
-                New Lead
-              </Button>
-            </Link>
+            <Button data-testid="button-new-lead" onClick={onNavigateToLeads}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Lead
+            </Button>
             <Link href="/crm/appointments/new">
               <Button variant="outline" data-testid="button-new-appointment">
                 <Calendar className="w-4 h-4 mr-2" />
@@ -328,32 +330,27 @@ export default function CRMDashboard() {
                       </div>
                     </div>
                     <div className="ml-4">
-                      <Link href={`/crm/leads/${lead.id}`}>
-                        <Button variant="outline" size="sm" data-testid={`button-view-lead-${lead.id}`}>
-                          View
-                        </Button>
-                      </Link>
+                      <Button variant="outline" size="sm" data-testid={`button-view-lead-${lead.id}`} onClick={onNavigateToLeads}>
+                        View
+                      </Button>
                     </div>
                   </div>
                 ))}
               </div>
             )}
             <div className="mt-4">
-              <Link href="/crm/leads">
-                <Button variant="outline" className="w-full" data-testid="button-view-all-leads">
-                  View All Leads
-                </Button>
-              </Link>
+              <Button variant="outline" className="w-full" data-testid="button-view-all-leads" onClick={onNavigateToLeads}>
+                View All Leads
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Quick Actions */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/crm/leads">
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-leads">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-leads" onClick={onNavigateToLeads}>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center">
                   <Users className="w-5 h-5 mr-2" />
                   Manage Leads
                 </CardTitle>
@@ -362,35 +359,30 @@ export default function CRMDashboard() {
                 </CardDescription>
               </CardHeader>
             </Card>
-          </Link>
 
-          <Link href="/crm/appointments">
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-appointments">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <Calendar className="w-5 h-5 mr-2" />
-                  Appointments
-                </CardTitle>
-                <CardDescription>
-                  Schedule and manage client appointments
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-appointments">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center">
+                <Calendar className="w-5 h-5 mr-2" />
+                Appointments
+              </CardTitle>
+              <CardDescription>
+                Schedule and manage client appointments
+              </CardDescription>
+            </CardHeader>
+          </Card>
 
-          <Link href="/crm/follow-ups">
-            <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-followups">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <Clock className="w-5 h-5 mr-2" />
-                  Follow-ups
-                </CardTitle>
-                <CardDescription>
-                  Track and complete follow-up tasks
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
+          <Card className="cursor-pointer hover:shadow-md transition-shadow" data-testid="card-manage-followups">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center">
+                <Clock className="w-5 h-5 mr-2" />
+                Follow-ups
+              </CardTitle>
+              <CardDescription>
+                Track and complete follow-up tasks
+              </CardDescription>
+            </CardHeader>
+          </Card>
         </div>
       </div>
     </div>

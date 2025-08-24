@@ -12,8 +12,6 @@ import Videos from "@/pages/videos";
 import Brochures from "@/pages/brochures";
 import BookVisit from "@/pages/book-visit";
 import AdminDashboard from "@/pages/admin-dashboard";
-import CRMDashboard from "@/pages/crm-dashboard";
-import CRMLeads from "@/pages/crm-leads";
 
 // Hook to scroll to top on route change
 function useScrollToTop() {
@@ -36,13 +34,6 @@ function Router() {
       <Route path="/brochures" component={Brochures} />
       <Route path="/book-visit" component={BookVisit} />
       <Route path="/admin" component={AdminDashboard} />
-      <Route path="/crm" component={CRMDashboard} />
-      <Route path="/crm/leads" component={CRMLeads} />
-      <Route path="/crm/leads/:id" component={CRMLeads} />
-      <Route path="/crm/appointments" component={CRMDashboard} />
-      <Route path="/crm/appointments/:id" component={CRMDashboard} />
-      <Route path="/crm/follow-ups" component={CRMDashboard} />
-      <Route path="/crm/follow-ups/:id" component={CRMDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
