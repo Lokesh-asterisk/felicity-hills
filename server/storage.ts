@@ -8,6 +8,9 @@ import {
   activities,
   users,
   adminSettings,
+  leads,
+  appointments,
+  followUps,
   type Plot,
   type SiteVisit,
   type Testimonial,
@@ -17,6 +20,9 @@ import {
   type Activity,
   type User,
   type AdminSetting,
+  type Lead,
+  type Appointment,
+  type FollowUp,
   type InsertPlot,
   type InsertSiteVisit,
   type InsertTestimonial,
@@ -26,10 +32,13 @@ import {
   type InsertActivity,
   type InsertUser,
   type InsertAdminSetting,
+  type InsertLead,
+  type InsertAppointment,
+  type InsertFollowUp,
   type UpsertUser,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, count, sql } from "drizzle-orm";
+import { eq, desc, count, sql, and, or, gte, lte, like, ilike } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -79,6 +88,31 @@ export interface IStorage {
   // Admin settings operations
   getAdminSetting(key: string): Promise<AdminSetting | undefined>;
   upsertAdminSetting(setting: InsertAdminSetting): Promise<AdminSetting>;
+
+  // CRM operations
+  // Lead operations
+  getLeads(filters?: { status?: string; source?: string; search?: string }): Promise<Lead[]>;
+  getLead(id: string): Promise<Lead | undefined>;
+  createLead(lead: InsertLead): Promise<Lead>;
+  updateLead(id: string, lead: Partial<InsertLead>): Promise<Lead | undefined>;
+  deleteLead(id: string): Promise<boolean>;
+  getLeadStats(): Promise<any>;
+
+  // Appointment operations
+  getAppointments(filters?: { status?: string; leadId?: string; date?: string }): Promise<Appointment[]>;
+  getAppointment(id: string): Promise<Appointment | undefined>;
+  createAppointment(appointment: InsertAppointment): Promise<Appointment>;
+  updateAppointment(id: string, appointment: Partial<InsertAppointment>): Promise<Appointment | undefined>;
+  deleteAppointment(id: string): Promise<boolean>;
+  getTodaysAppointments(): Promise<Appointment[]>;
+
+  // Follow-up operations
+  getFollowUps(filters?: { status?: string; leadId?: string; assignedTo?: string }): Promise<FollowUp[]>;
+  getFollowUp(id: string): Promise<FollowUp | undefined>;
+  createFollowUp(followUp: InsertFollowUp): Promise<FollowUp>;
+  updateFollowUp(id: string, followUp: Partial<InsertFollowUp>): Promise<FollowUp | undefined>;
+  deleteFollowUp(id: string): Promise<boolean>;
+  getOverdueFollowUps(): Promise<FollowUp[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -285,6 +319,194 @@ export class DatabaseStorage implements IStorage {
     return newSetting;
   }
 
+  // CRM operations implementation
+  // Lead operations
+  async getLeads(filters?: { status?: string; source?: string; search?: string }): Promise<Lead[]> {
+    const conditions = [];
+    
+    if (filters) {
+      if (filters.status) {
+        conditions.push(eq(leads.status, filters.status));
+      }
+      if (filters.source) {
+        conditions.push(eq(leads.source, filters.source));
+      }
+      if (filters.search) {
+        conditions.push(
+          or(
+            ilike(leads.firstName, `%${filters.search}%`),
+            ilike(leads.lastName, `%${filters.search}%`),
+            ilike(leads.email, `%${filters.search}%`),
+            ilike(leads.phone, `%${filters.search}%`)
+          )
+        );
+      }
+    }
+    
+    const query = conditions.length > 0 
+      ? db.select().from(leads).where(and(...conditions))
+      : db.select().from(leads);
+    
+    return await query.orderBy(desc(leads.createdAt));
+  }
+
+  async getLead(id: string): Promise<Lead | undefined> {
+    const [lead] = await db.select().from(leads).where(eq(leads.id, id));
+    return lead || undefined;
+  }
+
+  async createLead(lead: InsertLead): Promise<Lead> {
+    const [newLead] = await db.insert(leads).values(lead).returning();
+    return newLead;
+  }
+
+  async updateLead(id: string, leadData: Partial<InsertLead>): Promise<Lead | undefined> {
+    const [updatedLead] = await db
+      .update(leads)
+      .set({ ...leadData, updatedAt: new Date() })
+      .where(eq(leads.id, id))
+      .returning();
+    return updatedLead || undefined;
+  }
+
+  async deleteLead(id: string): Promise<boolean> {
+    const result = await db.delete(leads).where(eq(leads.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async getLeadStats(): Promise<any> {
+    const total = await db.select({ count: count() }).from(leads);
+    const newLeads = await db.select({ count: count() }).from(leads).where(eq(leads.status, 'new'));
+    const qualified = await db.select({ count: count() }).from(leads).where(eq(leads.status, 'qualified'));
+    const converted = await db.select({ count: count() }).from(leads).where(eq(leads.status, 'converted'));
+    
+    return {
+      total: total[0]?.count || 0,
+      new: newLeads[0]?.count || 0,
+      qualified: qualified[0]?.count || 0,
+      converted: converted[0]?.count || 0,
+    };
+  }
+
+  // Appointment operations
+  async getAppointments(filters?: { status?: string; leadId?: string; date?: string }): Promise<Appointment[]> {
+    const conditions = [];
+    
+    if (filters) {
+      if (filters.status) {
+        conditions.push(eq(appointments.status, filters.status));
+      }
+      if (filters.leadId) {
+        conditions.push(eq(appointments.leadId, filters.leadId));
+      }
+      if (filters.date) {
+        conditions.push(
+          sql`DATE(${appointments.appointmentDate}) = ${filters.date}`
+        );
+      }
+    }
+    
+    const query = conditions.length > 0 
+      ? db.select().from(appointments).where(and(...conditions))
+      : db.select().from(appointments);
+    
+    return await query.orderBy(desc(appointments.appointmentDate));
+  }
+
+  async getAppointment(id: string): Promise<Appointment | undefined> {
+    const [appointment] = await db.select().from(appointments).where(eq(appointments.id, id));
+    return appointment || undefined;
+  }
+
+  async createAppointment(appointment: InsertAppointment): Promise<Appointment> {
+    const [newAppointment] = await db.insert(appointments).values(appointment).returning();
+    return newAppointment;
+  }
+
+  async updateAppointment(id: string, appointmentData: Partial<InsertAppointment>): Promise<Appointment | undefined> {
+    const [updatedAppointment] = await db
+      .update(appointments)
+      .set({ ...appointmentData, updatedAt: new Date() })
+      .where(eq(appointments.id, id))
+      .returning();
+    return updatedAppointment || undefined;
+  }
+
+  async deleteAppointment(id: string): Promise<boolean> {
+    const result = await db.delete(appointments).where(eq(appointments.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async getTodaysAppointments(): Promise<Appointment[]> {
+    return await db
+      .select()
+      .from(appointments)
+      .where(
+        sql`DATE(${appointments.appointmentDate}) = CURRENT_DATE`
+      )
+      .orderBy(appointments.appointmentDate);
+  }
+
+  // Follow-up operations
+  async getFollowUps(filters?: { status?: string; leadId?: string; assignedTo?: string }): Promise<FollowUp[]> {
+    const conditions = [];
+    
+    if (filters) {
+      if (filters.status) {
+        conditions.push(eq(followUps.status, filters.status));
+      }
+      if (filters.leadId) {
+        conditions.push(eq(followUps.leadId, filters.leadId));
+      }
+      if (filters.assignedTo) {
+        conditions.push(eq(followUps.assignedTo, filters.assignedTo));
+      }
+    }
+    
+    const query = conditions.length > 0 
+      ? db.select().from(followUps).where(and(...conditions))
+      : db.select().from(followUps);
+    
+    return await query.orderBy(desc(followUps.dueDate));
+  }
+
+  async getFollowUp(id: string): Promise<FollowUp | undefined> {
+    const [followUp] = await db.select().from(followUps).where(eq(followUps.id, id));
+    return followUp || undefined;
+  }
+
+  async createFollowUp(followUp: InsertFollowUp): Promise<FollowUp> {
+    const [newFollowUp] = await db.insert(followUps).values(followUp).returning();
+    return newFollowUp;
+  }
+
+  async updateFollowUp(id: string, followUpData: Partial<InsertFollowUp>): Promise<FollowUp | undefined> {
+    const [updatedFollowUp] = await db
+      .update(followUps)
+      .set({ ...followUpData, updatedAt: new Date() })
+      .where(eq(followUps.id, id))
+      .returning();
+    return updatedFollowUp || undefined;
+  }
+
+  async deleteFollowUp(id: string): Promise<boolean> {
+    const result = await db.delete(followUps).where(eq(followUps.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async getOverdueFollowUps(): Promise<FollowUp[]> {
+    return await db
+      .select()
+      .from(followUps)
+      .where(
+        and(
+          lte(followUps.dueDate, new Date()),
+          eq(followUps.status, 'pending')
+        )
+      )
+      .orderBy(followUps.dueDate);
+  }
+
   // Initialize default data
   async initializeData(): Promise<void> {
     try {
@@ -408,6 +630,122 @@ export class DatabaseStorage implements IStorage {
 
         for (const activity of sampleActivities) {
           await this.createActivity(activity);
+        }
+      }
+
+      // Initialize sample CRM data if none exist
+      const existingLeads = await this.getLeads();
+      if (existingLeads.length === 0) {
+        const sampleLeads = [
+          {
+            firstName: "John",
+            lastName: "Smith",
+            email: "john.smith@example.com",
+            phone: "+1-555-0123",
+            company: "Tech Solutions Inc",
+            status: "new",
+            source: "website",
+            propertyInterests: ["Residential", "Commercial"],
+            budget: "$500,000 - $1,000,000",
+            notes: "Interested in properties near the city center. First-time buyer."
+          },
+          {
+            firstName: "Sarah",
+            lastName: "Johnson",
+            email: "sarah.johnson@example.com",
+            phone: "+1-555-0124",
+            company: "Design Studio",
+            status: "qualified",
+            source: "referral",
+            propertyInterests: ["Office Space", "Warehouse"],
+            budget: "$1,000,000+",
+            notes: "Expanding business, needs commercial space by Q2."
+          },
+          {
+            firstName: "Michael",
+            lastName: "Brown",
+            email: "m.brown@example.com",
+            phone: "+1-555-0125",
+            status: "contacted",
+            source: "social_media",
+            propertyInterests: ["Residential"],
+            budget: "$300,000 - $500,000",
+            notes: "Young family looking for their first home. Prefers good school district."
+          }
+        ];
+
+        for (const lead of sampleLeads) {
+          await this.createLead(lead);
+        }
+      }
+
+      // Initialize sample appointments if none exist
+      const existingAppointments = await this.getAppointments();
+      if (existingAppointments.length === 0 && existingLeads.length > 0) {
+        const leadIds = await this.getLeads();
+        if (leadIds.length > 0) {
+          const sampleAppointments = [
+            {
+              leadId: leadIds[0].id,
+              title: "Property Viewing - Downtown Office",
+              description: "Show downtown office space options",
+              appointmentDate: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
+              duration: 90,
+              location: "123 Main St, Downtown",
+              status: "scheduled"
+            },
+            {
+              leadId: leadIds[1].id,
+              title: "Investment Consultation",
+              description: "Discuss investment property options",
+              appointmentDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+              duration: 60,
+              location: "Our Office",
+              status: "confirmed"
+            }
+          ];
+
+          for (const appointment of sampleAppointments) {
+            await this.createAppointment(appointment);
+          }
+        }
+      }
+
+      // Initialize sample follow-ups if none exist
+      const existingFollowUps = await this.getFollowUps();
+      if (existingFollowUps.length === 0 && existingLeads.length > 0) {
+        const leadIds = await this.getLeads();
+        if (leadIds.length > 0) {
+          const sampleFollowUps = [
+            {
+              leadId: leadIds[0].id,
+              title: "Follow up on property interest",
+              description: "Check if client is still interested in the downtown properties we showed",
+              dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago (overdue)
+              priority: "high",
+              status: "pending"
+            },
+            {
+              leadId: leadIds[1].id,
+              title: "Send market analysis report",
+              description: "Prepare and send market analysis for commercial properties",
+              dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+              priority: "medium",
+              status: "pending"
+            },
+            {
+              leadId: leadIds[2].id,
+              title: "Schedule school district tour",
+              description: "Arrange tour of local schools for family",
+              dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+              priority: "low",
+              status: "pending"
+            }
+          ];
+
+          for (const followUp of sampleFollowUps) {
+            await this.createFollowUp(followUp);
+          }
         }
       }
 

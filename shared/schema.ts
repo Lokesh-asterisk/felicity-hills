@@ -100,6 +100,56 @@ export const adminSettings = pgTable("admin_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// CRM Tables
+export const leads = pgTable("leads", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email"),
+  phone: text("phone").notNull(),
+  company: text("company"),
+  status: text("status").notNull().default("new"), // new, contacted, qualified, showing_scheduled, not_interested, converted
+  source: text("source").notNull(), // website, referral, social_media, advertisement, cold_call, walk_in
+  propertyInterests: text("property_interests").array().default([]), // types of properties they're interested in
+  budget: text("budget"),
+  notes: text("notes"),
+  assignedTo: varchar("assigned_to"), // user id
+  lastContactDate: timestamp("last_contact_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const appointments = pgTable("appointments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  leadId: varchar("lead_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  appointmentDate: timestamp("appointment_date").notNull(),
+  duration: integer("duration").default(60), // in minutes
+  location: text("location"),
+  propertyId: varchar("property_id"), // reference to plots table
+  status: text("status").notNull().default("scheduled"), // scheduled, confirmed, completed, cancelled, no_show
+  reminderSent: boolean("reminder_sent").default(false),
+  createdBy: varchar("created_by"), // user id
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const followUps = pgTable("follow_ups", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  leadId: varchar("lead_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  dueDate: timestamp("due_date").notNull(),
+  priority: text("priority").notNull().default("medium"), // low, medium, high, urgent
+  status: text("status").notNull().default("pending"), // pending, completed, overdue
+  assignedTo: varchar("assigned_to"), // user id
+  completedAt: timestamp("completed_at"),
+  createdBy: varchar("created_by"), // user id
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 
 
 export const insertPlotSchema = createInsertSchema(plots).omit({ id: true });
@@ -111,6 +161,11 @@ export const insertBrochureDownloadSchema = createInsertSchema(brochureDownloads
 export const insertActivitySchema = createInsertSchema(activities).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAdminSettingSchema = createInsertSchema(adminSettings).omit({ id: true, updatedAt: true });
+
+// CRM Insert Schemas
+export const insertLeadSchema = createInsertSchema(leads).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAppointmentSchema = createInsertSchema(appointments).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertFollowUpSchema = createInsertSchema(followUps).omit({ id: true, createdAt: true, updatedAt: true });
 
 
 
@@ -124,6 +179,11 @@ export type Activity = typeof activities.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type AdminSetting = typeof adminSettings.$inferSelect;
 
+// CRM Types
+export type Lead = typeof leads.$inferSelect;
+export type Appointment = typeof appointments.$inferSelect;
+export type FollowUp = typeof followUps.$inferSelect;
+
 
 
 export type InsertPlot = z.infer<typeof insertPlotSchema>;
@@ -135,6 +195,11 @@ export type InsertBrochureDownload = z.infer<typeof insertBrochureDownloadSchema
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertAdminSetting = z.infer<typeof insertAdminSettingSchema>;
+
+// CRM Insert Types
+export type InsertLead = z.infer<typeof insertLeadSchema>;
+export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
+export type InsertFollowUp = z.infer<typeof insertFollowUpSchema>;
 
 
 

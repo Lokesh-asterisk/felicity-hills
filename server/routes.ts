@@ -1,7 +1,15 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertSiteVisitSchema, insertTestimonialSchema, insertActivitySchema, insertAdminSettingSchema } from "@shared/schema";
+import { 
+  insertSiteVisitSchema, 
+  insertTestimonialSchema, 
+  insertActivitySchema, 
+  insertAdminSettingSchema,
+  insertLeadSchema,
+  insertAppointmentSchema,
+  insertFollowUpSchema
+} from "@shared/schema";
 import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { EmailService } from "./emailService";
 import { z } from "zod";
@@ -455,6 +463,250 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(videos);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch videos" });
+    }
+  });
+
+  // CRM Routes
+  // Lead routes
+  app.get("/api/leads", async (req, res) => {
+    try {
+      const { status, source, search } = req.query as { status?: string; source?: string; search?: string };
+      const leads = await storage.getLeads({ status, source, search });
+      res.json(leads);
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+      res.status(500).json({ message: "Failed to fetch leads" });
+    }
+  });
+
+  app.get("/api/leads/stats", async (_req, res) => {
+    try {
+      const stats = await storage.getLeadStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching lead stats:", error);
+      res.status(500).json({ message: "Failed to fetch lead stats" });
+    }
+  });
+
+  app.get("/api/leads/:id", async (req, res) => {
+    try {
+      const lead = await storage.getLead(req.params.id);
+      if (!lead) {
+        return res.status(404).json({ message: "Lead not found" });
+      }
+      res.json(lead);
+    } catch (error) {
+      console.error("Error fetching lead:", error);
+      res.status(500).json({ message: "Failed to fetch lead" });
+    }
+  });
+
+  app.post("/api/leads", async (req, res) => {
+    try {
+      const leadData = insertLeadSchema.parse(req.body);
+      const lead = await storage.createLead(leadData);
+      res.json(lead);
+    } catch (error) {
+      console.error("Error creating lead:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create lead" });
+      }
+    }
+  });
+
+  app.put("/api/leads/:id", async (req, res) => {
+    try {
+      const leadData = insertLeadSchema.partial().parse(req.body);
+      const lead = await storage.updateLead(req.params.id, leadData);
+      if (!lead) {
+        return res.status(404).json({ message: "Lead not found" });
+      }
+      res.json(lead);
+    } catch (error) {
+      console.error("Error updating lead:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update lead" });
+      }
+    }
+  });
+
+  app.delete("/api/leads/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteLead(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Lead not found" });
+      }
+      res.json({ message: "Lead deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting lead:", error);
+      res.status(500).json({ message: "Failed to delete lead" });
+    }
+  });
+
+  // Appointment routes
+  app.get("/api/appointments", async (req, res) => {
+    try {
+      const { status, leadId, date } = req.query as { status?: string; leadId?: string; date?: string };
+      const appointments = await storage.getAppointments({ status, leadId, date });
+      res.json(appointments);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      res.status(500).json({ message: "Failed to fetch appointments" });
+    }
+  });
+
+  app.get("/api/appointments/today", async (_req, res) => {
+    try {
+      const appointments = await storage.getTodaysAppointments();
+      res.json(appointments);
+    } catch (error) {
+      console.error("Error fetching today's appointments:", error);
+      res.status(500).json({ message: "Failed to fetch today's appointments" });
+    }
+  });
+
+  app.get("/api/appointments/:id", async (req, res) => {
+    try {
+      const appointment = await storage.getAppointment(req.params.id);
+      if (!appointment) {
+        return res.status(404).json({ message: "Appointment not found" });
+      }
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error fetching appointment:", error);
+      res.status(500).json({ message: "Failed to fetch appointment" });
+    }
+  });
+
+  app.post("/api/appointments", async (req, res) => {
+    try {
+      const appointmentData = insertAppointmentSchema.parse(req.body);
+      const appointment = await storage.createAppointment(appointmentData);
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create appointment" });
+      }
+    }
+  });
+
+  app.put("/api/appointments/:id", async (req, res) => {
+    try {
+      const appointmentData = insertAppointmentSchema.partial().parse(req.body);
+      const appointment = await storage.updateAppointment(req.params.id, appointmentData);
+      if (!appointment) {
+        return res.status(404).json({ message: "Appointment not found" });
+      }
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update appointment" });
+      }
+    }
+  });
+
+  app.delete("/api/appointments/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteAppointment(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Appointment not found" });
+      }
+      res.json({ message: "Appointment deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
+      res.status(500).json({ message: "Failed to delete appointment" });
+    }
+  });
+
+  // Follow-up routes
+  app.get("/api/follow-ups", async (req, res) => {
+    try {
+      const { status, leadId, assignedTo } = req.query as { status?: string; leadId?: string; assignedTo?: string };
+      const followUps = await storage.getFollowUps({ status, leadId, assignedTo });
+      res.json(followUps);
+    } catch (error) {
+      console.error("Error fetching follow-ups:", error);
+      res.status(500).json({ message: "Failed to fetch follow-ups" });
+    }
+  });
+
+  app.get("/api/follow-ups/overdue", async (_req, res) => {
+    try {
+      const followUps = await storage.getOverdueFollowUps();
+      res.json(followUps);
+    } catch (error) {
+      console.error("Error fetching overdue follow-ups:", error);
+      res.status(500).json({ message: "Failed to fetch overdue follow-ups" });
+    }
+  });
+
+  app.get("/api/follow-ups/:id", async (req, res) => {
+    try {
+      const followUp = await storage.getFollowUp(req.params.id);
+      if (!followUp) {
+        return res.status(404).json({ message: "Follow-up not found" });
+      }
+      res.json(followUp);
+    } catch (error) {
+      console.error("Error fetching follow-up:", error);
+      res.status(500).json({ message: "Failed to fetch follow-up" });
+    }
+  });
+
+  app.post("/api/follow-ups", async (req, res) => {
+    try {
+      const followUpData = insertFollowUpSchema.parse(req.body);
+      const followUp = await storage.createFollowUp(followUpData);
+      res.json(followUp);
+    } catch (error) {
+      console.error("Error creating follow-up:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to create follow-up" });
+      }
+    }
+  });
+
+  app.put("/api/follow-ups/:id", async (req, res) => {
+    try {
+      const followUpData = insertFollowUpSchema.partial().parse(req.body);
+      const followUp = await storage.updateFollowUp(req.params.id, followUpData);
+      if (!followUp) {
+        return res.status(404).json({ message: "Follow-up not found" });
+      }
+      res.json(followUp);
+    } catch (error) {
+      console.error("Error updating follow-up:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update follow-up" });
+      }
+    }
+  });
+
+  app.delete("/api/follow-ups/:id", async (req, res) => {
+    try {
+      const success = await storage.deleteFollowUp(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Follow-up not found" });
+      }
+      res.json({ message: "Follow-up deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting follow-up:", error);
+      res.status(500).json({ message: "Failed to delete follow-up" });
     }
   });
 
