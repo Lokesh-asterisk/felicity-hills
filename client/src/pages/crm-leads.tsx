@@ -65,6 +65,7 @@ export default function CRMLeads() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
+  const [budgetFilter, setBudgetFilter] = useState("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
@@ -93,7 +94,15 @@ export default function CRMLeads() {
     retry: false,
   });
 
-  // Filter leads
+  // Helper function to get budget value as number
+  const getBudgetValue = (budget: string | number | undefined | null) => {
+    if (!budget) return 0;
+    const budgetStr = budget.toString().replace(/[^\d.-]/g, '');
+    const num = parseFloat(budgetStr);
+    return isNaN(num) ? 0 : num;
+  };
+
+  // Filter and sort leads
   const filteredLeads = leads?.filter((lead) => {
     const matchesSearch = 
       lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -103,7 +112,20 @@ export default function CRMLeads() {
     const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
     const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
     
-    return matchesSearch && matchesStatus && matchesSource;
+    let matchesBudget = true;
+    if (budgetFilter === "with_budget") {
+      matchesBudget = getBudgetValue(lead.budget) > 0;
+    } else if (budgetFilter === "no_budget") {
+      matchesBudget = getBudgetValue(lead.budget) === 0;
+    }
+    
+    return matchesSearch && matchesStatus && matchesSource && matchesBudget;
+  })?.sort((a, b) => {
+    // Sort by budget in descending order when budget filter is active
+    if (budgetFilter === "with_budget") {
+      return getBudgetValue(b.budget) - getBudgetValue(a.budget);
+    }
+    return 0; // No sorting for other filters
   });
 
   // Create mutation
@@ -338,6 +360,15 @@ export default function CRMLeads() {
                 {source.label}
               </option>
             ))}
+          </select>
+          <select 
+            value={budgetFilter} 
+            onChange={(e) => setBudgetFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-200 rounded-lg text-sm"
+          >
+            <option value="all">All Budgets</option>
+            <option value="with_budget">With Budget (High to Low)</option>
+            <option value="no_budget">No Budget</option>
           </select>
         </div>
       </div>
