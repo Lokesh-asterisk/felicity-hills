@@ -431,6 +431,11 @@ export default function CRMLeads() {
                     <div className="flex items-center mt-1 space-x-4 text-xs text-gray-400">
                       <span>{getSourceLabel(lead.source)}</span>
                       <span>{lead.company}</span>
+                      {lead.budget && getBudgetValue(lead.budget) > 0 && (
+                        <span className="text-green-600 font-medium">
+                          ₹{getBudgetValue(lead.budget).toLocaleString()}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
