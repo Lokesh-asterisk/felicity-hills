@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,8 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Search, Filter, Phone, Mail, Building, User, Calendar, Edit, Trash2 } from "lucide-react";
-import { Link } from "wouter";
+import { Plus, Search, Edit, Trash2, Users } from "lucide-react";
 import type { Lead } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -45,43 +43,20 @@ const leadSources = [
   { value: "website", label: "Website" },
   { value: "referral", label: "Referral" },
   { value: "social_media", label: "Social Media" },
-  { value: "advertisement", label: "Advertisement" },
+  { value: "advertising", label: "Advertising" },
   { value: "cold_call", label: "Cold Call" },
   { value: "walk_in", label: "Walk-in" },
 ];
 
-const propertyTypes = [
-  "Residential",
-  "Commercial",
-  "Office Space",
-  "Warehouse",
-  "Land",
-  "Investment",
-];
-
 export default function CRMLeads() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sourceFilter, setSourceFilter] = useState<string>("all");
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingLead, setEditingLead] = useState<Lead | null>(null);
-
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  const { data: leads, isLoading } = useQuery<Lead[]>({
-    queryKey: ["/api/leads", searchTerm, statusFilter, sourceFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (searchTerm) params.append("search", searchTerm);
-      if (statusFilter) params.append("status", statusFilter);
-      if (sourceFilter) params.append("source", sourceFilter);
-      
-      const response = await fetch(`/api/leads?${params.toString()}`);
-      if (!response.ok) throw new Error("Failed to fetch leads");
-      return response.json();
-    },
-  });
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sourceFilter, setSourceFilter] = useState("all");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
   const form = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
@@ -99,27 +74,40 @@ export default function CRMLeads() {
     },
   });
 
+  // Fetch leads
+  const { data: leads, isLoading } = useQuery<Lead[]>({
+    queryKey: ['/api/leads'],
+    retry: false,
+  });
+
+  // Filter leads
+  const filteredLeads = leads?.filter((lead) => {
+    const matchesSearch = 
+      lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
+    const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
+    
+    return matchesSearch && matchesStatus && matchesSource;
+  });
+
+  // Create mutation
   const createMutation = useMutation({
     mutationFn: async (data: LeadFormData) => {
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error("Failed to create lead");
-      return response.json();
+      await apiRequest('/api/leads', 'POST', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/leads/stats"] });
-      setIsCreateDialogOpen(false);
-      form.reset();
       toast({
         title: "Success",
         description: "Lead created successfully",
       });
+      queryClient.invalidateQueries({ queryKey: ['/api/leads'] });
+      setIsCreateDialogOpen(false);
+      form.reset();
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to create lead",
@@ -128,21 +116,22 @@ export default function CRMLeads() {
     },
   });
 
+  // Update mutation
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<LeadFormData> }) => {
-      await apiRequest("PUT", `/api/leads/${id}`, data);
+    mutationFn: async (data: LeadFormData) => {
+      await apiRequest(`/api/leads/${editingLead?.id}`, 'PUT', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/leads/stats"] });
-      setEditingLead(null);
-      form.reset();
       toast({
         title: "Success",
         description: "Lead updated successfully",
       });
+      queryClient.invalidateQueries({ queryKey: ['/api/leads'] });
+      setIsCreateDialogOpen(false);
+      setEditingLead(null);
+      form.reset();
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to update lead",
@@ -151,19 +140,19 @@ export default function CRMLeads() {
     },
   });
 
+  // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest("DELETE", `/api/leads/${id}`);
+      await apiRequest(`/api/leads/${id}`, 'DELETE');
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/leads/stats"] });
       toast({
         title: "Success",
         description: "Lead deleted successfully",
       });
+      queryClient.invalidateQueries({ queryKey: ['/api/leads'] });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to delete lead",
@@ -174,7 +163,7 @@ export default function CRMLeads() {
 
   const handleSubmit = (data: LeadFormData) => {
     if (editingLead) {
-      updateMutation.mutate({ id: editingLead.id, data });
+      updateMutation.mutate(data);
     } else {
       createMutation.mutate(data);
     }
@@ -190,16 +179,15 @@ export default function CRMLeads() {
       company: lead.company || "",
       status: lead.status,
       source: lead.source,
-      propertyInterests: lead.propertyInterests || [],
-      budget: lead.budget || "",
+      budget: lead.budget?.toString() || "",
       notes: lead.notes || "",
     });
     setIsCreateDialogOpen(true);
   };
 
-  const handleDelete = (leadId: string) => {
+  const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this lead?")) {
-      deleteMutation.mutate(leadId);
+      deleteMutation.mutate(id);
     }
   };
 
@@ -215,387 +203,283 @@ export default function CRMLeads() {
     return leadSources.find(s => s.value === source)?.label || source;
   };
 
-  const clearFilters = () => {
-    setSearchTerm("");
-    setStatusFilter("all");
-    setSourceFilter("all");
-  };
-
-  const openCreateDialog = () => {
-    setEditingLead(null);
-    form.reset();
-    setIsCreateDialogOpen(true);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              Lead Management
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Manage and track all your leads
-            </p>
+    <div className="bg-white">
+      <div className="mb-6">
+        {/* Search and Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex-1">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search leads by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            </div>
           </div>
-          <div className="flex space-x-4">
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={openCreateDialog} data-testid="button-new-lead">
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Lead
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingLead ? "Edit Lead" : "Create New Lead"}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {editingLead ? "Update lead information" : "Add a new lead to your CRM"}
-                  </DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} data-testid="input-first-name" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <Input {...field} data-testid="input-last-name" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input type="email" {...field} data-testid="input-email" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phone</FormLabel>
-                            <FormControl>
-                              <Input {...field} data-testid="input-phone" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="company"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Company</FormLabel>
-                          <FormControl>
-                            <Input {...field} data-testid="input-company" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Status</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger data-testid="select-status">
-                                  <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {leadStatuses.map((status) => (
-                                  <SelectItem key={status.value} value={status.value}>
-                                    {status.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="source"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Source</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger data-testid="select-source">
-                                  <SelectValue placeholder="Select source" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {leadSources.map((source) => (
-                                  <SelectItem key={source.value} value={source.value}>
-                                    {source.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="budget"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Budget</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., $500,000 - $1,000,000" {...field} data-testid="input-budget" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="notes"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Notes</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Additional notes about the lead..." {...field} data-testid="textarea-notes" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <DialogFooter>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsCreateDialogOpen(false)}
-                        data-testid="button-cancel"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="submit"
-                        disabled={createMutation.isPending || updateMutation.isPending}
-                        data-testid="button-save-lead"
-                      >
-                        {createMutation.isPending || updateMutation.isPending ? "Saving..." : editingLead ? "Update" : "Create"}
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <select 
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-200 rounded-lg text-sm"
+          >
+            <option value="all">All Statuses</option>
+            {leadStatuses.map((status) => (
+              <option key={status.value} value={status.value}>
+                {status.label}
+              </option>
+            ))}
+          </select>
+          <select 
+            value={sourceFilter} 
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-200 rounded-lg text-sm"
+          >
+            <option value="all">All Sources</option>
+            {leadSources.map((source) => (
+              <option key={source.value} value={source.value}>
+                {source.label}
+              </option>
+            ))}
+          </select>
         </div>
+      </div>
 
-        {/* Enhanced Filters */}
-        <Card className="mb-6 border-0 shadow-lg bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-700" data-testid="card-filters">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center text-xl">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg mr-3">
-                <Filter className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              </div>
-              Search & Filter Leads
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search leads..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-2 focus:border-blue-400 transition-colors"
-                  data-testid="input-search"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="border-2 focus:border-green-400 transition-colors" data-testid="select-filter-status">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  {leadStatuses.map((status) => (
-                    <SelectItem key={status.value} value={status.value}>
-                      <div className="flex items-center">
-                        <div className={`w-2 h-2 rounded-full mr-2 ${status.color.includes('blue') ? 'bg-blue-500' : status.color.includes('green') ? 'bg-green-500' : status.color.includes('yellow') ? 'bg-yellow-500' : status.color.includes('red') ? 'bg-red-500' : status.color.includes('purple') ? 'bg-purple-500' : 'bg-gray-500'}`}></div>
-                        {status.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                <SelectTrigger className="border-2 focus:border-orange-400 transition-colors" data-testid="select-filter-source">
-                  <SelectValue placeholder="Filter by source" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Sources</SelectItem>
-                  {leadSources.map((source) => (
-                    <SelectItem key={source.value} value={source.value}>
-                      {source.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+      {/* Leads Table */}
+      <Card className="border border-gray-200 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold text-gray-900">
+            All Leads ({filteredLeads?.length || 0})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            </div>
+          ) : leads && leads.length === 0 ? (
+            <div className="text-center py-12">
+              <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 text-sm mb-6">No leads found</p>
+              <p className="text-gray-400 text-sm mb-6">Get started by adding your first lead</p>
               <Button 
-                variant="outline" 
-                onClick={clearFilters} 
-                className="border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 transition-all duration-300" 
-                data-testid="button-clear-filters"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => setIsCreateDialogOpen(true)}
               >
-                <Filter className="w-4 h-4 mr-2" />
-                Clear Filters
+                <Plus className="w-4 h-4 mr-2" />
+                Add Your First Lead
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Leads List */}
-        <Card data-testid="card-leads-list">
-          <CardHeader>
-            <CardTitle>Leads ({leads?.length || 0})</CardTitle>
-            <CardDescription>
-              Manage your leads and track their progress
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="text-center py-8">Loading leads...</div>
-            ) : leads?.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                No leads found. Create your first lead to get started.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {leads?.map((lead) => (
-                  <div 
-                    key={lead.id} 
-                    className="flex items-center justify-between p-6 border rounded-lg hover:shadow-md transition-shadow"
-                    data-testid={`lead-card-${lead.id}`}
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-4 mb-2">
-                        <h3 className="text-lg font-semibold">
-                          {lead.firstName} {lead.lastName}
-                        </h3>
-                        <Badge className={getStatusColor(lead.status)}>
-                          {getStatusLabel(lead.status)}
-                        </Badge>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
-                        <div className="flex items-center space-x-2">
-                          <Mail className="w-4 h-4" />
-                          <span>{lead.email || "No email"}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Phone className="w-4 h-4" />
-                          <span>{lead.phone}</span>
-                        </div>
-                        {lead.company && (
-                          <div className="flex items-center space-x-2">
-                            <Building className="w-4 h-4" />
-                            <span>{lead.company}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="mt-2 flex flex-wrap gap-2 text-sm">
-                        <span className="text-gray-500">Source: {getSourceLabel(lead.source)}</span>
-                        {lead.budget && (
-                          <span className="text-gray-500">• Budget: {lead.budget}</span>
-                        )}
-                        {lead.propertyInterests && lead.propertyInterests.length > 0 && (
-                          <span className="text-gray-500">
-                            • Interests: {lead.propertyInterests.join(", ")}
-                          </span>
-                        )}
-                      </div>
-
-                      {lead.notes && (
-                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">
-                          "{lead.notes}"
-                        </p>
-                      )}
+          ) : (
+            <div className="space-y-4">
+              {filteredLeads?.map((lead) => (
+                <div key={lead.id} className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-gray-50">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">{lead.firstName} {lead.lastName}</h3>
+                    <p className="text-sm text-gray-500">{lead.email}</p>
+                    <div className="flex items-center mt-1 space-x-4 text-xs text-gray-400">
+                      <span>{getSourceLabel(lead.source)}</span>
+                      <span>{lead.company}</span>
                     </div>
-
-                    <div className="flex items-center space-x-2 ml-4">
-                      <Button variant="outline" size="sm" data-testid={`button-schedule-${lead.id}`} disabled>
-                        <Calendar className="w-4 h-4 mr-1" />
-                        Schedule
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleEdit(lead)}
-                        data-testid={`button-edit-${lead.id}`}
-                      >
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Badge className={getStatusColor(lead.status)}>
+                      {getStatusLabel(lead.status)}
+                    </Badge>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => handleEdit(lead)}>
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleDelete(lead.id)}
-                        className="text-red-600 hover:text-red-700"
-                        data-testid={`button-delete-${lead.id}`}
-                      >
+                      <Button variant="outline" size="sm" onClick={() => handleDelete(lead.id)}>
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Create/Edit Lead Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogTrigger asChild>
+          <div />
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingLead ? "Edit Lead" : "Create New Lead"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingLead ? "Update lead information" : "Add a new lead to your CRM"}
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="company"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <FormControl>
+                        <select {...field} className="w-full px-3 py-2 border border-gray-300 rounded-md">
+                          {leadStatuses.map((status) => (
+                            <option key={status.value} value={status.value}>
+                              {status.label}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="source"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Source</FormLabel>
+                      <FormControl>
+                        <select {...field} className="w-full px-3 py-2 border border-gray-300 rounded-md">
+                          {leadSources.map((source) => (
+                            <option key={source.value} value={source.value}>
+                              {source.label}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="budget"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Budget</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Expected budget range" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Additional notes about the lead..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                >
+                  {createMutation.isPending || updateMutation.isPending ? "Saving..." : editingLead ? "Update" : "Create"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

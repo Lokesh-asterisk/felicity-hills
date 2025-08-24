@@ -675,64 +675,103 @@ export default function AdminDashboard() {
     );
   };
 
+  // CRM Top Navigation Component
+  const CRMTopNav = ({ activeTab }: { activeTab: string }) => (
+    <div className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="flex items-center justify-between py-4">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-semibold text-gray-900">🏠 RealEstate CRM</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search leads, properties..."
+                className="w-64 pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+              <div className="absolute left-2 top-2.5">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">1</div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                JS
+              </div>
+              <span className="text-sm font-medium text-gray-700">John Smith</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="flex space-x-8 border-b border-gray-200">
+          <button
+            onClick={() => setCurrentView("crm")}
+            className={`px-1 py-4 text-sm font-medium border-b-2 ${
+              activeTab === "crm" 
+                ? "border-blue-600 text-blue-600" 
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            📊 Dashboard
+          </button>
+          <button
+            onClick={() => setCurrentView("crm-leads")}
+            className={`px-1 py-4 text-sm font-medium border-b-2 ${
+              activeTab === "crm-leads" 
+                ? "border-blue-600 text-blue-600" 
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            👥 Leads
+          </button>
+          <button
+            onClick={() => setCurrentView("crm-appointments")}
+            className={`px-1 py-4 text-sm font-medium border-b-2 ${
+              activeTab === "crm-appointments" 
+                ? "border-blue-600 text-blue-600" 
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            📅 Appointments
+          </button>
+          <button
+            onClick={() => setCurrentView("crm-followups")}
+            className={`px-1 py-4 text-sm font-medium border-b-2 ${
+              activeTab === "crm-followups" 
+                ? "border-blue-600 text-blue-600" 
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            📋 Follow-ups
+          </button>
+          <button
+            className="px-1 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+          >
+            📊 Reports
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   // Handle CRM view rendering
   if (currentView === "crm") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
-        <div className="flex">
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
-              <div className="flex items-center flex-shrink-0 px-4 mb-8">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
-              </div>
-              <CRMSidebar />
-            </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          <div className="lg:hidden">
-            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="m-4">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64">
-                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:pl-64 flex flex-col flex-1">
-            <div className="p-3 sm:p-6">
-              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-                <Breadcrumb />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentView("dashboard")}
-                      className="flex items-center gap-2 lg:hidden"
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                      Dashboard
-                    </Button>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                      CRM Dashboard
-                    </h1>
-                  </div>
-                </div>
-                <CRMDashboard 
-                  onNavigateToLeads={() => setCurrentView("crm-leads")}
-                  onCreateNewLead={() => setCurrentView("crm-leads")}
-                  setCurrentView={setCurrentView}
-                />
-              </div>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        <CRMTopNav activeTab="crm" />
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <CRMDashboard 
+            onNavigateToLeads={() => setCurrentView("crm-leads")}
+            onCreateNewLead={() => setCurrentView("crm-leads")}
+            setCurrentView={setCurrentView}
+          />
         </div>
       </div>
     );
@@ -740,55 +779,20 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-leads") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
-        <div className="flex">
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
-              <div className="flex items-center flex-shrink-0 px-4 mb-8">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
-              </div>
-              <CRMSidebar />
-            </div>
+      <div className="min-h-screen bg-gray-50">
+        <CRMTopNav activeTab="crm-leads" />
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-semibold text-gray-900">Leads Management</h1>
+            <Button 
+              onClick={() => setCurrentView("crm-leads")}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Lead
+            </Button>
           </div>
-
-          {/* Mobile Navigation */}
-          <div className="lg:hidden">
-            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="m-4">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64">
-                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:pl-64 flex flex-col flex-1">
-            <div className="p-3 sm:p-6">
-              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-                <Breadcrumb />
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentView("crm")}
-                    className="flex items-center gap-2 lg:hidden"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to CRM
-                  </Button>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    Manage Leads
-                  </h1>
-                </div>
-                <CRMLeads />
-              </div>
-            </div>
-          </div>
+          <CRMLeads />
         </div>
       </div>
     );
@@ -796,55 +800,19 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-appointments") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
-        <div className="flex">
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
-              <div className="flex items-center flex-shrink-0 px-4 mb-8">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
-              </div>
-              <CRMSidebar />
-            </div>
+      <div className="min-h-screen bg-gray-50">
+        <CRMTopNav activeTab="crm-appointments" />
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-semibold text-gray-900">Appointments</h1>
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Schedule Appointment
+            </Button>
           </div>
-
-          {/* Mobile Navigation */}
-          <div className="lg:hidden">
-            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="m-4">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64">
-                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:pl-64 flex flex-col flex-1">
-            <div className="p-3 sm:p-6">
-              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-                <Breadcrumb />
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentView("crm")}
-                    className="flex items-center gap-2 lg:hidden"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to CRM
-                  </Button>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    Appointment Management
-                  </h1>
-                </div>
-                <CRMAppointments />
-              </div>
-            </div>
-          </div>
+          <CRMAppointments />
         </div>
       </div>
     );
@@ -852,55 +820,19 @@ export default function AdminDashboard() {
 
   if (currentView === "crm-followups") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950 dark:to-teal-950">
-        <div className="flex">
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
-              <div className="flex items-center flex-shrink-0 px-4 mb-8">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">CRM System</h2>
-              </div>
-              <CRMSidebar />
-            </div>
+      <div className="min-h-screen bg-gray-50">
+        <CRMTopNav activeTab="crm-followups" />
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-semibold text-gray-900">Follow-ups</h1>
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Follow-up
+            </Button>
           </div>
-
-          {/* Mobile Navigation */}
-          <div className="lg:hidden">
-            <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="m-4">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64">
-                <CRMSidebar onClose={() => setIsMobileNavOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:pl-64 flex flex-col flex-1">
-            <div className="p-3 sm:p-6">
-              <div className="max-w-7xl mx-auto space-y-4 sm:space-y-8">
-                <Breadcrumb />
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentView("crm")}
-                    className="flex items-center gap-2 lg:hidden"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to CRM
-                  </Button>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    Follow-up Management
-                  </h1>
-                </div>
-                <CRMFollowUps />
-              </div>
-            </div>
-          </div>
+          <CRMFollowUps />
         </div>
       </div>
     );
