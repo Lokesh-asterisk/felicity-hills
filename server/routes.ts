@@ -19,8 +19,44 @@ import bcrypt from "bcryptjs";
 import multer from "multer";
 import csv from "csv-parser";
 import { Readable } from "stream";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Configure session middleware
+  const PostgresqlStore = connectPgSimple(session);
+  
+  app.use(session({
+    store: new PostgresqlStore({
+      pool: db as any,
+      tableName: 'session'
+    }),
+    secret: process.env.SESSION_SECRET || 'khushalipur-admin-secret-2025',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
+
+  // Admin authentication middleware
+  const requireAdminAuth = (req: any, res: any, next: any) => {
+    if (req.path === '/api/admin/verify-password') {
+      return next(); // Allow login endpoint
+    }
+    
+    if (!req.session?.adminAuthenticated) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    next();
+  };
+  
+  // Apply auth middleware to all admin routes
+  app.use('/api/admin', requireAdminAuth);
   
   // Configure multer for file uploads
   const upload = multer({ storage: multer.memoryStorage() });
@@ -430,7 +466,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.post("/api/admin/verify-password", async (req, res) => {
+  app.post("/api/admin/verify-password", async (req: any, res) => {
     try {
       const { password } = req.body;
       
@@ -452,6 +488,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       if (isPasswordValid) {
+        // Set admin authentication in session
+        req.session.adminAuthenticated = true;
         res.json({ valid: true });
       } else {
         res.status(401).json({ valid: false, message: "Invalid password" });
@@ -460,6 +498,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error verifying admin password:", error);
       res.status(500).json({ message: "Failed to verify password" });
     }
+  });
+
+  // Add admin logout endpoint
+  app.post("/api/admin/logout", (req: any, res) => {
+    req.session?.destroy((err: any) => {
+      if (err) {
+        return res.status(500).json({ message: "Failed to logout" });
+      }
+      res.clearCookie('connect.sid');
+      res.json({ message: "Logged out successfully" });
+    });
   });
 
   // Get videos

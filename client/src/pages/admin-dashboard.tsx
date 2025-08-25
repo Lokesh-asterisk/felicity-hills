@@ -431,14 +431,10 @@ export default function AdminDashboard() {
 
   // Check if already authenticated on component mount
   useEffect(() => {
-    // TEMPORARY: Auto-authenticate for public sharing with OpenAI
-    setIsAuthenticated(true);
-    
-    // ORIGINAL CODE (commented out for temporary public access):
-    // const authStatus = sessionStorage.getItem("admin-authenticated");
-    // if (authStatus === "true") {
-    //   setIsAuthenticated(true);
-    // }
+    const authStatus = sessionStorage.getItem("admin-authenticated");
+    if (authStatus === "true") {
+      setIsAuthenticated(true);
+    }
   }, []);
 
   const handleLogin = async (password: string) => {
@@ -452,10 +448,18 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    sessionStorage.removeItem("admin-authenticated");
-    setLocation("/"); // Redirect to home page
+  const handleLogout = async () => {
+    try {
+      // Call server logout to destroy session
+      await apiRequest("POST", "/api/admin/logout", {});
+    } catch (error) {
+      console.error("Error during logout:", error);
+    } finally {
+      // Always clear client-side state regardless of server response
+      setIsAuthenticated(false);
+      sessionStorage.removeItem("admin-authenticated");
+      setLocation("/"); // Redirect to home page
+    }
   };
 
   const handleAddActivity = () => {
