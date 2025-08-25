@@ -236,7 +236,7 @@ export default function CRMDashboard({
                   <select className="text-sm border border-gray-200 rounded px-2 py-1">
                     <option>All Sources</option>
                   </select>
-                  <Button variant="link" className="text-blue-600 text-sm font-medium p-0">View All</Button>
+                  <Button variant="link" className="text-blue-600 text-sm font-medium p-0" onClick={() => setCurrentView?.("crm-leads")}>View All</Button>
                 </div>
               </div>
             </CardHeader>
