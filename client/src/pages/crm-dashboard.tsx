@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, Users, Calendar, Clock, CheckCircle, TrendingUp } from "lucide-react";
+import { Plus, Users, Calendar, Clock, CheckCircle, TrendingUp, Eye, EyeOff, BarChart3, Activity } from "lucide-react";
 
 interface Lead {
   id: string;
@@ -43,6 +44,18 @@ export default function CRMDashboard({
   onCreateNewLead, 
   setCurrentView 
 }: CRMDashboardProps) {
+
+  // Widget visibility state for customizable dashboard
+  const [widgets, setWidgets] = useState({
+    stats: true,
+    schedule: true,
+    recentLeads: true,
+    taskSummary: true
+  });
+
+  const toggleWidget = (widgetKey: keyof typeof widgets) => {
+    setWidgets(prev => ({ ...prev, [widgetKey]: !prev[widgetKey] }));
+  };
 
   // Fetch leads stats
   const { data: leadStats, isLoading: statsLoading } = useQuery({
@@ -97,25 +110,86 @@ export default function CRMDashboard({
     });
   };
 
+  // Enhanced color coding system for better visual distinction
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'new': return 'bg-blue-100 text-blue-800';
-      case 'contacted': return 'bg-yellow-100 text-yellow-800';
-      case 'qualified': return 'bg-green-100 text-green-800';
-      case 'converted': return 'bg-purple-100 text-purple-800';
-      case 'lost': return 'bg-red-100 text-red-800';
-      case 'scheduled': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'new': return 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm';
+      case 'contacted': return 'bg-amber-50 text-amber-700 border border-amber-200 shadow-sm';
+      case 'qualified': return 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
+      case 'converted': return 'bg-purple-50 text-purple-700 border border-purple-200 shadow-sm';
+      case 'lost': return 'bg-red-50 text-red-700 border border-red-200 shadow-sm';
+      case 'scheduled': return 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm';
+      case 'completed': return 'bg-green-50 text-green-700 border border-green-200 shadow-sm';
+      case 'cancelled': return 'bg-rose-50 text-rose-700 border border-rose-200 shadow-sm';
+      default: return 'bg-slate-50 text-slate-700 border border-slate-200 shadow-sm';
+    }
+  };
+
+  // Priority color coding for tasks
+  const getPriorityColor = (priority: string) => {
+    switch (priority?.toLowerCase()) {
+      case 'high': return 'bg-red-50 text-red-700 border border-red-200';
+      case 'medium': return 'bg-amber-50 text-amber-700 border border-amber-200';
+      case 'low': return 'bg-green-50 text-green-700 border border-green-200';
+      default: return 'bg-slate-50 text-slate-700 border border-slate-200';
     }
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50/30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        
+        {/* Widget Customization Controls */}
+        <div className="mb-6 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">CRM Dashboard</h2>
+              <p className="text-sm text-gray-500">Customize your dashboard widgets</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={widgets.stats ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleWidget('stats')}
+                className="text-xs"
+              >
+                {widgets.stats ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
+                Stats
+              </Button>
+              <Button
+                variant={widgets.schedule ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleWidget('schedule')}
+                className="text-xs"
+              >
+                {widgets.schedule ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
+                Schedule
+              </Button>
+              <Button
+                variant={widgets.recentLeads ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleWidget('recentLeads')}
+                className="text-xs"
+              >
+                {widgets.recentLeads ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
+                Leads
+              </Button>
+              <Button
+                variant={widgets.taskSummary ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleWidget('taskSummary')}
+                className="text-xs"
+              >
+                {widgets.taskSummary ? <Eye className="w-3 h-3 mr-1" /> : <EyeOff className="w-3 h-3 mr-1" />}
+                Tasks
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {widgets.stats && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card className="border border-gray-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -183,12 +257,14 @@ export default function CRMDashboard({
               </div>
             </CardContent>
           </Card>
-        </div>
+          </div>
+        )}
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
           {/* Today's Schedule */}
-          <Card className="border border-gray-200 shadow-sm">
+          {widgets.schedule && (
+          <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold text-gray-900">Today's Schedule</CardTitle>
@@ -226,9 +302,11 @@ export default function CRMDashboard({
               )}
             </CardContent>
           </Card>
+          )}
 
           {/* Recent Leads */}
-          <Card className="border border-gray-200 shadow-sm">
+          {widgets.recentLeads && (
+          <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold text-gray-900">Recent Leads</CardTitle>
@@ -269,11 +347,13 @@ export default function CRMDashboard({
               )}
             </CardContent>
           </Card>
+          )}
         </div>
 
         {/* Task & Activity Summary */}
-        <div className="mt-8">
-          <Card className="border border-gray-200 shadow-sm">
+        {widgets.taskSummary && (
+        <div className="mt-6 sm:mt-8">
+          <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold text-gray-900">Task & Activity Summary</CardTitle>
@@ -465,6 +545,8 @@ export default function CRMDashboard({
             </CardContent>
           </Card>
         </div>
+        )}
+        
       </div>
     </div>
   );
