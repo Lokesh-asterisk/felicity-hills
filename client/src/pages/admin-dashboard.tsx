@@ -90,6 +90,7 @@ const testimonialFormSchema = z.object({
 const projectFormSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().min(10, "Description must be at least 10 characters"),
+  shortDescription: z.string().min(1, "Short description is required"),
   location: z.string().min(1, "Location is required"),
   type: z.enum(["residential", "commercial", "agricultural", "mixed"]),
   status: z.enum(["active", "completed", "upcoming", "suspended"]).default("active"),
@@ -497,6 +498,7 @@ export default function AdminDashboard() {
     projectForm.reset({
       name: project.name,
       description: project.description,
+      shortDescription: project.shortDescription || '',
       location: project.location,
       type: project.type,
       status: project.status,
@@ -2228,6 +2230,19 @@ export default function AdminDashboard() {
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
                                   <Textarea placeholder="Enter project description" rows={3} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={projectForm.control}
+                            name="shortDescription"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Short Description</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter a brief project summary" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
