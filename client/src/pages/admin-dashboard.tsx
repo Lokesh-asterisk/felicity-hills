@@ -172,7 +172,6 @@ export default function AdminDashboard() {
   const { data: recentActivities = [], refetch: refetchActivities } = useQuery<Activity[]>({
     queryKey: ["/api/activities/recent"],
     enabled: isAuthenticated,
-    refetchInterval: 5000, // Auto-refresh every 5 seconds
   });
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
@@ -607,26 +606,22 @@ export default function AdminDashboard() {
   // Only fetch data if authenticated
   const { data: stats, isLoading } = useQuery<BrochureStats>({
     queryKey: ["/api/admin/brochure-stats"],
-    refetchInterval: 5000,
     enabled: isAuthenticated, // Only run query when authenticated
   });
 
   const { data: downloads = [], isLoading: downloadsLoading } = useQuery<BrochureDownload[]>({
     queryKey: ["/api/admin/brochure-downloads"],
-    refetchInterval: 5000,
     enabled: isAuthenticated, // Only run query when authenticated
   });
 
   // Site visit data
   const { data: siteVisitStats, isLoading: siteVisitStatsLoading } = useQuery<SiteVisitStats>({
     queryKey: ["/api/admin/site-visit-stats"],
-    refetchInterval: 5000,
     enabled: isAuthenticated,
   });
 
   const { data: siteVisits = [], isLoading: siteVisitsLoading } = useQuery<SiteVisit[]>({
     queryKey: ["/api/admin/site-visits"],
-    refetchInterval: 5000,
     enabled: isAuthenticated,
   });
 
