@@ -160,6 +160,8 @@ export const projects = pgTable("projects", {
   status: text("status").notNull().default("active"), // active, coming_soon, completed, sold_out
   type: text("type").notNull(), // Agricultural Plots, Residential Plots, Premium Villas, etc.
   priceRange: text("price_range").notNull(),
+  latitude: text("latitude"), // Geographic latitude for heatmap visualization
+  longitude: text("longitude"), // Geographic longitude for heatmap visualization
   features: text("features").array().default([]),
   amenities: text("amenities").array().default([]),
   images: text("images").array().default([]), // URLs to project images

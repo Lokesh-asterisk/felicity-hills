@@ -4,11 +4,18 @@ import Footer from "../components/footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Building, Calendar, TreePine, Mountain, Waves, Home, Star, CheckCircle, Phone, ChevronRight, Clock } from "lucide-react";
+import { MapPin, Users, Building, Calendar, TreePine, Mountain, Waves, Home, Star, CheckCircle, Phone, ChevronRight, Clock, Map, Filter } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import ProjectHeatmap from "@/components/project-heatmap";
+import { useState } from "react";
 
 export default function ProjectShowcase() {
+  const [activeView, setActiveView] = useState<'grid' | 'heatmap'>('grid');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [typeFilter, setTypeFilter] = useState<string>('');
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
+
   // Set page title for SEO
   useEffect(() => {
     document.title = "Project Portfolio - Real Estate Developments | Felicity Hills";
@@ -129,14 +136,95 @@ export default function ProjectShowcase() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 animate-fade-in-up">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Our Project Portfolio</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
               From agricultural investments to luxury developments, explore our comprehensive 
               range of real estate opportunities designed for every investor and lifestyle preference.
             </p>
+            
+            {/* View Toggle */}
+            <div className="flex justify-center items-center gap-4 mb-8">
+              <div className="bg-gray-100 rounded-lg p-1 shadow-sm">
+                <button
+                  onClick={() => setActiveView('grid')}
+                  className={`px-6 py-3 rounded-md flex items-center gap-2 font-medium transition-colors ${
+                    activeView === 'grid' 
+                      ? 'bg-green-600 text-white shadow-md' 
+                      : 'text-gray-600 hover:bg-gray-200'
+                  }`}
+                  data-testid="grid-view-toggle"
+                >
+                  <Building className="w-5 h-5" />
+                  Grid View
+                </button>
+                <button
+                  onClick={() => setActiveView('heatmap')}
+                  className={`px-6 py-3 rounded-md flex items-center gap-2 font-medium transition-colors ${
+                    activeView === 'heatmap' 
+                      ? 'bg-green-600 text-white shadow-md' 
+                      : 'text-gray-600 hover:bg-gray-200'
+                  }`}
+                  data-testid="heatmap-view-toggle"
+                >
+                  <Map className="w-5 h-5" />
+                  Heatmap View
+                </button>
+              </div>
+            </div>
+
+            {/* Filters for heatmap view */}
+            {activeView === 'heatmap' && (
+              <div className="flex flex-wrap justify-center gap-4 mb-8">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  data-testid="status-filter"
+                >
+                  <option value="">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="completed">Completed</option>
+                </select>
+                
+                <select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  data-testid="type-filter"
+                >
+                  <option value="">All Types</option>
+                  <option value="residential">Residential</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="agricultural">Agricultural</option>
+                  <option value="mixed">Mixed</option>
+                </select>
+                
+                <label className="flex items-center gap-2 px-4 py-2 bg-white rounded-md border border-gray-300 shadow-sm cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="checkbox"
+                    checked={showFeaturedOnly}
+                    onChange={(e) => setShowFeaturedOnly(e.target.checked)}
+                    className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    data-testid="featured-filter"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Featured Only</span>
+                </label>
+              </div>
+            )}
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {projects.map((project, index) => (
+          {/* Render either heatmap or grid view */}
+          {activeView === 'heatmap' ? (
+            <div className="mb-12">
+              <ProjectHeatmap 
+                selectedStatus={statusFilter}
+                selectedType={typeFilter}
+                showFeaturedOnly={showFeaturedOnly}
+              />
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {projects.map((project: any, index: number) => (
               <Card 
                 key={project.id} 
                 className={`group hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 border-0 shadow-lg overflow-hidden animate-fade-in-up ${project.isMain ? 'md:col-span-2 lg:col-span-2 xl:col-span-2' : ''}`}
@@ -192,7 +280,7 @@ export default function ProjectShowcase() {
                     <div className="mb-4">
                       <h4 className="text-sm font-semibold text-gray-900 mb-2">Key Features:</h4>
                       <div className="grid grid-cols-2 gap-2">
-                        {project.features.map((feature, featureIndex) => (
+                        {project.features.map((feature: any, featureIndex: number) => (
                           <div key={featureIndex} className="flex items-center text-sm text-gray-600">
                             <CheckCircle className="w-3 h-3 text-green-500 mr-1 flex-shrink-0" />
                             <span>{feature}</span>
@@ -240,7 +328,8 @@ export default function ProjectShowcase() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 

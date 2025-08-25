@@ -99,6 +99,8 @@ const projectFormSchema = z.object({
   amenities: z.string().optional(),
   features: z.string().optional(),
   priceRange: z.string().optional(),
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
   totalUnits: z.string().optional().transform((val) => val ? parseInt(val) : undefined),
   sortOrder: z.string().optional().transform((val) => val ? parseInt(val) : 0)
 });
@@ -507,6 +509,8 @@ export default function AdminDashboard() {
       features: project.features ? project.features.join(', ') : '',
       amenities: project.amenities ? project.amenities.join(', ') : '',
       priceRange: project.priceRange || '',
+      latitude: project.latitude || '',
+      longitude: project.longitude || '',
       totalUnits: project.totalUnits || 0,
       sortOrder: project.sortOrder || 0
     });
@@ -2376,6 +2380,34 @@ export default function AdminDashboard() {
                                   <FormLabel>Total Units</FormLabel>
                                   <FormControl>
                                     <Input type="number" placeholder="Enter total units" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                              control={projectForm.control}
+                              name="latitude"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Latitude (for heatmap)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="e.g., 30.3165" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={projectForm.control}
+                              name="longitude"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Longitude (for heatmap)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="e.g., 78.0322" {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
