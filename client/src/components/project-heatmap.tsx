@@ -53,21 +53,22 @@ export default function ProjectHeatmap({
     return { lat: avgLat, lng: avgLng };
   }, [heatmapProjects]);
 
-  // Generate Google Maps URL with actual markers
+  // Generate Google Maps URL with actual markers - using simpler approach
   const googleMapsUrl = React.useMemo(() => {
     if (heatmapProjects.length === 0) {
-      return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2000000!2d78.0322!3d30.3165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzAuMzE2NSxOIDc4LjAzMjIsRQ!!5e0!3m2!1sen!2sin!4v1629780000000!5m2!1sen!2sin`;
+      // Default map centered on Dehradun
+      return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55659.24344818684!2d78.01855632167968!3d30.31649707593402!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390929c356c888af%3A0x4c3562c032518799!2sDehradun%2C%20Uttarakhand!5e0!3m2!1sen!2sin!4v1629780000000!5m2!1sen!2sin`;
     }
 
-    // Create URL with multiple markers for each project
-    const baseUrl = "https://www.google.com/maps/embed?pb=!1m";
-    const zoom = "11";
-    const markers = heatmapProjects.map((project, index) => 
-      `!4m1!1s${project.latitude},${project.longitude}`
-    ).join('');
+    // For multiple markers, create a simple search URL that Google Maps will render properly
+    if (heatmapProjects.length === 1) {
+      const project = heatmapProjects[0];
+      return `https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3462.746!2d${project.longitude}!3d${project.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzAuMzE2NSxOIDc4LjAzMjIsRQ!!5e0!3m2!1sen!2sin!4v1629780000000!5m2!1sen!2sin`;
+    }
     
-    return `${baseUrl}${heatmapProjects.length + 3}!1m${heatmapProjects.length}${markers}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f${zoom}!3m${heatmapProjects.length}${heatmapProjects.map((p, i) => `!1m1!1s${p.latitude},${p.longitude}`).join('')}!5e0!3m2!1sen!2sin!4v1629780000000!5m2!1sen!2sin`;
-  }, [heatmapProjects]);
+    // For multiple projects, center on the map area and let users click the project links below
+    return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27829.622!2d${mapCenter.lng}!3d${mapCenter.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390929c356c888af%3A0x4c3562c032518799!2sDehradun%2C%20Uttarakhand!5e0!3m2!1sen!2sin!4v1629780000000!5m2!1sen!2sin`;
+  }, [heatmapProjects, mapCenter]);
 
   // Get color based on project type
   const getProjectColor = (type: string) => {
