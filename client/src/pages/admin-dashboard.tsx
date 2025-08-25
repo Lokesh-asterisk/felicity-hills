@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Testimonial, Activity, SiteVisit } from "@shared/schema";
 import { format, isToday, isYesterday, subDays, startOfDay } from "date-fns";
 import AdminLogin from "@/components/admin-login";
@@ -212,6 +213,7 @@ export default function AdminDashboard() {
   // Current tab state for mobile dropdown
   const [currentTab, setCurrentTab] = useState("activity");
   
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   
   // Get testimonials data
@@ -401,13 +403,14 @@ export default function AdminDashboard() {
   // Project management queries and mutations
   const projectsQuery = useQuery({
     queryKey: ["/api/projects", projectFilters],
-    queryFn: () => {
+    queryFn: async () => {
       const params = new URLSearchParams();
       if (projectFilters.status) params.set('status', projectFilters.status);
       if (projectFilters.type) params.set('type', projectFilters.type);
       if (projectFilters.featured !== undefined) params.set('featured', String(projectFilters.featured));
       
-      return apiRequest(`/api/projects?${params.toString()}`);
+      const response = await apiRequest('GET', `/api/projects?${params.toString()}`);
+      return response.json();
     }
   });
   
@@ -416,15 +419,9 @@ export default function AdminDashboard() {
   const projectSubmitMutation = useMutation({
     mutationFn: async (data: z.infer<typeof projectFormSchema>) => {
       if (editingProject) {
-        return apiRequest(`/api/admin/projects/${editingProject.id}`, {
-          method: "PUT",
-          body: JSON.stringify(data)
-        });
+        return apiRequest("PUT", `/api/admin/projects/${editingProject.id}`, data);
       } else {
-        return apiRequest("/api/admin/projects", {
-          method: "POST",
-          body: JSON.stringify(data)
-        });
+        return apiRequest("POST", "/api/admin/projects", data);
       }
     },
     onSuccess: () => {
@@ -447,7 +444,7 @@ export default function AdminDashboard() {
   });
   
   const deleteProjectMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/admin/projects/${id}`, { method: "DELETE" }),
+    mutationFn: (id: string) => apiRequest("DELETE", `/api/admin/projects/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       toast({
@@ -465,7 +462,7 @@ export default function AdminDashboard() {
   });
   
   const toggleFeaturedMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/admin/projects/${id}/toggle-featured`, { method: "POST" }),
+    mutationFn: (id: string) => apiRequest("POST", `/api/admin/projects/${id}/toggle-featured`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       toast({
