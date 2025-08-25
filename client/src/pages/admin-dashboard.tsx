@@ -85,6 +85,21 @@ const testimonialFormSchema = z.object({
   review: z.string().min(10, "Review should be at least 10 characters"),
 });
 
+// Project management form schema
+const projectFormSchema = z.object({
+  name: z.string().min(1, "Project name is required"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  location: z.string().min(1, "Location is required"),
+  type: z.enum(["residential", "commercial", "agricultural", "mixed"]),
+  status: z.enum(["active", "completed", "upcoming", "suspended"]).default("active"),
+  featured: z.boolean().default(false),
+  images: z.string().optional(),
+  amenities: z.string().optional(),
+  priceRange: z.string().optional(),
+  totalUnits: z.number().optional(),
+  sortOrder: z.number().default(0)
+});
+
 // Password verification is now handled via API
 
 export default function AdminDashboard() {
@@ -185,6 +200,15 @@ export default function AdminDashboard() {
   const [showTestimonialDialog, setShowTestimonialDialog] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   
+  // Project management state
+  const [showProjectDialog, setShowProjectDialog] = useState(false);
+  const [editingProject, setEditingProject] = useState<any | null>(null);
+  const [projectFilters, setProjectFilters] = useState<{
+    status?: string;
+    type?: string;
+    featured?: boolean;
+  }>({});
+  
   // Current tab state for mobile dropdown
   const [currentTab, setCurrentTab] = useState("activity");
   
@@ -207,6 +231,24 @@ export default function AdminDashboard() {
       duration: "",
       review: "",
     },
+  });
+  
+  // Project form
+  const projectForm = useForm<z.infer<typeof projectFormSchema>>({
+    resolver: zodResolver(projectFormSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      location: "",
+      type: "residential",
+      status: "active",
+      featured: false,
+      images: "",
+      amenities: "",
+      priceRange: "",
+      totalUnits: 0,
+      sortOrder: 0
+    }
   });
 
   // Reset form when dialog opens/closes
@@ -355,6 +397,131 @@ export default function AdminDashboard() {
       deleteTestimonialMutation.mutate(id);
     }
   };
+
+  // Project management queries and mutations
+  const projectsQuery = useQuery({
+    queryKey: ["/api/projects", projectFilters],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (projectFilters.status) params.set('status', projectFilters.status);
+      if (projectFilters.type) params.set('type', projectFilters.type);
+      if (projectFilters.featured !== undefined) params.set('featured', String(projectFilters.featured));
+      
+      return apiRequest(`/api/projects?${params.toString()}`);
+    }
+  });
+  
+  const projects = projectsQuery.data || [];
+  
+  const projectSubmitMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof projectFormSchema>) => {
+      if (editingProject) {
+        return apiRequest(`/api/admin/projects/${editingProject.id}`, {
+          method: "PUT",
+          body: JSON.stringify(data)
+        });
+      } else {
+        return apiRequest("/api/admin/projects", {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      setShowProjectDialog(false);
+      setEditingProject(null);
+      projectForm.reset();
+      toast({
+        title: "Success",
+        description: editingProject ? "Project updated successfully" : "Project created successfully"
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to save project",
+        variant: "destructive"
+      });
+    }
+  });
+  
+  const deleteProjectMutation = useMutation({
+    mutationFn: (id: string) => apiRequest(`/api/admin/projects/${id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      toast({
+        title: "Success",
+        description: "Project deleted successfully"
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete project",
+        variant: "destructive"
+      });
+    }
+  });
+  
+  const toggleFeaturedMutation = useMutation({
+    mutationFn: (id: string) => apiRequest(`/api/admin/projects/${id}/toggle-featured`, { method: "POST" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
+      toast({
+        title: "Success",
+        description: "Featured status updated"
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error", 
+        description: "Failed to update featured status",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Project form handlers
+  const handleProjectSubmit = (data: z.infer<typeof projectFormSchema>) => {
+    projectSubmitMutation.mutate(data);
+  };
+
+  const handleEditProject = (project: any) => {
+    setEditingProject(project);
+    projectForm.reset({
+      name: project.name,
+      description: project.description,
+      location: project.location,
+      type: project.type,
+      status: project.status,
+      featured: project.featured,
+      images: project.images ? project.images.join(', ') : '',
+      amenities: project.amenities ? project.amenities.join(', ') : '',
+      priceRange: project.priceRange || '',
+      totalUnits: project.totalUnits || 0,
+      sortOrder: project.sortOrder || 0
+    });
+    setShowProjectDialog(true);
+  };
+
+  const handleDeleteProject = (id: string) => {
+    if (confirm("Are you sure you want to delete this project?")) {
+      deleteProjectMutation.mutate(id);
+    }
+  };
+
+  const handleToggleFeatured = (id: string) => {
+    toggleFeaturedMutation.mutate(id);
+  };
+
+  // Reset project form when dialog opens/closes
+  useEffect(() => {
+    if (!showProjectDialog) {
+      setEditingProject(null);
+      projectForm.reset();
+    }
+  }, [showProjectDialog, projectForm]);
 
   // Handle delete site visit
   const handleDeleteSiteVisit = (id: string, visitorName: string) => {
@@ -1046,13 +1213,14 @@ export default function AdminDashboard() {
                 <option value="analytics">📈 Analytics</option>
                 <option value="testimonials">💬 Stories</option>
                 <option value="sitevisits">📅 Visits</option>
+                <option value="projects">🏢 Projects</option>
                 <option value="settings">⚙️ Settings</option>
               </select>
             </div>
             
             {/* Regular tabs for larger screens */}
             <div className="hidden sm:block">
-              <TabsList className="grid grid-cols-7 gap-1 w-full h-auto p-1">
+              <TabsList className="grid grid-cols-8 gap-1 w-full h-auto p-1">
                 <TabsTrigger value="activity" className="px-2 py-2 text-sm">
                   Activity
                 </TabsTrigger>
@@ -1070,6 +1238,9 @@ export default function AdminDashboard() {
                 </TabsTrigger>
                 <TabsTrigger value="sitevisits" className="px-2 py-2 text-sm">
                   Visits
+                </TabsTrigger>
+                <TabsTrigger value="projects" className="px-2 py-2 text-sm">
+                  Projects
                 </TabsTrigger>
                 <TabsTrigger value="settings" className="px-2 py-2 text-sm">
                   Settings
@@ -2005,6 +2176,404 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Settings Tab */}
+          {/* Project Showcase Management */}
+          <TabsContent value="projects" className="space-y-4 sm:space-y-6">
+            <Card className="bg-white dark:bg-gray-800 shadow-lg">
+              <CardHeader className="pb-3 sm:pb-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Home className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    <CardTitle className="text-base sm:text-lg">Project Showcase Management</CardTitle>
+                  </div>
+                  <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        Add Project
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>{editingProject ? "Edit Project" : "Add New Project"}</DialogTitle>
+                        <DialogDescription>
+                          {editingProject ? "Update project details" : "Create a new project showcase"}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <Form {...projectForm}>
+                        <form onSubmit={projectForm.handleSubmit(handleProjectSubmit)} className="space-y-4">
+                          <FormField
+                            control={projectForm.control}
+                            name="name"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Project Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter project name" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={projectForm.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                  <Textarea placeholder="Enter project description" rows={3} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                              control={projectForm.control}
+                              name="location"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Location</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter location" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={projectForm.control}
+                              name="type"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Project Type</FormLabel>
+                                  <FormControl>
+                                    <select {...field} className="w-full p-2 border rounded-md">
+                                      <option value="">Select type</option>
+                                      <option value="residential">Residential</option>
+                                      <option value="commercial">Commercial</option>
+                                      <option value="agricultural">Agricultural</option>
+                                      <option value="mixed">Mixed Use</option>
+                                    </select>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                              control={projectForm.control}
+                              name="status"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Status</FormLabel>
+                                  <FormControl>
+                                    <select {...field} className="w-full p-2 border rounded-md">
+                                      <option value="active">Active</option>
+                                      <option value="completed">Completed</option>
+                                      <option value="upcoming">Upcoming</option>
+                                      <option value="suspended">Suspended</option>
+                                    </select>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={projectForm.control}
+                              name="sortOrder"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Display Order</FormLabel>
+                                  <FormControl>
+                                    <Input type="number" placeholder="0" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <FormField
+                            control={projectForm.control}
+                            name="images"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Image URLs (comma separated)</FormLabel>
+                                <FormControl>
+                                  <Textarea placeholder="Enter image URLs separated by commas" rows={2} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={projectForm.control}
+                            name="amenities"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Amenities (comma separated)</FormLabel>
+                                <FormControl>
+                                  <Textarea placeholder="Enter amenities separated by commas" rows={2} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                              control={projectForm.control}
+                              name="priceRange"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Price Range</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="e.g., ₹50 lakh - ₹2 crore" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={projectForm.control}
+                              name="totalUnits"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Total Units</FormLabel>
+                                  <FormControl>
+                                    <Input type="number" placeholder="Enter total units" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <FormField
+                              control={projectForm.control}
+                              name="featured"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <div className="space-y-1 leading-none">
+                                    <FormLabel>Featured Project</FormLabel>
+                                  </div>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                          <div className="flex justify-end space-x-2">
+                            <Button type="button" variant="outline" onClick={() => {
+                              setShowProjectDialog(false);
+                              setEditingProject(null);
+                              projectForm.reset();
+                            }}>
+                              Cancel
+                            </Button>
+                            <Button type="submit" disabled={projectSubmitMutation.isPending}>
+                              {projectSubmitMutation.isPending ? "Saving..." : editingProject ? "Update" : "Create"}
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* Project Filters */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex-1">
+                    <select
+                      value={projectFilters.status || ""}
+                      onChange={(e) => setProjectFilters({ ...projectFilters, status: e.target.value || undefined })}
+                      className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
+                    >
+                      <option value="">All Status</option>
+                      <option value="active">Active</option>
+                      <option value="completed">Completed</option>
+                      <option value="upcoming">Upcoming</option>
+                      <option value="suspended">Suspended</option>
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <select
+                      value={projectFilters.type || ""}
+                      onChange={(e) => setProjectFilters({ ...projectFilters, type: e.target.value || undefined })}
+                      className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
+                    >
+                      <option value="">All Types</option>
+                      <option value="residential">Residential</option>
+                      <option value="commercial">Commercial</option>
+                      <option value="agricultural">Agricultural</option>
+                      <option value="mixed">Mixed Use</option>
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <select
+                      value={projectFilters.featured !== undefined ? (projectFilters.featured ? "true" : "false") : ""}
+                      onChange={(e) => setProjectFilters({ 
+                        ...projectFilters, 
+                        featured: e.target.value === "" ? undefined : e.target.value === "true" 
+                      })}
+                      className="w-full p-2 border rounded-md dark:bg-gray-800 dark:border-gray-600"
+                    >
+                      <option value="">All Projects</option>
+                      <option value="true">Featured Only</option>
+                      <option value="false">Non-Featured</option>
+                    </select>
+                  </div>
+                </div>
+
+                {projectsQuery.isLoading ? (
+                  <div className="text-center py-4">Loading projects...</div>
+                ) : projectsQuery.error ? (
+                  <div className="text-center py-4 text-red-600">Failed to load projects</div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Desktop Table */}
+                    <div className="hidden lg:block">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Featured</TableHead>
+                            <TableHead>Units</TableHead>
+                            <TableHead>Price Range</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {projects.map((project) => (
+                            <TableRow key={project.id}>
+                              <TableCell className="font-medium">{project.name}</TableCell>
+                              <TableCell>
+                                <Badge variant={project.type === "residential" ? "default" : "outline"}>
+                                  {project.type}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>{project.location}</TableCell>
+                              <TableCell>
+                                <Badge variant={project.status === "active" ? "default" : "secondary"}>
+                                  {project.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleToggleFeatured(project.id)}
+                                  disabled={toggleFeaturedMutation.isPending}
+                                >
+                                  <Star className={`h-4 w-4 ${project.featured ? "fill-yellow-400 text-yellow-400" : "text-gray-400"}`} />
+                                </Button>
+                              </TableCell>
+                              <TableCell>{project.totalUnits || "N/A"}</TableCell>
+                              <TableCell>{project.priceRange || "N/A"}</TableCell>
+                              <TableCell>
+                                <div className="flex justify-end space-x-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleEditProject(project)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleDeleteProject(project.id)}
+                                    disabled={deleteProjectMutation.isPending}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+
+                    {/* Mobile Cards */}
+                    <div className="lg:hidden space-y-4">
+                      {projects.map((project) => (
+                        <Card key={project.id} className="p-4">
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h3 className="font-semibold">{project.name}</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{project.location}</p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleToggleFeatured(project.id)}
+                                  disabled={toggleFeaturedMutation.isPending}
+                                >
+                                  <Star className={`h-4 w-4 ${project.featured ? "fill-yellow-400 text-yellow-400" : "text-gray-400"}`} />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEditProject(project)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteProject(project.id)}
+                                  disabled={deleteProjectMutation.isPending}
+                                >
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <Badge variant={project.type === "residential" ? "default" : "outline"}>
+                                {project.type}
+                              </Badge>
+                              <Badge variant={project.status === "active" ? "default" : "secondary"}>
+                                {project.status}
+                              </Badge>
+                              {project.featured && (
+                                <Badge variant="default" className="bg-yellow-500">
+                                  Featured
+                                </Badge>
+                              )}
+                            </div>
+                            {project.priceRange && (
+                              <p className="text-sm"><strong>Price:</strong> {project.priceRange}</p>
+                            )}
+                            {project.totalUnits && (
+                              <p className="text-sm"><strong>Units:</strong> {project.totalUnits}</p>
+                            )}
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {projects.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        No projects found. Add your first project to get started.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="settings" className="space-y-4 sm:space-y-6">
             <Card className="bg-white dark:bg-gray-800 shadow-lg">
               <CardHeader className="pb-3 sm:pb-6">

@@ -11,6 +11,7 @@ import {
   leads,
   appointments,
   followUps,
+  projects,
   type Plot,
   type SiteVisit,
   type Testimonial,
@@ -35,6 +36,8 @@ import {
   type InsertLead,
   type InsertAppointment,
   type InsertFollowUp,
+  type Project,
+  type InsertProject,
   type UpsertUser,
 } from "@shared/schema";
 import { db } from "./db";
@@ -113,6 +116,16 @@ export interface IStorage {
   updateFollowUp(id: string, followUp: Partial<InsertFollowUp>): Promise<FollowUp | undefined>;
   deleteFollowUp(id: string): Promise<boolean>;
   getOverdueFollowUps(): Promise<FollowUp[]>;
+
+  // Project showcase operations
+  getProjects(filters?: { status?: string; type?: string; featured?: boolean }): Promise<Project[]>;
+  getProject(id: string): Promise<Project | undefined>;
+  createProject(project: InsertProject): Promise<Project>;
+  updateProject(id: string, project: Partial<InsertProject>): Promise<Project | undefined>;
+  deleteProject(id: string): Promise<boolean>;
+  toggleProjectFeatured(id: string): Promise<Project | undefined>;
+  updateProjectOrder(id: string, sortOrder: number): Promise<Project | undefined>;
+  getProjectStats(): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -515,6 +528,152 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .orderBy(followUps.dueDate);
+  }
+
+  // Project showcase operations
+  async getProjects(filters?: { status?: string; type?: string; featured?: boolean }): Promise<Project[]> {
+    try {
+      let query = db.select().from(projects);
+      
+      if (filters) {
+        const conditions = [];
+        if (filters.status) conditions.push(eq(projects.status, filters.status));
+        if (filters.type) conditions.push(eq(projects.type, filters.type));
+        if (filters.featured !== undefined) conditions.push(eq(projects.featured, filters.featured));
+        
+        if (conditions.length > 0) {
+          query = query.where(and(...conditions));
+        }
+      }
+      
+      return await query.orderBy(desc(projects.featured), projects.sortOrder, desc(projects.createdAt));
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      return [];
+    }
+  }
+
+  async getProject(id: string): Promise<Project | undefined> {
+    try {
+      const [project] = await db.select().from(projects).where(eq(projects.id, id));
+      return project || undefined;
+    } catch (error) {
+      console.error("Error fetching project:", error);
+      return undefined;
+    }
+  }
+
+  async createProject(project: InsertProject): Promise<Project> {
+    try {
+      const [newProject] = await db.insert(projects).values(project).returning();
+      return newProject;
+    } catch (error) {
+      console.error("Error creating project:", error);
+      throw error;
+    }
+  }
+
+  async updateProject(id: string, project: Partial<InsertProject>): Promise<Project | undefined> {
+    try {
+      const [updatedProject] = await db
+        .update(projects)
+        .set({ ...project, updatedAt: new Date() })
+        .where(eq(projects.id, id))
+        .returning();
+      return updatedProject || undefined;
+    } catch (error) {
+      console.error("Error updating project:", error);
+      return undefined;
+    }
+  }
+
+  async deleteProject(id: string): Promise<boolean> {
+    try {
+      const result = await db.delete(projects).where(eq(projects.id, id));
+      return result.rowCount ? result.rowCount > 0 : false;
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      return false;
+    }
+  }
+
+  async toggleProjectFeatured(id: string): Promise<Project | undefined> {
+    try {
+      // First get current featured status
+      const [currentProject] = await db.select({ featured: projects.featured }).from(projects).where(eq(projects.id, id));
+      if (!currentProject) return undefined;
+
+      // Toggle the featured status
+      const [updatedProject] = await db
+        .update(projects)
+        .set({ 
+          featured: !currentProject.featured,
+          updatedAt: new Date()
+        })
+        .where(eq(projects.id, id))
+        .returning();
+      
+      return updatedProject || undefined;
+    } catch (error) {
+      console.error("Error toggling project featured status:", error);
+      return undefined;
+    }
+  }
+
+  async updateProjectOrder(id: string, sortOrder: number): Promise<Project | undefined> {
+    try {
+      const [updatedProject] = await db
+        .update(projects)
+        .set({ 
+          sortOrder: sortOrder,
+          updatedAt: new Date()
+        })
+        .where(eq(projects.id, id))
+        .returning();
+      
+      return updatedProject || undefined;
+    } catch (error) {
+      console.error("Error updating project order:", error);
+      return undefined;
+    }
+  }
+
+  async getProjectStats(): Promise<any> {
+    try {
+      const totalProjects = await db.select({ count: count() }).from(projects);
+      const featuredProjects = await db.select({ count: count() }).from(projects).where(eq(projects.featured, true));
+      const activeProjects = await db.select({ count: count() }).from(projects).where(eq(projects.status, "active"));
+      const completedProjects = await db.select({ count: count() }).from(projects).where(eq(projects.status, "completed"));
+
+      const projectsByType = await db
+        .select({ type: projects.type, count: count() })
+        .from(projects)
+        .groupBy(projects.type);
+
+      const projectsByStatus = await db
+        .select({ status: projects.status, count: count() })
+        .from(projects)
+        .groupBy(projects.status);
+
+      return {
+        total: totalProjects[0]?.count || 0,
+        featured: featuredProjects[0]?.count || 0,
+        active: activeProjects[0]?.count || 0,
+        completed: completedProjects[0]?.count || 0,
+        byType: projectsByType,
+        byStatus: projectsByStatus,
+      };
+    } catch (error) {
+      console.error("Error fetching project stats:", error);
+      return {
+        total: 0,
+        featured: 0,
+        active: 0,
+        completed: 0,
+        byType: [],
+        byStatus: [],
+      };
+    }
   }
 
   // Initialize default data

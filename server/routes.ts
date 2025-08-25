@@ -504,6 +504,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Project showcase management routes
+  app.get("/api/projects", async (req, res) => {
+    try {
+      const { status, type, featured } = req.query as { status?: string; type?: string; featured?: string };
+      const filters: any = {};
+      
+      if (status) filters.status = status;
+      if (type) filters.type = type;
+      if (featured !== undefined) filters.featured = featured === 'true';
+      
+      const projects = await storage.getProjects(Object.keys(filters).length > 0 ? filters : undefined);
+      res.json(projects);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      res.status(500).json({ message: "Failed to fetch projects" });
+    }
+  });
+
+  app.get("/api/projects/:id", async (req, res) => {
+    try {
+      const project = await storage.getProject(req.params.id);
+      if (!project) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+      res.json(project);
+    } catch (error) {
+      console.error("Error fetching project:", error);
+      res.status(500).json({ message: "Failed to fetch project" });
+    }
+  });
+
+  // Admin project management routes
+  app.post("/api/admin/projects", requireAdminAuth, async (req, res) => {
+    try {
+      const project = await storage.createProject(req.body);
+      res.status(201).json(project);
+    } catch (error) {
+      console.error("Error creating project:", error);
+      res.status(500).json({ message: "Failed to create project" });
+    }
+  });
+
+  app.put("/api/admin/projects/:id", requireAdminAuth, async (req, res) => {
+    try {
+      const updatedProject = await storage.updateProject(req.params.id, req.body);
+      if (!updatedProject) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+      res.json(updatedProject);
+    } catch (error) {
+      console.error("Error updating project:", error);
+      res.status(500).json({ message: "Failed to update project" });
+    }
+  });
+
+  app.delete("/api/admin/projects/:id", requireAdminAuth, async (req, res) => {
+    try {
+      const deleted = await storage.deleteProject(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+      res.json({ message: "Project deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      res.status(500).json({ message: "Failed to delete project" });
+    }
+  });
+
+  app.post("/api/admin/projects/:id/toggle-featured", requireAdminAuth, async (req, res) => {
+    try {
+      const updatedProject = await storage.toggleProjectFeatured(req.params.id);
+      if (!updatedProject) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+      res.json(updatedProject);
+    } catch (error) {
+      console.error("Error toggling project featured status:", error);
+      res.status(500).json({ message: "Failed to toggle featured status" });
+    }
+  });
+
+  app.post("/api/admin/projects/:id/update-order", requireAdminAuth, async (req, res) => {
+    try {
+      const { sortOrder } = req.body;
+      const updatedProject = await storage.updateProjectOrder(req.params.id, sortOrder);
+      if (!updatedProject) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+      res.json(updatedProject);
+    } catch (error) {
+      console.error("Error updating project order:", error);
+      res.status(500).json({ message: "Failed to update project order" });
+    }
+  });
+
+  app.get("/api/admin/project-stats", requireAdminAuth, async (req, res) => {
+    try {
+      const stats = await storage.getProjectStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching project stats:", error);
+      res.status(500).json({ message: "Failed to fetch project stats" });
+    }
+  });
+
   // Get videos
   app.get("/api/videos", async (_req, res) => {
     try {

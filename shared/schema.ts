@@ -151,6 +151,45 @@ export const followUps = pgTable("follow_ups", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const projects = pgTable("projects", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  location: text("location").notNull(),
+  description: text("description").notNull(),
+  shortDescription: text("short_description").notNull(),
+  status: text("status").notNull().default("active"), // active, coming_soon, completed, sold_out
+  type: text("type").notNull(), // Agricultural Plots, Residential Plots, Premium Villas, etc.
+  priceRange: text("price_range").notNull(),
+  features: text("features").array().default([]),
+  amenities: text("amenities").array().default([]),
+  images: text("images").array().default([]), // URLs to project images
+  galleryImages: text("gallery_images").array().default([]), // Additional gallery images
+  videoUrl: text("video_url"), // Project showcase video
+  brochureUrl: text("brochure_url"), // Link to downloadable brochure
+  masterPlanUrl: text("master_plan_url"), // Master plan image/PDF
+  locationMapUrl: text("location_map_url"), // Google Maps embed or image
+  featured: boolean("featured").default(false), // Featured projects display prominently
+  sortOrder: integer("sort_order").default(0), // For custom ordering
+  investmentReturns: text("investment_returns"), // Expected returns percentage
+  totalArea: text("total_area"), // Total project area
+  totalPlots: integer("total_plots"), // Number of plots/units
+  availablePlots: integer("available_plots"), // Available units
+  launchDate: timestamp("launch_date"),
+  possessionDate: timestamp("possession_date"),
+  approvals: text("approvals").array().default([]), // Required approvals/certificates
+  connectivity: text("connectivity").array().default([]), // Transportation links
+  nearbyAttractions: text("nearby_attractions").array().default([]), // Tourist spots, landmarks
+  contactPerson: text("contact_person"), // Project contact person
+  contactPhone: text("contact_phone"), // Project contact number
+  contactEmail: text("contact_email"), // Project contact email
+  seoTitle: text("seo_title"), // SEO page title
+  seoDescription: text("seo_description"), // SEO meta description
+  seoKeywords: text("seo_keywords").array().default([]), // SEO keywords
+  isActive: boolean("is_active").default(true), // Show/hide project
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 
 
 export const insertPlotSchema = createInsertSchema(plots).omit({ id: true });
@@ -177,6 +216,11 @@ export const insertFollowUpSchema = createInsertSchema(followUps).omit({ id: tru
   completedAt: z.string().datetime().optional().or(z.date().optional()).transform((val) => val ? new Date(val) : undefined),
 });
 
+export const insertProjectSchema = createInsertSchema(projects).omit({ id: true, createdAt: true, updatedAt: true }).extend({
+  launchDate: z.string().datetime().optional().or(z.date().optional()).transform((val) => val ? new Date(val) : undefined),
+  possessionDate: z.string().datetime().optional().or(z.date().optional()).transform((val) => val ? new Date(val) : undefined),
+});
+
 
 
 export type Plot = typeof plots.$inferSelect;
@@ -194,6 +238,9 @@ export type Lead = typeof leads.$inferSelect;
 export type Appointment = typeof appointments.$inferSelect;
 export type FollowUp = typeof followUps.$inferSelect;
 
+// Project Types
+export type Project = typeof projects.$inferSelect;
+
 
 
 export type InsertPlot = z.infer<typeof insertPlotSchema>;
@@ -210,6 +257,9 @@ export type InsertAdminSetting = z.infer<typeof insertAdminSettingSchema>;
 export type InsertLead = z.infer<typeof insertLeadSchema>;
 export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
 export type InsertFollowUp = z.infer<typeof insertFollowUpSchema>;
+
+// Project Insert Types
+export type InsertProject = z.infer<typeof insertProjectSchema>;
 
 
 
