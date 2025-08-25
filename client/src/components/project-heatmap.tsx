@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { Project } from '@shared/schema';
 
@@ -27,6 +27,8 @@ export default function ProjectHeatmap({
   showFeaturedOnly 
 }: ProjectHeatmapProps) {
   const [selectedProject, setSelectedProject] = useState<HeatmapProject | null>(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 30.3165, lng: 78.0322 }); // Dehradun area
+  const mapRef = useRef<HTMLDivElement>(null);
   
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ["/api/projects"]
@@ -70,19 +72,29 @@ export default function ProjectHeatmap({
     }
   };
 
-  // Convert lat/lng to SVG coordinates (simplified projection)
-  const latLngToSVG = (lat: string, lng: string) => {
-    const latitude = parseFloat(lat);
-    const longitude = parseFloat(lng);
+  // Initialize map with actual coordinates
+  useEffect(() => {
+    if (heatmapProjects.length > 0) {
+      // Calculate map center from project coordinates
+      const avgLat = heatmapProjects.reduce((sum, project) => 
+        sum + parseFloat(project.latitude || '0'), 0) / heatmapProjects.length;
+      const avgLng = heatmapProjects.reduce((sum, project) => 
+        sum + parseFloat(project.longitude || '0'), 0) / heatmapProjects.length;
+      
+      setMapCenter({ lat: avgLat, lng: avgLng });
+    }
+  }, [heatmapProjects]);
+
+  // Generate Google Maps embed URL with markers
+  const generateMapUrl = () => {
+    const markers = heatmapProjects.map((project, index) => {
+      const color = getProjectColor(project.type).replace('#', '');
+      const label = String.fromCharCode(65 + index); // A, B, C, etc.
+      return `markers=color:0x${color}%7Clabel:${label}%7C${project.latitude},${project.longitude}`;
+    }).join('&');
     
-    // Simplified conversion for Dehradun area (adjust based on your region)
-    const minLat = 30.0, maxLat = 30.5;
-    const minLng = 77.8, maxLng = 78.3;
-    
-    const x = ((longitude - minLng) / (maxLng - minLng)) * 800;
-    const y = ((maxLat - latitude) / (maxLat - minLat)) * 600;
-    
-    return { x: Math.max(0, Math.min(800, x)), y: Math.max(0, Math.min(600, y)) };
+    const apiKey = "AIzaSyBFw0Qbyq9zTFTd-tUqqo6yLWFyhx_gdHg"; // You'll need your own API key
+    return `https://www.google.com/maps/embed/v1/view?key=${apiKey}&center=${mapCenter.lat},${mapCenter.lng}&zoom=11&${markers}`;
   };
 
   if (isLoading) {
@@ -103,90 +115,115 @@ export default function ProjectHeatmap({
       </div>
       
       <div className="relative">
-        {/* SVG Heatmap */}
-        <svg 
-          viewBox="0 0 800 600" 
-          className="w-full h-96 bg-gradient-to-br from-gray-50 to-blue-50"
-          style={{ aspectRatio: '4/3' }}
-        >
-          {/* Background grid */}
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e5e7eb" strokeWidth="1" opacity="0.3"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-          
-          {/* Region labels */}
-          <text x="100" y="50" className="text-sm fill-gray-500 font-medium">Dehradun Region</text>
-          <text x="600" y="550" className="text-xs fill-gray-400">Agricultural & Residential Areas</text>
-          
-          {/* Project markers */}
-          {heatmapProjects.map((project) => {
-            if (!project.latitude || !project.longitude) return null;
-            
-            const { x, y } = latLngToSVG(project.latitude, project.longitude);
-            const intensity = getHeatmapIntensity(project);
-            const color = getProjectColor(project.type);
-            
-            return (
-              <g key={project.id}>
-                {/* Heatmap glow effect */}
-                <circle
-                  cx={x}
-                  cy={y}
-                  r={25}
-                  fill={color}
-                  opacity={intensity * 0.3}
-                  className="animate-pulse"
-                />
-                <circle
-                  cx={x}
-                  cy={y}
-                  r={15}
-                  fill={color}
-                  opacity={intensity * 0.5}
-                />
+        {/* Google Maps Integration */}
+        <div className="w-full h-96 rounded-lg overflow-hidden bg-gray-100">
+          {heatmapProjects.length > 0 ? (
+            <iframe
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              style={{ border: 0 }}
+              src={`https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d${50000}!2d${mapCenter.lng}!3d${mapCenter.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1629780000000!5m2!1sen!2sin`}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full h-full"
+            ></iframe>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <div className="text-center text-gray-500">
+                <div className="mb-2">🗺️</div>
+                <p>No projects with coordinates to display</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Project Markers Overlay */}
+        {heatmapProjects.length > 0 && (
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="relative w-full h-96">
+              {heatmapProjects.map((project, index) => {
+                if (!project.latitude || !project.longitude) return null;
                 
-                {/* Project marker */}
-                <circle
-                  cx={x}
-                  cy={y}
-                  r={project.featured ? 8 : 6}
-                  fill={color}
-                  stroke="white"
-                  strokeWidth="2"
-                  className="cursor-pointer hover:scale-110 transition-transform"
-                  onClick={() => setSelectedProject(project)}
-                />
+                // Calculate approximate position on the map (simplified)
+                const lat = parseFloat(project.latitude);
+                const lng = parseFloat(project.longitude);
                 
-                {/* Featured project indicator */}
-                {project.featured && (
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={12}
-                    fill="none"
-                    stroke="#fbbf24"
-                    strokeWidth="2"
-                    className="animate-ping"
-                  />
-                )}
+                // Simple positioning relative to map center (this is approximate)
+                const latDiff = (lat - mapCenter.lat) * 111000; // meters per degree lat
+                const lngDiff = (lng - mapCenter.lng) * 111000 * Math.cos(lat * Math.PI / 180);
                 
-                {/* Project label */}
-                <text
-                  x={x}
-                  y={y - 20}
-                  textAnchor="middle"
-                  className="text-xs fill-gray-700 font-medium pointer-events-none"
-                  style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}
-                >
-                  {project.name}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
+                // Convert to pixels (very approximate for zoom level 11)
+                const scale = 0.5; // Adjust based on zoom level
+                const x = 50 + (lngDiff * scale * 0.001); // Rough conversion
+                const y = 50 - (latDiff * scale * 0.001);
+                
+                const color = getProjectColor(project.type);
+                const intensity = getHeatmapIntensity(project);
+                
+                return (
+                  <div
+                    key={project.id}
+                    className="absolute pointer-events-auto cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
+                    style={{
+                      left: `${Math.max(5, Math.min(95, x))}%`,
+                      top: `${Math.max(5, Math.min(95, y))}%`,
+                    }}
+                    onClick={() => setSelectedProject(project)}
+                  >
+                    {/* Heatmap glow effect */}
+                    <div
+                      className="absolute inset-0 rounded-full animate-pulse"
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: color,
+                        opacity: intensity * 0.3,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                    
+                    {/* Project marker */}
+                    <div
+                      className="relative z-10 rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform"
+                      style={{
+                        width: project.featured ? '16px' : '12px',
+                        height: project.featured ? '16px' : '12px',
+                        backgroundColor: color,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                    
+                    {/* Featured indicator */}
+                    {project.featured && (
+                      <div
+                        className="absolute inset-0 rounded-full border-2 animate-ping"
+                        style={{
+                          borderColor: '#fbbf24',
+                          width: '24px',
+                          height: '24px',
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      />
+                    )}
+                    
+                    {/* Project label */}
+                    <div
+                      className="absolute whitespace-nowrap text-xs font-medium text-gray-700 bg-white/90 px-2 py-1 rounded shadow-sm"
+                      style={{
+                        transform: 'translate(-50%, -130%)',
+                        textShadow: '1px 1px 2px rgba(255,255,255,0.8)',
+                      }}
+                    >
+                      {project.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         
         {/* Legend */}
         <div className="absolute top-4 right-4 bg-white rounded-lg shadow-md p-3 border">
