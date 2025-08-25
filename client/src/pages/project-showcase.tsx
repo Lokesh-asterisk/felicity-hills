@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, Building, Calendar, TreePine, Mountain, Waves, Home, Star, CheckCircle, Phone, ChevronRight, Clock } from "lucide-react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProjectShowcase() {
   // Set page title for SEO
@@ -17,120 +18,49 @@ export default function ProjectShowcase() {
     }
   }, []);
 
-  const projects = [
-    {
-      id: 1,
-      name: "Khushalipur",
-      location: "Dehradun, Uttarakhand",
-      status: "Active",
-      type: "Agricultural Plots",
-      description: "Premium agricultural land investment opportunity near Delhi-Dehradun Expressway with excellent connectivity and high returns.",
-      features: ["Water facility", "Main road access", "15-20% returns", "Complete approvals"],
-      priceRange: "₹8,100/sq yd onwards",
-      icon: TreePine,
-      color: "from-green-500 to-green-600",
-      link: "/",
-      isMain: true
-    },
-    {
-      id: 2,
-      name: "Green Valley",
-      location: "Rishikesh, Uttarakhand",
-      status: "Active",
-      type: "Residential Plots",
-      description: "Peaceful residential plots in the spiritual city of Rishikesh, perfect for those seeking tranquility and natural beauty.",
-      features: ["River proximity", "Hill views", "Spiritual environment", "Investment potential"],
-      priceRange: "₹12,000/sq yd onwards",
-      icon: Waves,
-      color: "from-blue-500 to-blue-600",
-      link: null,
-      isMain: false
-    },
-    {
-      id: 3,
-      name: "Hill View Estates",
-      location: "Mussoorie, Uttarakhand",
-      status: "Active",
-      type: "Premium Villas",
-      description: "Luxury villa plots in the Queen of Hills with breathtaking mountain views and cool climate year-round.",
-      features: ["Mountain views", "Cool climate", "Premium location", "Villa development"],
-      priceRange: "₹25,000/sq yd onwards",
-      icon: Mountain,
-      color: "from-purple-500 to-purple-600",
-      link: null,
-      isMain: false
-    },
-    {
-      id: 4,
-      name: "River Side",
-      location: "Haridwar, Uttarakhand",
-      status: "Active",
-      type: "Eco-friendly Plots",
-      description: "Environmentally conscious development near the holy Ganges river with sustainable living features.",
-      features: ["River proximity", "Eco-friendly", "Sustainable design", "Religious significance"],
-      priceRange: "₹10,500/sq yd onwards",
-      icon: Waves,
-      color: "from-teal-500 to-teal-600",
-      link: null,
-      isMain: false
-    },
-    {
-      id: 5,
-      name: "Pine Woods",
-      location: "Shimla, Himachal Pradesh",
-      status: "Planning",
-      type: "Hill Station Plots",
-      description: "Upcoming development in the summer capital with pine forest surroundings and pleasant weather.",
-      features: ["Pine forest", "Cool weather", "Tourist location", "Future potential"],
-      priceRange: "Coming Soon",
-      icon: TreePine,
-      color: "from-green-700 to-green-800",
-      link: null,
-      isMain: false
-    },
-    {
-      id: 6,
-      name: "Valley Heights",
-      location: "Manali, Himachal Pradesh",
-      status: "Active",
-      type: "Luxury Apartments",
-      description: "Premium apartment complex in the adventure capital with stunning valley views and modern amenities.",
-      features: ["Valley views", "Adventure sports", "Modern amenities", "Tourist hub"],
-      priceRange: "₹35,000/sq ft onwards",
-      icon: Building,
-      color: "from-indigo-500 to-indigo-600",
-      link: null,
-      isMain: false
-    },
-    {
-      id: 7,
-      name: "Mountain View",
-      location: "Dharamshala, Himachal Pradesh",
-      status: "Planning",
-      type: "Resort Plots",
-      description: "Future resort development in the Dalai Lama's residence with spiritual significance and tourism potential.",
-      features: ["Spiritual location", "Tourism potential", "Mountain views", "Resort development"],
-      priceRange: "Coming Soon",
-      icon: Mountain,
-      color: "from-orange-500 to-orange-600",
-      link: null,
-      isMain: false
-    },
-    {
-      id: 8,
-      name: "Serene Gardens",
-      location: "Kasauli, Himachal Pradesh",
-      status: "Active",
-      type: "Gated Community",
-      description: "Exclusive gated community in the cantonment town with colonial charm and peaceful environment.",
-      features: ["Gated community", "Colonial charm", "Peaceful location", "Exclusive living"],
-      priceRange: "₹18,000/sq yd onwards",
-      icon: Home,
-      color: "from-pink-500 to-pink-600",
-      link: null,
-      isMain: false
-    }
-  ];
+  // Fetch projects from API
+  const { data: projectsData = [], isLoading: projectsLoading } = useQuery({
+    queryKey: ["/api/projects"],
+    queryFn: () => fetch("/api/projects").then(res => res.json())
+  });
+
+  // Map API data to component format
+  const projects = projectsData.map((project: any) => ({
+    id: project.id,
+    name: project.name,
+    location: project.location,
+    status: project.status === "active" ? "Active" : project.status === "coming_soon" ? "Coming Soon" : "Completed",
+    type: project.type,
+    description: project.description,
+    features: project.features || [],
+    priceRange: project.priceRange || "Contact for pricing",
+    icon: project.type.includes("Agricultural") ? TreePine : 
+          project.type.includes("Residential") ? Home :
+          project.type.includes("Commercial") ? Building : Mountain,
+    color: project.type.includes("Agricultural") ? "from-green-500 to-green-600" :
+           project.type.includes("Residential") ? "from-blue-500 to-blue-600" :
+           project.type.includes("Commercial") ? "from-purple-500 to-purple-600" : "from-teal-500 to-teal-600",
+    link: project.name === "Khushalipur" || project.name.toLowerCase().includes("khushalipur") ? "/" : null,
+    isMain: project.featured || false,
+    totalPlots: project.totalPlots,
+    images: project.images || []
+  }));
+
+  // Loading state
+  if (projectsLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+        <Navigation />
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-300">Loading projects...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   const stats = [
     { number: "8+", label: "Active Projects", icon: Building },
