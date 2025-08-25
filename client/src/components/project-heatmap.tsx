@@ -99,8 +99,8 @@ export default function ProjectHeatmap({
       </div>
       
       <div className="relative">
-        {/* Google Maps with Native Markers at Real Coordinates */}
-        <div className="w-full h-96 rounded-lg overflow-hidden bg-gray-100">
+        {/* Google Maps with Visual Project Markers */}
+        <div className="w-full h-96 rounded-lg overflow-hidden bg-gray-100 relative">
           <iframe
             width="100%"
             height="100%"
@@ -113,35 +113,134 @@ export default function ProjectHeatmap({
             className="w-full h-full"
             title="Interactive Project Heatmap"
           />
+          
+          {/* Visual Markers Overlay on Map */}
+          {heatmapProjects.length > 0 && (
+            <div className="absolute inset-0 pointer-events-none">
+              {heatmapProjects.map((project, index) => {
+                if (!project.latitude || !project.longitude) return null;
+                
+                // Calculate approximate position on visible map
+                const lat = parseFloat(project.latitude);
+                const lng = parseFloat(project.longitude);
+                
+                // Position calculation relative to map bounds (Dehradun area)
+                const mapBounds = {
+                  north: 30.45,
+                  south: 30.15,
+                  east: 78.15,
+                  west: 77.95
+                };
+                
+                // Convert lat/lng to pixel coordinates within the iframe
+                const x = ((lng - mapBounds.west) / (mapBounds.east - mapBounds.west)) * 100;
+                const y = ((mapBounds.north - lat) / (mapBounds.north - mapBounds.south)) * 100;
+                
+                // Only show markers that fall within visible bounds
+                if (x < 0 || x > 100 || y < 0 || y > 100) return null;
+                
+                const color = getProjectColor(project.type);
+                
+                return (
+                  <div
+                    key={project.id}
+                    className="absolute pointer-events-auto cursor-pointer transform -translate-x-1/2 -translate-y-1/2 z-10"
+                    style={{
+                      left: `${x}%`,
+                      top: `${y}%`,
+                    }}
+                    onClick={() => {
+                      setSelectedProject(project);
+                      // Open in new Google Maps tab with exact coordinates
+                      window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
+                    }}
+                  >
+                    {/* Heatmap glow effect */}
+                    <div
+                      className="absolute inset-0 rounded-full animate-pulse opacity-40"
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        backgroundColor: color,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                    
+                    {/* Project marker pin */}
+                    <div
+                      className="relative z-10 rounded-full border-2 border-white shadow-lg hover:scale-125 transition-transform"
+                      style={{
+                        width: project.featured ? '12px' : '8px',
+                        height: project.featured ? '12px' : '8px',
+                        backgroundColor: color,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                    
+                    {/* Featured project pulse */}
+                    {project.featured && (
+                      <div
+                        className="absolute inset-0 rounded-full border-2 animate-ping"
+                        style={{
+                          borderColor: '#fbbf24',
+                          width: '16px',
+                          height: '16px',
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      />
+                    )}
+                    
+                    {/* Project name tooltip on hover */}
+                    <div
+                      className="absolute whitespace-nowrap text-xs font-medium text-gray-800 bg-white/95 px-2 py-1 rounded shadow-lg border opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
+                      style={{
+                        transform: 'translate(-50%, -110%)',
+                        textShadow: 'none',
+                      }}
+                    >
+                      {project.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Direct Links to Open in Google Maps */}
+        {/* Project List with Direct Map Links */}
         {heatmapProjects.length > 0 && (
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {heatmapProjects.map((project, index) => (
-              <a
-                key={project.id}
-                href={`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${project.name.replace(/\s+/g, '+')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setSelectedProject(project)}
-              >
-                <div 
-                  className="w-4 h-4 rounded-full flex-shrink-0"
-                  style={{ 
-                    backgroundColor: project.type === 'residential' ? '#3B82F6' : 
-                                   project.type === 'commercial' ? '#10B981' : 
-                                   project.type === 'agricultural' ? '#F59E0B' : '#8B5CF6' 
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">Project Locations</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {heatmapProjects.map((project, index) => (
+                <div
+                  key={project.id}
+                  className={`flex items-center gap-3 p-3 border rounded-lg hover:shadow-md transition-all cursor-pointer ${
+                    selectedProject?.id === project.id 
+                      ? 'bg-blue-50 border-blue-300 shadow-md' 
+                      : 'bg-white border-gray-200'
+                  }`}
+                  onClick={() => {
+                    setSelectedProject(project);
+                    // Open exact location in Google Maps
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
                   }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-gray-900 truncate">{project.name}</div>
-                  <div className="text-xs text-gray-500">{project.latitude}, {project.longitude}</div>
+                >
+                  <div 
+                    className="w-4 h-4 rounded-full flex-shrink-0 border border-white shadow-sm"
+                    style={{ 
+                      backgroundColor: getProjectColor(project.type)
+                    }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm text-gray-900 truncate">{project.name}</div>
+                    <div className="text-xs text-gray-500">{project.latitude}°N, {project.longitude}°E</div>
+                    <div className="text-xs text-gray-400 capitalize">{project.type} • {project.status}</div>
+                  </div>
+                  <div className="text-xs text-blue-600 flex-shrink-0 font-medium">View Location →</div>
                 </div>
-                <div className="text-xs text-blue-600 flex-shrink-0">View →</div>
-              </a>
-            ))}
+              ))}
+            </div>
           </div>
         )}
         
