@@ -45,18 +45,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Admin authentication middleware
   const requireAdminAuth = (req: any, res: any, next: any) => {
-    if (req.path === '/api/admin/verify-password') {
-      return next(); // Allow login endpoint
-    }
-    
     if (!req.session?.adminAuthenticated) {
       return res.status(401).json({ message: "Authentication required" });
     }
     next();
   };
-  
-  // Apply auth middleware to all admin routes
-  app.use('/api/admin', requireAdminAuth);
   
   // Configure multer for file uploads
   const upload = multer({ storage: multer.memoryStorage() });
@@ -166,7 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin testimonial management endpoints
-  app.post("/api/admin/testimonials", async (req, res) => {
+  app.post("/api/admin/testimonials", requireAdminAuth, async (req, res) => {
     try {
       const testimonialData = insertTestimonialSchema.parse(req.body);
       const testimonial = await storage.createTestimonial(testimonialData);
@@ -181,7 +174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/admin/testimonials/:id", async (req, res) => {
+  app.put("/api/admin/testimonials/:id", requireAdminAuth, async (req, res) => {
     try {
       const testimonialData = insertTestimonialSchema.parse(req.body);
       const testimonial = await storage.updateTestimonial(req.params.id, testimonialData);
@@ -199,7 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/testimonials/:id", async (req, res) => {
+  app.delete("/api/admin/testimonials/:id", requireAdminAuth, async (req, res) => {
     try {
       const success = await storage.deleteTestimonial(req.params.id);
       if (!success) {
@@ -213,7 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all site visits (admin)
-  app.get("/api/admin/site-visits", async (_req, res) => {
+  app.get("/api/admin/site-visits", requireAdminAuth, async (_req, res) => {
     try {
       const siteVisits = await storage.getSiteVisits();
       res.json(siteVisits);
@@ -224,7 +217,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get site visit statistics (admin)
-  app.get("/api/admin/site-visit-stats", async (_req, res) => {
+  app.get("/api/admin/site-visit-stats", requireAdminAuth, async (_req, res) => {
     try {
       const stats = await storage.getSiteVisitStats();
       res.json(stats);
@@ -235,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete site visit (admin)
-  app.delete("/api/admin/site-visits/:id", async (req, res) => {
+  app.delete("/api/admin/site-visits/:id", requireAdminAuth, async (req, res) => {
     try {
       const success = await storage.deleteSiteVisit(req.params.id);
       if (!success) {
@@ -345,7 +338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes for brochure management
-  app.get("/api/admin/brochure-downloads", async (req, res) => {
+  app.get("/api/admin/brochure-downloads", requireAdminAuth, async (req, res) => {
     try {
       const downloads = await storage.getBrochureDownloads();
       res.json(downloads);
@@ -355,7 +348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/brochure-stats", async (req, res) => {
+  app.get("/api/admin/brochure-stats", requireAdminAuth, async (req, res) => {
     try {
       const stats = await storage.getBrochureDownloadStats();
       res.json(stats);
@@ -365,7 +358,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/admin/brochure-downloads/:id", async (req, res) => {
+  app.delete("/api/admin/brochure-downloads/:id", requireAdminAuth, async (req, res) => {
     try {
       const success = await storage.deleteBrochureDownload(req.params.id);
       if (!success) {
@@ -379,7 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Bulk delete brochure downloads
-  app.delete("/api/admin/brochure-downloads", async (req, res) => {
+  app.delete("/api/admin/brochure-downloads", requireAdminAuth, async (req, res) => {
     try {
       const { ids } = req.body;
       if (!ids || !Array.isArray(ids)) {
@@ -414,7 +407,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin password management
-  app.post("/api/admin/change-password", async (req, res) => {
+  app.post("/api/admin/change-password", requireAdminAuth, async (req, res) => {
     try {
       const { currentPassword, newPassword } = req.body;
       
