@@ -9,7 +9,7 @@ export default function RecentActivitySection() {
   // Fetch recent activities
   const { data: recentActivities = [], isLoading: activitiesLoading } = useQuery<Activity[]>({
     queryKey: ["/api/activities/recent"],
-    refetchInterval: 5000, // Refresh every 5 seconds
+    // Removed automatic refresh to prevent blinking/reloading
   });
 
   const formatRelativeTime = (date: Date) => {
@@ -74,7 +74,7 @@ export default function RecentActivitySection() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center text-sm text-gray-600">
                       <Zap className="w-4 h-4 mr-1 text-green-500" />
-                      <span>Auto-refreshing every 5 seconds</span>
+                      <span>Live activity feed</span>
                     </div>
                     <div className="text-xs text-green-600 font-medium">
                       {recentActivities.filter(activity => 
