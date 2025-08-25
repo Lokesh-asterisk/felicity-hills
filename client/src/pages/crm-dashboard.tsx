@@ -271,111 +271,196 @@ export default function CRMDashboard({
           </Card>
         </div>
 
-        {/* Bottom Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-          {/* Follow-up Tasks */}
+        {/* Task & Activity Summary */}
+        <div className="mt-8">
           <Card className="border border-gray-200 shadow-sm">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-semibold text-gray-900">Follow-up Tasks</CardTitle>
-                <Button variant="link" className="text-blue-600 text-sm font-medium p-0" onClick={() => setCurrentView?.("crm-followups")}>
-                  View All
-                </Button>
+                <CardTitle className="text-lg font-semibold text-gray-900">Task & Activity Summary</CardTitle>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    onClick={() => setCurrentView?.("crm-followups")}
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Task
+                  </Button>
+                  <Button variant="link" className="text-blue-600 text-sm font-medium p-0" onClick={() => setCurrentView?.("crm-followups")}>
+                    View All
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              {followUpsLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                </div>
-              ) : getPendingFollowUps().length === 0 ? (
-                <div className="text-center py-8">
-                  <Clock className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-gray-500 text-sm">No pending follow-ups</p>
-                  <Button 
-                    onClick={() => setCurrentView?.("crm-followups")}
-                    className="bg-blue-600 hover:bg-blue-700 text-white mt-4"
-                    size="sm"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Follow-up
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {getPendingFollowUps().map((followUp: any) => {
-                    const isOverdue = getOverdueFollowUps().some((o: any) => o.id === followUp.id);
-                    const dueDate = new Date(followUp.dueDate);
-                    const isToday = dueDate.toDateString() === new Date().toDateString();
-                    
-                    return (
-                      <div key={followUp.id} className="flex items-center p-3 border border-gray-100 rounded-lg">
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">{followUp.title}</p>
-                          <p className="text-sm text-gray-500">
-                            Due: {dueDate.toLocaleDateString()} 
-                            {isToday && <span className="text-orange-600 font-medium ml-1">(Today)</span>}
-                            {isOverdue && <span className="text-red-600 font-medium ml-1">(Overdue)</span>}
-                          </p>
-                        </div>
-                        <Badge className={`text-xs ${
-                          isOverdue ? 'bg-red-100 text-red-800' : 
-                          isToday ? 'bg-orange-100 text-orange-800' : 
-                          'bg-blue-100 text-blue-800'
-                        }`}>
-                          {followUp.priority}
-                        </Badge>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Today's Activities */}
+                <div className="space-y-4">
+                  <h3 className="font-medium text-gray-900 border-b pb-2">Today's Activities</h3>
+                  
+                  {/* Today's Follow-ups */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Follow-ups</h4>
+                    {followUpsLoading ? (
+                      <div className="flex justify-center py-4">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                       </div>
-                    );
-                  })}
-                  {getOverdueFollowUps().length > 0 && (
-                    <div className="mt-2 text-sm text-red-600 font-medium">
-                      {getOverdueFollowUps().length} overdue task{getOverdueFollowUps().length !== 1 ? 's' : ''}
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    ) : getPendingFollowUps().filter((followUp: any) => {
+                      const dueDate = new Date(followUp.dueDate);
+                      return dueDate.toDateString() === new Date().toDateString();
+                    }).length === 0 ? (
+                      <p className="text-xs text-gray-500">No follow-ups today</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {getPendingFollowUps().filter((followUp: any) => {
+                          const dueDate = new Date(followUp.dueDate);
+                          return dueDate.toDateString() === new Date().toDateString();
+                        }).slice(0, 3).map((followUp: any) => (
+                          <div key={followUp.id} className="p-2 bg-orange-50 border border-orange-200 rounded text-xs">
+                            <p className="font-medium text-gray-900">{followUp.title}</p>
+                            <p className="text-orange-600">Due Today</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-          {/* Quick Actions */}
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  onClick={() => setCurrentView?.("crm-leads")}
-                  className="bg-green-600 hover:bg-green-700 text-white h-auto p-4 flex flex-col items-center gap-2"
-                >
-                  <Users className="w-5 h-5" />
-                  <span className="text-sm">Add Lead</span>
-                </Button>
-                
-                <Button 
-                  onClick={() => setCurrentView?.("crm-appointments")}
-                  className="bg-blue-600 hover:bg-blue-700 text-white h-auto p-4 flex flex-col items-center gap-2"
-                >
-                  <Calendar className="w-5 h-5" />
-                  <span className="text-sm">Schedule</span>
-                </Button>
-                
-                <Button 
-                  onClick={() => setCurrentView?.("crm-followups")}
-                  className="bg-orange-600 hover:bg-orange-700 text-white h-auto p-4 flex flex-col items-center gap-2"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="text-sm">Follow-up</span>
-                </Button>
-                
-                <Button 
-                  onClick={() => setCurrentView?.("crm-reports")}
-                  className="bg-purple-600 hover:bg-purple-700 text-white h-auto p-4 flex flex-col items-center gap-2"
-                >
-                  <TrendingUp className="w-5 h-5" />
-                  <span className="text-sm">Reports</span>
-                </Button>
+                  {/* Today's Appointments */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Appointments</h4>
+                    {appointmentsLoading ? (
+                      <div className="flex justify-center py-4">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      </div>
+                    ) : (todaysAppointments?.length ?? 0) === 0 ? (
+                      <p className="text-xs text-gray-500">No appointments today</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {todaysAppointments?.slice(0, 3).map((appointment) => (
+                          <div key={appointment.id} className="p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                            <p className="font-medium text-gray-900">{appointment.title}</p>
+                            <p className="text-blue-600">{formatTime(appointment.appointmentDate)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Upcoming Activities */}
+                <div className="space-y-4">
+                  <h3 className="font-medium text-gray-900 border-b pb-2">Upcoming</h3>
+                  
+                  {/* Upcoming Follow-ups */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Next Follow-ups</h4>
+                    {followUpsLoading ? (
+                      <div className="flex justify-center py-4">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      </div>
+                    ) : getPendingFollowUps().filter((followUp: any) => {
+                      const dueDate = new Date(followUp.dueDate);
+                      const today = new Date();
+                      return dueDate > today;
+                    }).length === 0 ? (
+                      <p className="text-xs text-gray-500">No upcoming follow-ups</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {getPendingFollowUps().filter((followUp: any) => {
+                          const dueDate = new Date(followUp.dueDate);
+                          const today = new Date();
+                          return dueDate > today;
+                        }).slice(0, 3).map((followUp: any) => (
+                          <div key={followUp.id} className="p-2 bg-green-50 border border-green-200 rounded text-xs">
+                            <p className="font-medium text-gray-900">{followUp.title}</p>
+                            <p className="text-green-600">{new Date(followUp.dueDate).toLocaleDateString()}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Quick Actions</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button 
+                        onClick={() => setCurrentView?.("crm-appointments")}
+                        size="sm"
+                        variant="outline"
+                        className="h-auto p-2 flex flex-col items-center gap-1"
+                      >
+                        <Calendar className="w-4 h-4" />
+                        <span className="text-xs">Schedule</span>
+                      </Button>
+                      <Button 
+                        onClick={() => setCurrentView?.("crm-leads")}
+                        size="sm"
+                        variant="outline"
+                        className="h-auto p-2 flex flex-col items-center gap-1"
+                      >
+                        <Users className="w-4 h-4" />
+                        <span className="text-xs">Add Lead</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Overdue & Urgent */}
+                <div className="space-y-4">
+                  <h3 className="font-medium text-gray-900 border-b pb-2">Overdue & Urgent</h3>
+                  
+                  {/* Overdue Tasks */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Overdue Tasks</h4>
+                    {followUpsLoading ? (
+                      <div className="flex justify-center py-4">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      </div>
+                    ) : getOverdueFollowUps().length === 0 ? (
+                      <div className="p-2 bg-green-50 border border-green-200 rounded text-xs">
+                        <p className="text-green-600 font-medium">✓ No overdue tasks</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {getOverdueFollowUps().slice(0, 3).map((followUp: any) => (
+                          <div key={followUp.id} className="p-2 bg-red-50 border border-red-200 rounded text-xs">
+                            <p className="font-medium text-gray-900">{followUp.title}</p>
+                            <p className="text-red-600">Overdue since {new Date(followUp.dueDate).toLocaleDateString()}</p>
+                          </div>
+                        ))}
+                        {getOverdueFollowUps().length > 3 && (
+                          <p className="text-xs text-red-600 font-medium">
+                            +{getOverdueFollowUps().length - 3} more overdue tasks
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Summary Stats */}
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Summary</h4>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Total tasks:</span>
+                        <span className="font-medium">{followUps?.length || 0}</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Today's activities:</span>
+                        <span className="font-medium">
+                          {(getPendingFollowUps().filter((f: any) => new Date(f.dueDate).toDateString() === new Date().toDateString()).length + (todaysAppointments?.length || 0))}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-red-600">Overdue:</span>
+                        <span className="font-medium text-red-600">{getOverdueFollowUps().length}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </CardContent>
           </Card>
