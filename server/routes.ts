@@ -30,7 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.use(session({
     store: new PostgresqlStore({
-      pool: db as any,
+      conString: process.env.DATABASE_URL,
       tableName: 'session'
     }),
     secret: process.env.SESSION_SECRET || 'khushalipur-admin-secret-2025',
