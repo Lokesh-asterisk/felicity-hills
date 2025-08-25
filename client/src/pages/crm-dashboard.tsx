@@ -232,12 +232,7 @@ export default function CRMDashboard({
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold text-gray-900">Recent Leads</CardTitle>
-                <div className="flex items-center gap-2">
-                  <select className="text-sm border border-gray-200 rounded px-2 py-1">
-                    <option>All Sources</option>
-                  </select>
-                  <Button variant="link" className="text-blue-600 text-sm font-medium p-0" onClick={() => setCurrentView?.("crm-leads")}>View All</Button>
-                </div>
+                <Button variant="link" className="text-blue-600 text-sm font-medium p-0" onClick={() => setCurrentView?.("crm-leads")}>View All</Button>
               </div>
             </CardHeader>
             <CardContent>
