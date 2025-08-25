@@ -12,7 +12,7 @@ interface HeatmapProject {
   priceRange: string;
   latitude?: string | null;
   longitude?: string | null;
-  featured: boolean;
+  featured: boolean | null;
 }
 
 interface ProjectHeatmapProps {
@@ -150,7 +150,7 @@ export default function ProjectHeatmap({
                       top: `${y}%`,
                     }}
                     onClick={() => {
-                      setSelectedProject(project);
+                      setSelectedProject(project as HeatmapProject);
                       // Open in new Google Maps tab with exact coordinates
                       window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
                     }}
@@ -221,7 +221,7 @@ export default function ProjectHeatmap({
                       : 'bg-white border-gray-200'
                   }`}
                   onClick={() => {
-                    setSelectedProject(project);
+                    setSelectedProject(project as HeatmapProject);
                     // Open exact location in Google Maps
                     window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
                   }}
