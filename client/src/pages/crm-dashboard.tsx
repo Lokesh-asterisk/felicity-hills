@@ -192,7 +192,7 @@ export default function CRMDashboard({
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold text-gray-900">Today's Schedule</CardTitle>
-                <Button variant="link" className="text-blue-600 text-sm font-medium p-0">View All</Button>
+                <Button variant="link" className="text-blue-600 text-sm font-medium p-0" onClick={() => setCurrentView?.("crm-appointments")}>View All</Button>
               </div>
             </CardHeader>
             <CardContent>
