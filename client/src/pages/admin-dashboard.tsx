@@ -784,7 +784,7 @@ export default function AdminDashboard() {
           <CRMDashboard 
             onNavigateToLeads={() => setCurrentView("crm-leads")}
             onCreateNewLead={() => setCurrentView("crm-leads")}
-            setCurrentView={setCurrentView}
+            setCurrentView={(view: string) => setCurrentView(view as typeof currentView)}
           />
         </div>
       </div>
