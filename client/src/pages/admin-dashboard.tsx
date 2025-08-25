@@ -97,8 +97,8 @@ const projectFormSchema = z.object({
   images: z.string().optional(),
   amenities: z.string().optional(),
   priceRange: z.string().optional(),
-  totalUnits: z.number().optional(),
-  sortOrder: z.number().default(0)
+  totalUnits: z.string().optional().transform((val) => val ? parseInt(val) : undefined),
+  sortOrder: z.string().optional().transform((val) => val ? parseInt(val) : 0)
 });
 
 // Password verification is now handled via API
