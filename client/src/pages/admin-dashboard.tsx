@@ -96,6 +96,7 @@ const projectFormSchema = z.object({
   featured: z.boolean().default(false),
   images: z.string().optional(),
   amenities: z.string().optional(),
+  features: z.string().optional(),
   priceRange: z.string().optional(),
   totalUnits: z.string().optional().transform((val) => val ? parseInt(val) : undefined),
   sortOrder: z.string().optional().transform((val) => val ? parseInt(val) : 0)
@@ -481,7 +482,14 @@ export default function AdminDashboard() {
 
   // Project form handlers
   const handleProjectSubmit = (data: z.infer<typeof projectFormSchema>) => {
-    projectSubmitMutation.mutate(data);
+    // Transform comma-separated strings to arrays
+    const transformedData = {
+      ...data,
+      images: data.images ? data.images.split(',').map(s => s.trim()).filter(s => s) : [],
+      amenities: data.amenities ? data.amenities.split(',').map(s => s.trim()).filter(s => s) : [],
+      features: data.features ? data.features.split(',').map(s => s.trim()).filter(s => s) : []
+    };
+    projectSubmitMutation.mutate(transformedData);
   };
 
   const handleEditProject = (project: any) => {
@@ -494,6 +502,7 @@ export default function AdminDashboard() {
       status: project.status,
       featured: project.featured,
       images: project.images ? project.images.join(', ') : '',
+      features: project.features ? project.features.join(', ') : '',
       amenities: project.amenities ? project.amenities.join(', ') : '',
       priceRange: project.priceRange || '',
       totalUnits: project.totalUnits || 0,
@@ -2299,6 +2308,19 @@ export default function AdminDashboard() {
                                 <FormLabel>Image URLs (comma separated)</FormLabel>
                                 <FormControl>
                                   <Textarea placeholder="Enter image URLs separated by commas" rows={2} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={projectForm.control}
+                            name="features"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Features (comma separated)</FormLabel>
+                                <FormControl>
+                                  <Textarea placeholder="Enter features separated by commas" rows={2} {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
