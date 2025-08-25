@@ -431,10 +431,14 @@ export default function AdminDashboard() {
 
   // Check if already authenticated on component mount
   useEffect(() => {
-    const authStatus = sessionStorage.getItem("admin-authenticated");
-    if (authStatus === "true") {
-      setIsAuthenticated(true);
-    }
+    // TEMPORARY: Auto-authenticate for public sharing with OpenAI
+    setIsAuthenticated(true);
+    
+    // ORIGINAL CODE (commented out for temporary public access):
+    // const authStatus = sessionStorage.getItem("admin-authenticated");
+    // if (authStatus === "true") {
+    //   setIsAuthenticated(true);
+    // }
   }, []);
 
   const handleLogin = async (password: string) => {
