@@ -13,6 +13,7 @@ interface HeatmapProject {
   latitude?: string | null;
   longitude?: string | null;
   featured: boolean | null;
+  boundaryCoordinates?: string | null;
 }
 
 interface ProjectHeatmapProps {
@@ -130,24 +131,39 @@ export default function ProjectHeatmap({
                   west: 77.95
                 };
                 
-                // Use percentage coordinates for the SVG viewBox
-                const centerX = 50; // Center of the map area
-                const centerY = 50;
+                // Use custom boundary coordinates if available, otherwise use default shape
+                let boundaryPoints;
                 
-                // Generate irregular land boundary shape (like in your image) - larger and more visible
-                const boundaryPoints = [
-                  { x: centerX - 15, y: centerY - 20 },   // Top-left
-                  { x: centerX + 8, y: centerY - 25 },    // Top
-                  { x: centerX + 20, y: centerY - 12 },   // Top-right
-                  { x: centerX + 25, y: centerY + 5 },    // Right
-                  { x: centerX + 18, y: centerY + 22 },   // Bottom-right
-                  { x: centerX - 3, y: centerY + 25 },    // Bottom
-                  { x: centerX - 20, y: centerY + 15 },   // Bottom-left
-                  { x: centerX - 25, y: centerY - 5 },    // Left
-                ];
+                if (selectedProject.boundaryCoordinates) {
+                  try {
+                    boundaryPoints = JSON.parse(selectedProject.boundaryCoordinates);
+                  } catch (e) {
+                    console.warn('Invalid boundary coordinates, using default shape');
+                    boundaryPoints = null;
+                  }
+                }
+                
+                // Default boundary shape if no custom coordinates
+                if (!boundaryPoints) {
+                  const centerX = 50;
+                  const centerY = 50;
+                  boundaryPoints = [
+                    { x: centerX - 15, y: centerY - 20 },   // Top-left
+                    { x: centerX + 8, y: centerY - 25 },    // Top
+                    { x: centerX + 20, y: centerY - 12 },   // Top-right
+                    { x: centerX + 25, y: centerY + 5 },    // Right
+                    { x: centerX + 18, y: centerY + 22 },   // Bottom-right
+                    { x: centerX - 3, y: centerY + 25 },    // Bottom
+                    { x: centerX - 20, y: centerY + 15 },   // Bottom-left
+                    { x: centerX - 25, y: centerY - 5 },    // Left
+                  ];
+                }
                 
                 const pathData = `M ${boundaryPoints[0].x} ${boundaryPoints[0].y} ` +
-                  boundaryPoints.slice(1).map(point => `L ${point.x} ${point.y}`).join(' ') + ' Z';
+                  boundaryPoints.slice(1).map((point: {x: number, y: number}) => `L ${point.x} ${point.y}`).join(' ') + ' Z';
+                
+                const centerX = boundaryPoints.reduce((sum: number, p: {x: number, y: number}) => sum + p.x, 0) / boundaryPoints.length;
+                const centerY = boundaryPoints.reduce((sum: number, p: {x: number, y: number}) => sum + p.y, 0) / boundaryPoints.length;
                 
                 return (
                   <svg 
