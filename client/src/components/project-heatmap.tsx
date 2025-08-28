@@ -130,19 +130,20 @@ export default function ProjectHeatmap({
                   west: 77.95
                 };
                 
-                const x = ((selectedLng - mapBounds.west) / (mapBounds.east - mapBounds.west)) * 100;
-                const y = ((mapBounds.north - selectedLat) / (mapBounds.north - mapBounds.south)) * 100;
+                // Use percentage coordinates for the SVG viewBox
+                const centerX = 50; // Center of the map area
+                const centerY = 50;
                 
-                // Generate irregular land boundary shape (like in your image)
+                // Generate irregular land boundary shape (like in your image) - larger and more visible
                 const boundaryPoints = [
-                  { x: x - 8, y: y - 12 },   // Top-left
-                  { x: x + 5, y: y - 15 },   // Top
-                  { x: x + 12, y: y - 8 },   // Top-right
-                  { x: x + 15, y: y + 2 },   // Right
-                  { x: x + 10, y: y + 12 },  // Bottom-right
-                  { x: x - 2, y: y + 15 },   // Bottom
-                  { x: x - 12, y: y + 8 },   // Bottom-left
-                  { x: x - 15, y: y - 2 },   // Left
+                  { x: centerX - 15, y: centerY - 20 },   // Top-left
+                  { x: centerX + 8, y: centerY - 25 },    // Top
+                  { x: centerX + 20, y: centerY - 12 },   // Top-right
+                  { x: centerX + 25, y: centerY + 5 },    // Right
+                  { x: centerX + 18, y: centerY + 22 },   // Bottom-right
+                  { x: centerX - 3, y: centerY + 25 },    // Bottom
+                  { x: centerX - 20, y: centerY + 15 },   // Bottom-left
+                  { x: centerX - 25, y: centerY - 5 },    // Left
                 ];
                 
                 const pathData = `M ${boundaryPoints[0].x} ${boundaryPoints[0].y} ` +
@@ -151,44 +152,51 @@ export default function ProjectHeatmap({
                 return (
                   <svg 
                     className="absolute inset-0 w-full h-full"
-                    style={{ pointerEvents: 'none' }}
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                    style={{ pointerEvents: 'none', zIndex: 10 }}
                   >
                     {/* Animated dotted land boundary */}
                     <path
                       d={pathData}
-                      fill="none"
+                      fill="rgba(220, 38, 38, 0.1)"
                       stroke="#dc2626"
-                      strokeWidth="3"
-                      strokeDasharray="8,4"
-                      className="animate-pulse"
+                      strokeWidth="0.8"
+                      strokeDasharray="2,1"
                       style={{
-                        filter: 'drop-shadow(0 0 4px rgba(220, 38, 38, 0.5))'
+                        filter: 'drop-shadow(0 0 2px rgba(220, 38, 38, 0.8))'
                       }}
                     >
                       <animate
                         attributeName="stroke-dashoffset"
-                        values="0;12;0"
-                        dur="2s"
+                        values="0;3;0"
+                        dur="1.5s"
                         repeatCount="indefinite"
                       />
                     </path>
                     
                     {/* Land area label */}
                     <text
-                      x={x}
-                      y={y - 20}
+                      x={centerX}
+                      y={centerY - 8}
                       textAnchor="middle"
-                      className="text-sm font-bold fill-red-600"
-                      style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}
+                      className="text-xs font-bold fill-red-600"
+                      style={{ 
+                        fontSize: '3px',
+                        textShadow: '1px 1px 2px rgba(255,255,255,0.9)'
+                      }}
                     >
                       {selectedProject.name}
                     </text>
                     <text
-                      x={x}
-                      y={y - 5}
+                      x={centerX}
+                      y={centerY + 2}
                       textAnchor="middle"
                       className="text-xs font-medium fill-red-500"
-                      style={{ textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}
+                      style={{ 
+                        fontSize: '2.5px',
+                        textShadow: '1px 1px 2px rgba(255,255,255,0.9)'
+                      }}
                     >
                       Land Area: ~2-5 acres
                     </text>
