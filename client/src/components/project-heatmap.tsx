@@ -155,6 +155,17 @@ export default function ProjectHeatmap({
                       window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
                     }}
                   >
+                    {/* Coverage Area Circle */}
+                    <div
+                      className="absolute inset-0 rounded-full border-2 border-dashed opacity-30"
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        borderColor: color,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                    
                     {/* Heatmap glow effect */}
                     <div
                       className="absolute inset-0 rounded-full animate-pulse opacity-40"
@@ -190,15 +201,17 @@ export default function ProjectHeatmap({
                       />
                     )}
                     
-                    {/* Project name tooltip on hover */}
+                    {/* Project name and coverage info tooltip */}
                     <div
                       className="absolute whitespace-nowrap text-xs font-medium text-gray-800 bg-white/95 px-2 py-1 rounded shadow-lg border opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
                       style={{
-                        transform: 'translate(-50%, -110%)',
+                        transform: 'translate(-50%, -120%)',
                         textShadow: 'none',
                       }}
                     >
-                      {project.name}
+                      <div className="font-semibold">{project.name}</div>
+                      <div className="text-gray-600">Coverage: ~2-5 acres radius</div>
+                      <div className="text-blue-600">Click for exact location</div>
                     </div>
                   </div>
                 );
@@ -236,6 +249,7 @@ export default function ProjectHeatmap({
                     <div className="font-medium text-sm text-gray-900 truncate">{project.name}</div>
                     <div className="text-xs text-gray-500">{project.latitude}°N, {project.longitude}°E</div>
                     <div className="text-xs text-gray-400 capitalize">{project.type} • {project.status}</div>
+                    <div className="text-xs text-green-600 font-medium">Coverage: ~2-5 acres radius</div>
                   </div>
                   <div className="text-xs text-blue-600 flex-shrink-0 font-medium">View Location →</div>
                 </div>
@@ -244,9 +258,9 @@ export default function ProjectHeatmap({
           </div>
         )}
         
-        {/* Legend */}
-        <div className="absolute top-4 right-4 bg-white rounded-lg shadow-md p-3 border">
-          <h4 className="text-sm font-semibold mb-2">Project Types</h4>
+        {/* Enhanced Legend with Coverage Info */}
+        <div className="absolute top-4 right-4 bg-white rounded-lg shadow-md p-3 border max-w-48">
+          <h4 className="text-sm font-semibold mb-2">Project Types & Coverage</h4>
           <div className="space-y-1 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-500"></div>
@@ -265,10 +279,25 @@ export default function ProjectHeatmap({
               <span>Mixed</span>
             </div>
           </div>
-          <div className="mt-2 pt-2 border-t">
-            <div className="flex items-center gap-2 text-xs">
+          
+          <hr className="my-2" />
+          
+          <h5 className="text-xs font-semibold mb-1">Coverage Areas</h5>
+          <div className="space-y-1 text-xs text-gray-600">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full border border-dashed border-gray-400"></div>
+              <span>Land coverage radius</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-gray-700"></div>
+              <span>Project center point</span>
+            </div>
+            <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full border-2 border-yellow-400"></div>
-              <span>Featured</span>
+              <span>Featured projects</span>
+            </div>
+            <div className="text-xs text-green-600 mt-1 font-medium">
+              ~2-5 acres per project
             </div>
           </div>
         </div>
