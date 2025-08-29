@@ -162,7 +162,6 @@ export const projects = pgTable("projects", {
   priceRange: text("price_range").notNull(),
   latitude: text("latitude"), // Geographic latitude for heatmap visualization
   longitude: text("longitude"), // Geographic longitude for heatmap visualization
-  boundaryCoordinates: text("boundary_coordinates"), // JSON string of boundary points for land area
   features: text("features").array().default([]),
   amenities: text("amenities").array().default([]),
   images: text("images").array().default([]), // URLs to project images

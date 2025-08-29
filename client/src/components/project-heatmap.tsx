@@ -13,7 +13,6 @@ interface HeatmapProject {
   latitude?: string | null;
   longitude?: string | null;
   featured: boolean | null;
-  boundaryCoordinates?: string | null;
 }
 
 interface ProjectHeatmapProps {
@@ -28,7 +27,6 @@ export default function ProjectHeatmap({
   showFeaturedOnly 
 }: ProjectHeatmapProps) {
   const [selectedProject, setSelectedProject] = useState<HeatmapProject | null>(null);
-  const [showLandBoundary, setShowLandBoundary] = useState(false);
   
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ["/api/projects"]
@@ -116,111 +114,6 @@ export default function ProjectHeatmap({
             title="Interactive Project Heatmap"
           />
           
-          {/* Land Boundary Outline for Selected Project */}
-          {selectedProject && showLandBoundary && (
-            <div className="absolute inset-0 pointer-events-none">
-              {(() => {
-                const selectedLat = parseFloat(selectedProject.latitude || '0');
-                const selectedLng = parseFloat(selectedProject.longitude || '0');
-                
-                // Calculate position for the selected project
-                const mapBounds = {
-                  north: 30.45,
-                  south: 30.15,
-                  east: 78.15,
-                  west: 77.95
-                };
-                
-                // Use custom boundary coordinates if available, otherwise use default shape
-                let boundaryPoints;
-                
-                if (selectedProject.boundaryCoordinates) {
-                  try {
-                    boundaryPoints = JSON.parse(selectedProject.boundaryCoordinates);
-                  } catch (e) {
-                    console.warn('Invalid boundary coordinates, using default shape');
-                    boundaryPoints = null;
-                  }
-                }
-                
-                // Default boundary shape if no custom coordinates
-                if (!boundaryPoints) {
-                  const centerX = 50;
-                  const centerY = 50;
-                  boundaryPoints = [
-                    { x: centerX - 15, y: centerY - 20 },   // Top-left
-                    { x: centerX + 8, y: centerY - 25 },    // Top
-                    { x: centerX + 20, y: centerY - 12 },   // Top-right
-                    { x: centerX + 25, y: centerY + 5 },    // Right
-                    { x: centerX + 18, y: centerY + 22 },   // Bottom-right
-                    { x: centerX - 3, y: centerY + 25 },    // Bottom
-                    { x: centerX - 20, y: centerY + 15 },   // Bottom-left
-                    { x: centerX - 25, y: centerY - 5 },    // Left
-                  ];
-                }
-                
-                const pathData = `M ${boundaryPoints[0].x} ${boundaryPoints[0].y} ` +
-                  boundaryPoints.slice(1).map((point: {x: number, y: number}) => `L ${point.x} ${point.y}`).join(' ') + ' Z';
-                
-                const centerX = boundaryPoints.reduce((sum: number, p: {x: number, y: number}) => sum + p.x, 0) / boundaryPoints.length;
-                const centerY = boundaryPoints.reduce((sum: number, p: {x: number, y: number}) => sum + p.y, 0) / boundaryPoints.length;
-                
-                return (
-                  <svg 
-                    className="absolute inset-0 w-full h-full"
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
-                    style={{ pointerEvents: 'none', zIndex: 10 }}
-                  >
-                    {/* Animated dotted land boundary */}
-                    <path
-                      d={pathData}
-                      fill="rgba(220, 38, 38, 0.1)"
-                      stroke="#dc2626"
-                      strokeWidth="0.8"
-                      strokeDasharray="2,1"
-                      style={{
-                        filter: 'drop-shadow(0 0 2px rgba(220, 38, 38, 0.8))'
-                      }}
-                    >
-                      <animate
-                        attributeName="stroke-dashoffset"
-                        values="0;3;0"
-                        dur="1.5s"
-                        repeatCount="indefinite"
-                      />
-                    </path>
-                    
-                    {/* Land area label */}
-                    <text
-                      x={centerX}
-                      y={centerY - 8}
-                      textAnchor="middle"
-                      className="text-xs font-bold fill-red-600"
-                      style={{ 
-                        fontSize: '3px',
-                        textShadow: '1px 1px 2px rgba(255,255,255,0.9)'
-                      }}
-                    >
-                      {selectedProject.name}
-                    </text>
-                    <text
-                      x={centerX}
-                      y={centerY + 2}
-                      textAnchor="middle"
-                      className="text-xs font-medium fill-red-500"
-                      style={{ 
-                        fontSize: '2.5px',
-                        textShadow: '1px 1px 2px rgba(255,255,255,0.9)'
-                      }}
-                    >
-                      Land Area: ~2-5 acres
-                    </text>
-                  </svg>
-                );
-              })()}
-            </div>
-          )}
 
           {/* Visual Markers Overlay on Map */}
           {heatmapProjects.length > 0 && (
@@ -259,9 +152,8 @@ export default function ProjectHeatmap({
                     }}
                     onClick={() => {
                       setSelectedProject(project as HeatmapProject);
-                      setShowLandBoundary(true);
-                      // Optional: Open in new Google Maps tab
-                      // window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
+                      // Open in new Google Maps tab
+                      window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
                     }}
                   >
                     {/* Coverage Area Circle */}
@@ -344,9 +236,8 @@ export default function ProjectHeatmap({
                   }`}
                   onClick={() => {
                     setSelectedProject(project as HeatmapProject);
-                    setShowLandBoundary(true);
-                    // Optional: Open exact location in Google Maps
-                    // window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
+                    // Open exact location in Google Maps
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${project.latitude},${project.longitude}&query_place_id=${encodeURIComponent(project.name)}`, '_blank');
                   }}
                 >
                   <div 
@@ -419,10 +310,7 @@ export default function ProjectHeatmap({
           <div className="flex justify-between items-start mb-2">
             <h4 className="font-semibold text-gray-800">{selectedProject.name}</h4>
             <button
-              onClick={() => {
-                setSelectedProject(null);
-                setShowLandBoundary(false);
-              }}
+              onClick={() => setSelectedProject(null)}
               className="text-gray-400 hover:text-gray-600"
               data-testid="close-project-details"
             >
@@ -452,33 +340,8 @@ export default function ProjectHeatmap({
               <span className="font-medium text-gray-600">Price Range:</span>
               <span className="ml-2">{selectedProject.priceRange}</span>
             </div>
-            <div className="md:col-span-2">
-              <span className="font-medium text-red-600">Land Coverage:</span>
-              <span className="ml-2 text-green-600 font-medium">~2-5 acres total area</span>
-            </div>
           </div>
           
-          {/* Land Boundary Toggle Button */}
-          <div className="mt-3 flex items-center gap-3">
-            <button
-              onClick={() => setShowLandBoundary(!showLandBoundary)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                showLandBoundary 
-                  ? 'bg-red-600 text-white hover:bg-red-700' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {showLandBoundary ? '🔴 Hide Land Boundary' : '📍 Show Land Boundary'}
-            </button>
-            <button
-              onClick={() => {
-                window.open(`https://www.google.com/maps/search/?api=1&query=${selectedProject.latitude},${selectedProject.longitude}&query_place_id=${encodeURIComponent(selectedProject.name)}`, '_blank');
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-            >
-              🗺️ Open in Google Maps
-            </button>
-          </div>
           
           <p className="mt-2 text-sm text-gray-600">{selectedProject.shortDescription}</p>
         </div>

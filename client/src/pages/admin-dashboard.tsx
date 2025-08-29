@@ -448,28 +448,6 @@ export default function AdminDashboard() {
     }
   });
 
-  // Project boundary update mutation
-  const projectUpdateMutation = useMutation({
-    mutationFn: async (data: { id: string; boundaryCoordinates?: string | null }) => {
-      return apiRequest("PUT", `/api/admin/projects/${data.id}`, { 
-        boundaryCoordinates: data.boundaryCoordinates 
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
-      toast({
-        title: "Success",
-        description: "Land boundary updated successfully"
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to update land boundary",
-        variant: "destructive"
-      });
-    }
-  });
   
   const deleteProjectMutation = useMutation({
     mutationFn: (id: string) => apiRequest("DELETE", `/api/admin/projects/${id}`),
@@ -1256,7 +1234,7 @@ export default function AdminDashboard() {
             
             {/* Regular tabs for larger screens */}
             <div className="hidden sm:block">
-              <TabsList className="grid grid-cols-9 gap-1 w-full h-auto p-1">
+              <TabsList className="grid grid-cols-8 gap-1 w-full h-auto p-1">
                 <TabsTrigger value="activity" className="px-2 py-2 text-sm">
                   Activity
                 </TabsTrigger>
@@ -1277,9 +1255,6 @@ export default function AdminDashboard() {
                 </TabsTrigger>
                 <TabsTrigger value="projects" className="px-2 py-2 text-sm">
                   Projects
-                </TabsTrigger>
-                <TabsTrigger value="boundaries" className="px-2 py-2 text-sm">
-                  Boundaries
                 </TabsTrigger>
                 <TabsTrigger value="settings" className="px-2 py-2 text-sm">
                   Settings
@@ -2802,136 +2777,6 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
-          {/* Land Boundaries Management */}
-          <TabsContent value="boundaries" className="space-y-4 sm:space-y-6">
-            <Card className="bg-white dark:bg-gray-800 shadow-lg">
-              <CardHeader className="pb-3 sm:pb-6">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
-                  <CardTitle className="text-base sm:text-lg">Edit Land Boundaries</CardTitle>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  Customize the land boundary shapes for each project. Use percentage coordinates (0-100) to define boundary points.
-                </p>
-              </CardHeader>
-              <CardContent>
-                {projectsLoading ? (
-                  <div className="animate-pulse space-y-4">
-                    {[...Array(3)].map((_, i) => (
-                      <div key={i} className="flex space-x-4">
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {projects?.map((project) => (
-                      <div key={project.id} className="border rounded-lg p-4 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-semibold text-gray-900 dark:text-white">{project.name}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{project.location}</p>
-                          </div>
-                          <Badge className={`${
-                            project.boundaryCoordinates 
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                          }`}>
-                            {project.boundaryCoordinates ? 'Custom Boundary' : 'Default Shape'}
-                          </Badge>
-                        </div>
-                        
-                        <div>
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                            Boundary Coordinates (JSON format)
-                          </label>
-                          <p className="text-xs text-gray-500 mb-2">
-                            Example: {`[{"x":30,"y":20},{"x":70,"y":25},{"x":75,"y":60},{"x":25,"y":65}]`}
-                          </p>
-                          <Textarea
-                            data-project={project.id}
-                            placeholder="Enter boundary coordinates as JSON array..."
-                            defaultValue={project.boundaryCoordinates || ''}
-                            rows={4}
-                            className="font-mono text-sm"
-                            onBlur={(e) => {
-                              // Save boundary coordinates
-                              const coordinates = e.target.value.trim();
-                              if (coordinates && coordinates !== project.boundaryCoordinates) {
-                                // Validate JSON
-                                try {
-                                  const parsed = JSON.parse(coordinates);
-                                  if (Array.isArray(parsed) && parsed.every(p => typeof p.x === 'number' && typeof p.y === 'number')) {
-                                    // Update project with new boundary
-                                    projectUpdateMutation.mutate({
-                                      id: project.id,
-                                      boundaryCoordinates: coordinates
-                                    });
-                                  } else {
-                                    toast({
-                                      title: "Invalid format",
-                                      description: "Boundary coordinates must be an array of objects with x and y numbers",
-                                      variant: "destructive"
-                                    });
-                                  }
-                                } catch (error) {
-                                  toast({
-                                    title: "Invalid JSON",
-                                    description: "Please enter valid JSON format for boundary coordinates",
-                                    variant: "destructive"
-                                  });
-                                }
-                              }
-                            }}
-                          />
-                        </div>
-                        
-                        <div className="flex items-center gap-2 pt-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              // Reset to default boundary
-                              projectUpdateMutation.mutate({
-                                id: project.id,
-                                boundaryCoordinates: null
-                              });
-                            }}
-                          >
-                            Reset to Default
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              // Copy example coordinates
-                              const textarea = document.querySelector(`textarea[data-project="${project.id}"]`) as HTMLTextAreaElement;
-                              if (textarea) {
-                                textarea.value = '[{"x":35,"y":30},{"x":65,"y":25},{"x":70,"y":55},{"x":30,"y":60}]';
-                                textarea.focus();
-                              }
-                            }}
-                          >
-                            Use Example
-                          </Button>
-                          <div className="text-xs text-gray-500">
-                            Coordinates range: 0-100 (percentage of map area)
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {projects.length === 0 && (
-                      <div className="text-center py-8 text-gray-500">
-                        No projects found. Add projects first to manage their land boundaries.
-                      </div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </div>
     </div>
