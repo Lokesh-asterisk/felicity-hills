@@ -48,27 +48,27 @@ export default function Navigation() {
           </div>
           
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-1">
             <Link href="/about">
-              <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0">
+              <Button variant="ghost" className="text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium px-3 py-2">
                 About
               </Button>
             </Link>
             <Button 
+              variant="ghost"
               onClick={() => scrollToSection('projects')}
-              className="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
+              className="text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium px-3 py-2"
             >
               Projects
             </Button>
-
             <Link href="/book-visit">
-              <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0">
+              <Button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md transition-colors ml-2">
                 Book Visit
               </Button>
             </Link>
             <Button 
               onClick={() => scrollToSection('contact')}
-              className="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md transition-colors"
             >
               Contact
             </Button>
@@ -88,28 +88,27 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4 space-y-3">
+          <div className="md:hidden pb-4 space-y-2">
+            <Link href="/about">
+              <Button variant="ghost" className="w-full text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium py-3 justify-start">
+                About
+              </Button>
+            </Link>
             <Button 
-              onClick={() => handleNavigation('/about')}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
-            >
-              About
-            </Button>
-            <Button 
+              variant="ghost"
               onClick={() => scrollToSection('projects')}
-              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
+              className="w-full text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium py-3 justify-start"
             >
               Projects
             </Button>
-            <Button 
-              onClick={() => handleNavigation('/book-visit')}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
-            >
-              Book Visit
-            </Button>
+            <Link href="/book-visit">
+              <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3">
+                Book Visit
+              </Button>
+            </Link>
             <Button 
               onClick={() => scrollToSection('contact')}
-              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3"
             >
               Contact
             </Button>
