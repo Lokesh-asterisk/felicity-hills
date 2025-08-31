@@ -48,22 +48,32 @@ export default function Navigation() {
           </div>
           
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/about" className="text-gray-700 hover:text-primary transition-colors">
-              About
+          <div className="hidden md:flex items-center space-x-4">
+            <Link href="/about">
+              <Button 
+                variant="ghost" 
+                className="text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 font-medium px-6 py-2 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+              >
+                About
+              </Button>
             </Link>
-            <Link href="/project-showcase" className="text-gray-700 hover:text-primary transition-colors">
-              Projects
+            <Link href="/project-showcase">
+              <Button 
+                variant="ghost" 
+                className="text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-600 font-medium px-6 py-2 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md"
+              >
+                Projects
+              </Button>
             </Link>
 
             <Link href="/book-visit">
-              <Button className="bg-green-600 hover:bg-green-700 text-white">
+              <Button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0">
                 Book Visit
               </Button>
             </Link>
             <Button 
               onClick={() => scrollToSection('contact')}
-              className="bg-primary hover:bg-secondary"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
             >
               Contact
             </Button>
@@ -83,28 +93,30 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4 space-y-2">
-            <button 
+          <div className="md:hidden pb-4 space-y-3">
+            <Button 
               onClick={() => handleNavigation('/about')}
-              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
+              variant="ghost"
+              className="w-full text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 font-medium py-3 transition-all duration-300 shadow-sm hover:shadow-md"
             >
               About
-            </button>
-            <button 
+            </Button>
+            <Button 
               onClick={() => handleNavigation('/project-showcase')}
-              className="block w-full text-left py-2 text-gray-700 hover:text-primary transition-colors"
+              variant="ghost"
+              className="w-full text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-600 font-medium py-3 transition-all duration-300 shadow-sm hover:shadow-md"
             >
               Projects
-            </button>
+            </Button>
             <Button 
               onClick={() => handleNavigation('/book-visit')}
-              className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
             >
               Book Visit
             </Button>
             <Button 
               onClick={() => scrollToSection('contact')}
-              className="w-full mt-2 bg-primary hover:bg-secondary"
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
             >
               Contact
             </Button>
