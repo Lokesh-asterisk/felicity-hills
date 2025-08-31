@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Calendar, Phone, Sparkles } from "lucide-react";
 import logoImage from "@assets/Felicity Hills Logo_1754587869215.png";
 
 export default function Navigation() {
@@ -62,15 +62,21 @@ export default function Navigation() {
               Projects
             </Button>
             <Link href="/book-visit">
-              <Button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md transition-colors ml-2">
-                Book Visit
+              <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ml-2 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Calendar className="w-4 h-4 mr-2" />
+                <span className="relative z-10">Book Visit</span>
+                <Sparkles className="w-3 h-3 ml-1 animate-pulse" />
               </Button>
             </Link>
             <Button 
               onClick={() => scrollToSection('contact')}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-md transition-colors"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden group"
             >
-              Contact
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <Phone className="w-4 h-4 mr-2" />
+              <span className="relative z-10">Contact</span>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
             </Button>
           </div>
 
@@ -102,15 +108,21 @@ export default function Navigation() {
               Projects
             </Button>
             <Link href="/book-visit">
-              <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3">
-                Book Visit
+              <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Calendar className="w-5 h-5 mr-3" />
+                <span className="relative z-10 text-lg">Book Visit</span>
+                <Sparkles className="w-4 h-4 ml-2 animate-pulse" />
               </Button>
             </Link>
             <Button 
               onClick={() => scrollToSection('contact')}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group"
             >
-              Contact
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <Phone className="w-5 h-5 mr-3" />
+              <span className="relative z-10 text-lg">Contact</span>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
             </Button>
           </div>
         )}
