@@ -7,6 +7,11 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Home, Building, Star, ArrowRight } from 'lucide-react';
 import type { Project } from '@shared/schema';
 
+// Import existing components
+import Navigation from '../components/navigation';
+import ContactSection from '../components/contact-section';
+import Footer from '../components/footer';
+
 export default function CompanyPortfolio() {
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ["/api/projects"]
@@ -31,6 +36,9 @@ export default function CompanyPortfolio() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+      {/* Navigation Header */}
+      <Navigation />
+      
       {/* Header Section */}
       <div className="bg-white dark:bg-gray-900 shadow-sm border-b">
         <div className="container mx-auto px-4 py-8">
@@ -193,35 +201,24 @@ export default function CompanyPortfolio() {
         </div>
       </div>
 
-      {/* Contact CTA Section */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Invest in Your Future?
-          </h2>
-          <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-            Join hundreds of satisfied investors who have chosen Felicity Hills for their real estate journey.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-green-600 hover:bg-green-50 font-semibold px-8"
-              data-testid="contact-us-button"
-            >
-              <Home className="h-5 w-5 mr-2" />
-              Contact Us Today
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-white text-white hover:bg-white hover:text-green-600 font-semibold px-8"
-              data-testid="view-all-projects-button"
-            >
-              View All Projects
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* Contact Section with Booking Form */}
+      <ContactSection />
+      
+      {/* Footer */}
+      <Footer />
+      
+      {/* WhatsApp Float Button */}
+      <a 
+        href="https://wa.me/918588834221" 
+        className="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors z-50"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contact us on WhatsApp"
+        title="Chat with us on WhatsApp"
+        data-testid="whatsapp-float"
+      >
+        📱
+      </a>
     </div>
   );
 }
