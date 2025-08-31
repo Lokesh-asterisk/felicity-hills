@@ -12,6 +12,27 @@ import Navigation from '../components/navigation';
 import ContactSection from '../components/contact-section';
 import Footer from '../components/footer';
 
+// Add floating animation keyframes
+const floatingStyles = `
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.1); }
+  }
+`;
+
+// Add styles to document head
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.type = 'text/css';
+  styleSheet.innerText = floatingStyles;
+  document.head.appendChild(styleSheet);
+}
+
 export default function CompanyPortfolio() {
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ["/api/projects"]
@@ -41,21 +62,54 @@ export default function CompanyPortfolio() {
       
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 overflow-hidden">
-        {/* Background Image Overlay */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}
-        ></div>
+        {/* Transparent Background Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
+              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 2px),
+              linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+              linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%)
+            `,
+            backgroundSize: '50px 50px, 50px 50px, 30px 30px, 30px 30px',
+            backgroundPosition: '0 0, 25px 25px, 0 0, 15px 15px'
+          }}></div>
+        </div>
         
-        {/* Real Estate Pattern Overlay */}
-        <div 
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpolygon points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E")`
-          }}
-        ></div>
+        {/* Building/House Icons Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-white/20 text-4xl"
+              style={{
+                left: `${(i % 4) * 25 + 10}%`,
+                top: `${Math.floor(i / 4) * 30 + 15}%`,
+                transform: `rotate(${i * 15}deg)`,
+                animation: `float ${3 + (i % 3)}s ease-in-out infinite`
+              }}
+            >
+              🏠
+            </div>
+          ))}
+        </div>
+        
+        {/* Investment Icons */}
+        <div className="absolute inset-0 opacity-15">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-white/30 text-2xl"
+              style={{
+                left: `${(i % 4) * 25 + 5}%`,
+                top: `${Math.floor(i / 4) * 40 + 25}%`,
+                animation: `pulse ${2 + (i % 2)}s ease-in-out infinite`
+              }}
+            >
+              {i % 4 === 0 ? '🌱' : i % 4 === 1 ? '💰' : i % 4 === 2 ? '📈' : '🏆'}
+            </div>
+          ))}
+        </div>
         
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
