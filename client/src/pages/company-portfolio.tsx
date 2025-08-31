@@ -11,6 +11,7 @@ import type { Project } from '@shared/schema';
 import Navigation from '../components/navigation';
 import ContactSection from '../components/contact-section';
 import Footer from '../components/footer';
+import backgroundImage from '@assets/image_1756640331916.png';
 
 // Add floating animation keyframes
 const floatingStyles = `
@@ -62,19 +63,16 @@ export default function CompanyPortfolio() {
       
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 overflow-hidden">
-        {/* Transparent Background Pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
-              radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 2px),
-              linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-              linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%)
-            `,
-            backgroundSize: '50px 50px, 50px 50px, 30px 30px, 30px 30px',
-            backgroundPosition: '0 0, 25px 25px, 0 0, 15px 15px'
-          }}></div>
-        </div>
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          style={{
+            backgroundImage: `url(${backgroundImage})`
+          }}
+        ></div>
+        
+        {/* Gradient Overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-green-600/80 via-blue-600/80 to-purple-600/80"></div>
         
         {/* Building/House Icons Pattern */}
         <div className="absolute inset-0 opacity-10">
