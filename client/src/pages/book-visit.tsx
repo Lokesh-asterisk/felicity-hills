@@ -303,7 +303,7 @@ export default function BookVisit() {
 
               <Button
                 type="submit"
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg"
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-102 transition-all duration-300 relative overflow-hidden group text-lg"
                 disabled={bookingMutation.isPending}
               >
                 {bookingMutation.isPending ? (
