@@ -62,17 +62,54 @@ export default function CompanyPortfolio() {
       <Navigation />
       
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 overflow-hidden">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-          style={{
-            backgroundImage: `url(${backgroundImage})`
-          }}
-        ></div>
+      <div className="relative overflow-hidden">
+        {/* Beautiful Landscape Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-400 via-green-400 to-green-600"></div>
         
-        {/* Gradient Overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-green-600/80 via-blue-600/80 to-purple-600/80"></div>
+        {/* Mountain Silhouettes */}
+        <div className="absolute inset-0">
+          <svg viewBox="0 0 1200 600" className="absolute bottom-0 w-full h-full">
+            {/* Back mountains */}
+            <polygon 
+              points="0,300 200,180 400,220 600,160 800,200 1000,140 1200,180 1200,600 0,600" 
+              fill="rgba(34, 197, 94, 0.3)"
+            />
+            {/* Middle mountains */}
+            <polygon 
+              points="0,350 150,250 350,280 550,220 750,260 950,200 1200,240 1200,600 0,600" 
+              fill="rgba(34, 197, 94, 0.5)"
+            />
+            {/* Front mountains */}
+            <polygon 
+              points="0,400 100,320 300,350 500,300 700,340 900,280 1200,320 1200,600 0,600" 
+              fill="rgba(34, 197, 94, 0.7)"
+            />
+          </svg>
+        </div>
+        
+        {/* Rolling Hills */}
+        <div className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-green-500/60 to-transparent"></div>
+        
+        {/* Clouds */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-10 w-32 h-16 bg-white rounded-full transform rotate-12"></div>
+          <div className="absolute top-16 left-20 w-24 h-12 bg-white rounded-full"></div>
+          <div className="absolute top-32 right-32 w-40 h-20 bg-white rounded-full transform -rotate-6"></div>
+          <div className="absolute top-28 right-40 w-28 h-14 bg-white rounded-full"></div>
+          <div className="absolute top-40 left-1/3 w-36 h-18 bg-white rounded-full transform rotate-3"></div>
+        </div>
+        
+        {/* Gradient Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-green-600/70 via-blue-600/70 to-purple-600/70"></div>
+        
+        {/* Subtle texture overlay */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `
+            radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 1px, transparent 1px),
+            radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px, 60px 60px'
+        }}></div>
         
         {/* Building/House Icons Pattern */}
         <div className="absolute inset-0 opacity-10">
