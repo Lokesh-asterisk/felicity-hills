@@ -62,7 +62,7 @@ export default function CompanyPortfolio() {
       <Navigation />
       
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
+      <div className="relative min-h-screen overflow-hidden flex items-center">
         {/* Beautiful Landscape Background */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-400 via-green-400 to-green-600"></div>
         
@@ -159,7 +159,7 @@ export default function CompanyPortfolio() {
           <div className="absolute bottom-1/3 left-1/6 w-6 h-6 bg-white/15 rounded-full animate-bounce delay-1000"></div>
         </div>
         
-        <div className="relative container mx-auto px-4 py-20 text-center text-white">
+        <div className="relative container mx-auto px-4 py-12 text-center text-white w-full">
           <div className="max-w-5xl mx-auto">
             <div className="mb-6">
               <Badge className="bg-white/20 text-white border-white/30 text-sm px-4 py-2 mb-4">
