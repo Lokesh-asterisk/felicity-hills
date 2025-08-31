@@ -12,9 +12,6 @@ import HeroSection from '../components/hero-section';
 import RecentActivitySection from '../components/recent-activity-section';
 import LocationAdvantages from '../components/location-advantages';
 import ComparisonTable from '../components/comparison-table';
-import AmenitiesSection from '../components/amenities-section';
-import InvestmentCalculator from '../components/investment-calculator';
-import TestimonialsSection from '../components/testimonials-section';
 import FAQSection from '../components/faq-section';
 import ContactSection from '../components/contact-section';
 import Footer from '../components/footer';
@@ -90,10 +87,7 @@ export default function ProjectDetail() {
         <HeroSection />
         <RecentActivitySection />
         <LocationAdvantages />
-        <AmenitiesSection />
         <ComparisonTable />
-        <InvestmentCalculator />
-        <TestimonialsSection />
         <FAQSection />
         <ContactSection />
         <Footer />
