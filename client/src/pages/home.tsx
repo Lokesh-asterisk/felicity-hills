@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Navigation from "../components/navigation";
+import KhushhalipurNavigation from "../components/khushalipur-navigation";
 import HeroSection from "../components/hero-section";
 import RecentActivitySection from "../components/recent-activity-section";
 import LocationAdvantages from "../components/location-advantages";
@@ -23,7 +23,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <KhushhalipurNavigation />
       <HeroSection />
       <RecentActivitySection />
       <LocationAdvantages />
