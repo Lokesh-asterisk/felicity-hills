@@ -55,7 +55,7 @@ export default function Navigation() {
               </Button>
             </Link>
             <Button 
-              onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => scrollToSection('projects')}
               className="bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
             >
               Projects
