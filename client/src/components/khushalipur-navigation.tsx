@@ -34,7 +34,7 @@ export default function KhushhalipurNavigation() {
           </div>
           
           {/* Desktop Menu */}
-          <div className="hidden xl:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             <Link href="/about">
               <Button variant="ghost" className="text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium px-3 py-2">
                 About
@@ -90,7 +90,7 @@ export default function KhushhalipurNavigation() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="xl:hidden">
+          <div className="lg:hidden">
             <Button
               variant="ghost"
               size="sm"
@@ -103,7 +103,7 @@ export default function KhushhalipurNavigation() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="xl:hidden pb-4 space-y-2">
+          <div className="lg:hidden pb-4 space-y-2">
             <Link href="/about">
               <Button variant="ghost" className="w-full text-gray-700 hover:text-green-600 hover:bg-green-50 font-medium py-3 justify-start">
                 About
