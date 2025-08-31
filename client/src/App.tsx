@@ -12,6 +12,8 @@ import Videos from "@/pages/videos";
 import Brochures from "@/pages/brochures";
 import BookVisit from "@/pages/book-visit";
 import AdminDashboard from "@/pages/admin-dashboard";
+import CompanyPortfolio from "@/pages/company-portfolio";
+import ProjectDetail from "@/pages/project-detail";
 
 // Hook to scroll to top on route change
 function useScrollToTop() {
@@ -27,7 +29,9 @@ function Router() {
   
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={CompanyPortfolio} />
+      <Route path="/khushalipur" component={Home} />
+      <Route path="/project/:id" component={ProjectDetail} />
       <Route path="/about" component={About} />
       <Route path="/project-showcase" component={ProjectShowcase} />
       <Route path="/videos" component={Videos} />
