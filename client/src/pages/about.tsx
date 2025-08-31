@@ -24,16 +24,6 @@ export default function About() {
     { number: "1000+", label: "Acres Developed", icon: TrendingUp }
   ];
 
-  const projects = [
-    { name: "Khushalipur", location: "Dehradun, UK", status: "Active", type: "Agricultural Plots" },
-    { name: "Green Valley", location: "Rishikesh, UK", status: "Active", type: "Residential Plots" },
-    { name: "Hill View Estates", location: "Mussoorie, UK", status: "Active", type: "Premium Villas" },
-    { name: "River Side", location: "Haridwar, UK", status: "Active", type: "Eco-friendly Plots" },
-    { name: "Pine Woods", location: "Shimla, HP", status: "Planning", type: "Hill Station Plots" },
-    { name: "Valley Heights", location: "Manali, HP", status: "Active", type: "Luxury Apartments" },
-    { name: "Mountain View", location: "Dharamshala, HP", status: "Planning", type: "Resort Plots" },
-    { name: "Serene Gardens", location: "Kasauli, HP", status: "Active", type: "Gated Community" }
-  ];
 
   const values = [
     {
@@ -238,76 +228,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Current Projects */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-fade-in-up">
-            <Badge className="mb-4 bg-teal-100 text-teal-800 px-4 py-2">
-              Our Portfolio
-            </Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Project Showcase</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Explore our diverse range of real estate projects across Uttarakhand and Himachal Pradesh, 
-              each designed to offer exceptional investment opportunities
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {projects.map((project, index) => (
-              <Card 
-                key={index} 
-                className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 border-0 shadow-lg overflow-hidden animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardContent className="p-0">
-                  {/* Project Header */}
-                  <div className="bg-gradient-to-r from-green-500 to-teal-500 p-6 text-white">
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="font-bold text-lg group-hover:scale-105 transition-transform">
-                        {project.name}
-                      </h3>
-                      <Badge 
-                        className={`${
-                          project.status === 'Active' 
-                            ? 'bg-green-100 text-green-800 border-green-200' 
-                            : 'bg-yellow-100 text-yellow-800 border-yellow-200'
-                        } shadow-sm`}
-                      >
-                        {project.status}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center text-green-100 mb-2">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      <span className="text-sm font-medium">{project.location}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Project Details */}
-                  <div className="p-6">
-                    <p className="text-gray-600 mb-4 font-medium">{project.type}</p>
-                    {project.name === 'Khushalipur' ? (
-                      <Link href="/">
-                        <Button className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                          <span className="mr-2">View Details</span>
-                          <ChevronRight className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                    ) : (
-                      <Button 
-                        variant="outline" 
-                        className="w-full border-green-200 text-green-600 hover:bg-green-50 transition-colors"
-                        disabled
-                      >
-                        Coming Soon
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Call to Action */}
       <section className="py-20 bg-gradient-to-br from-green-600 via-teal-600 to-green-700 text-white relative overflow-hidden">
