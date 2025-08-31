@@ -62,7 +62,7 @@ export default function CompanyPortfolio() {
       <Navigation />
       
       {/* Hero Section */}
-      <div className="relative min-h-screen overflow-hidden flex items-center">
+      <div className="relative h-screen md:min-h-screen overflow-hidden flex items-center">
         {/* Beautiful Landscape Background */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-400 via-green-400 to-green-600"></div>
         
@@ -159,64 +159,63 @@ export default function CompanyPortfolio() {
           <div className="absolute bottom-1/3 left-1/6 w-6 h-6 bg-white/15 rounded-full animate-bounce delay-1000"></div>
         </div>
         
-        <div className="relative container mx-auto px-4 py-12 text-center text-white w-full">
+        <div className="relative container mx-auto px-4 py-8 md:py-12 text-center text-white w-full">
           <div className="max-w-5xl mx-auto">
-            <div className="mb-6">
-              <Badge className="bg-white/20 text-white border-white/30 text-sm px-4 py-2 mb-4">
+            <div className="mb-4 md:mb-6">
+              <Badge className="bg-white/20 text-white border-white/30 text-xs md:text-sm px-3 md:px-4 py-2 mb-3 md:mb-4">
                 🏆 Trusted by 500+ Investors
               </Badge>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">
               Felicity Hills
             </h1>
             
-            <p className="text-2xl md:text-3xl font-light mb-4 text-green-100">
+            <p className="text-lg md:text-2xl lg:text-3xl font-light mb-3 md:mb-4 text-green-100">
               Premium Real Estate Development Company
             </p>
             
-            <p className="text-xl text-green-50 leading-relaxed mb-8 max-w-3xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-green-50 leading-relaxed mb-6 md:mb-8 max-w-3xl mx-auto px-2">
               Transform your investment dreams into reality with our carefully curated portfolio of 
-              agricultural land investments and residential projects near Dehradun. Experience 
-              sustainable development with guaranteed returns.
+              agricultural land investments and residential projects near Dehradun.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-8 md:mb-12 px-4">
               <Button 
                 size="lg" 
-                className="bg-white text-green-600 hover:bg-green-50 font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                className="bg-white text-green-600 hover:bg-green-50 font-semibold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
                 onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                <Building className="h-6 w-6 mr-2" />
+                <Building className="h-5 w-5 md:h-6 md:w-6 mr-2" />
                 Explore Projects
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-green-600 font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                className="border-white text-white hover:bg-white hover:text-green-600 font-semibold px-6 md:px-8 py-3 md:py-4 text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                <Users className="h-6 w-6 mr-2" />
+                <Users className="h-5 w-5 md:h-6 md:w-6 mr-2" />
                 Book Site Visit
               </Button>
             </div>
             
             {/* Key Benefits */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-                <TrendingUp className="h-12 w-12 text-green-200 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">15-20% Returns</h3>
-                <p className="text-green-100">Guaranteed annual returns on agricultural investments</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-12 px-2">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20">
+                <TrendingUp className="h-8 w-8 md:h-12 md:w-12 text-green-200 mx-auto mb-3 md:mb-4" />
+                <h3 className="text-lg md:text-xl font-semibold mb-2">15-20% Returns</h3>
+                <p className="text-sm md:text-base text-green-100">Guaranteed annual returns on agricultural investments</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-                <Shield className="h-12 w-12 text-blue-200 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Secure Investment</h3>
-                <p className="text-blue-100">Legal documentation and transparent processes</p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20">
+                <Shield className="h-8 w-8 md:h-12 md:w-12 text-blue-200 mx-auto mb-3 md:mb-4" />
+                <h3 className="text-lg md:text-xl font-semibold mb-2">Secure Investment</h3>
+                <p className="text-sm md:text-base text-blue-100">Legal documentation and transparent processes</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-                <Award className="h-12 w-12 text-purple-200 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Prime Locations</h3>
-                <p className="text-purple-100">Strategic locations near Delhi-Dehradun Expressway</p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20">
+                <Award className="h-8 w-8 md:h-12 md:w-12 text-purple-200 mx-auto mb-3 md:mb-4" />
+                <h3 className="text-lg md:text-xl font-semibold mb-2">Prime Locations</h3>
+                <p className="text-sm md:text-base text-purple-100">Strategic locations near Delhi-Dehradun Expressway</p>
               </div>
             </div>
           </div>
