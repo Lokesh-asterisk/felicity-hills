@@ -4,7 +4,7 @@ import { Link } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Home, Building, Star, ArrowRight } from 'lucide-react';
+import { MapPin, Home, Building, Star, ArrowRight, Trophy, Shield, Users, TrendingUp, Award, CheckCircle } from 'lucide-react';
 import type { Project } from '@shared/schema';
 
 // Import existing components
@@ -35,122 +35,209 @@ export default function CompanyPortfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen">
       {/* Navigation Header */}
       <Navigation />
       
-      {/* Header Section */}
-      <div className="bg-white dark:bg-gray-900 shadow-sm border-b">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-32 h-32 bg-white/5 rounded-full animate-bounce"></div>
+          <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-500"></div>
+          <div className="absolute bottom-40 right-1/3 w-24 h-24 bg-white/5 rounded-full animate-bounce delay-700"></div>
+        </div>
+        
+        <div className="relative container mx-auto px-4 py-20 text-center text-white">
+          <div className="max-w-5xl mx-auto">
+            <div className="mb-6">
+              <Badge className="bg-white/20 text-white border-white/30 text-sm px-4 py-2 mb-4">
+                🏆 Trusted by 500+ Investors
+              </Badge>
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">
               Felicity Hills
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
+            
+            <p className="text-2xl md:text-3xl font-light mb-4 text-green-100">
               Premium Real Estate Development Company
             </p>
-            <p className="text-lg text-gray-700 dark:text-gray-400 leading-relaxed">
-              We specialize in creating exceptional agricultural land investments and residential projects 
-              near Dehradun. With a focus on sustainable development and premium amenities, we transform 
-              land into thriving communities.
+            
+            <p className="text-xl text-green-50 leading-relaxed mb-8 max-w-3xl mx-auto">
+              Transform your investment dreams into reality with our carefully curated portfolio of 
+              agricultural land investments and residential projects near Dehradun. Experience 
+              sustainable development with guaranteed returns.
             </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Button 
+                size="lg" 
+                className="bg-white text-green-600 hover:bg-green-50 font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <Building className="h-6 w-6 mr-2" />
+                Explore Projects
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-white text-white hover:bg-white hover:text-green-600 font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                <Users className="h-6 w-6 mr-2" />
+                Book Site Visit
+              </Button>
+            </div>
+            
+            {/* Key Benefits */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                <TrendingUp className="h-12 w-12 text-green-200 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">15-20% Returns</h3>
+                <p className="text-green-100">Guaranteed annual returns on agricultural investments</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                <Shield className="h-12 w-12 text-blue-200 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Secure Investment</h3>
+                <p className="text-blue-100">Legal documentation and transparent processes</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                <Award className="h-12 w-12 text-purple-200 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Prime Locations</h3>
+                <p className="text-purple-100">Strategic locations near Delhi-Dehradun Expressway</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Projects Portfolio Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Our Project Portfolio
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Discover our carefully curated collection of premium real estate projects, 
-            each designed to offer exceptional value and lifestyle experiences.
-          </p>
-        </div>
+      <div id="projects" className="bg-gradient-to-br from-gray-50 to-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <Trophy className="h-4 w-4" />
+              Award-Winning Projects
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+              Our Premium Project Portfolio
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Discover our carefully curated collection of premium real estate projects, 
+              each designed to offer exceptional value, lifestyle experiences, and guaranteed returns.
+            </p>
+          </div>
 
         {projects.length === 0 ? (
-          <div className="text-center py-16">
-            <Building className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-              No Projects Available
+          <div className="text-center py-20">
+            <div className="bg-gradient-to-br from-green-100 to-blue-100 w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Building className="h-16 w-16 text-green-600" />
+            </div>
+            <h3 className="text-2xl font-semibold text-gray-700 mb-4">
+              Exciting Projects Coming Soon
             </h3>
-            <p className="text-gray-500 dark:text-gray-500">
-              We're working on exciting new projects. Please check back soon!
+            <p className="text-lg text-gray-600 max-w-md mx-auto">
+              We're developing amazing new investment opportunities. Stay tuned for exceptional projects!
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
+            {projects.map((project, index) => (
               <Card 
                 key={project.id} 
-                className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white dark:bg-gray-800 border-0 shadow-lg overflow-hidden"
+                className={`group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white border-0 shadow-lg overflow-hidden relative ${
+                  project.featured ? 'ring-2 ring-green-500 ring-opacity-50' : ''
+                }`}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between mb-3">
+                {/* Featured Badge */}
+                {project.featured && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-current" />
+                      FEATURED
+                    </div>
+                  </div>
+                )}
+
+                {/* Project Image Placeholder */}
+                <div className="relative h-48 bg-gradient-to-br from-green-100 to-blue-100 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-blue-500/20"></div>
+                  <div className="absolute bottom-4 left-4 right-4">
                     <Badge 
-                      className={`text-xs font-medium ${
+                      className={`text-xs font-medium shadow-lg ${
                         project.status === 'active' 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          ? 'bg-green-500 text-white'
                           : project.status === 'coming_soon'
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                          ? 'bg-blue-500 text-white'
                           : project.status === 'completed'
-                          ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                          : 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+                          ? 'bg-purple-500 text-white'
+                          : 'bg-orange-500 text-white'
                       }`}
                     >
-                      {project.status === 'active' ? 'Available Now' :
-                       project.status === 'coming_soon' ? 'Coming Soon' :
-                       project.status === 'completed' ? 'Completed' : 'Sold Out'}
+                      {project.status === 'active' ? '🟢 Available Now' :
+                       project.status === 'coming_soon' ? '🔵 Coming Soon' :
+                       project.status === 'completed' ? '🟣 Completed' : '🟠 Sold Out'}
                     </Badge>
-                    {project.featured && (
-                      <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                    )}
                   </div>
-                  
-                  <CardTitle className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-green-600 transition-colors">
+                </div>
+
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors flex items-center gap-2">
                     {project.name}
+                    {project.featured && <Star className="h-5 w-5 text-yellow-500 fill-current" />}
                   </CardTitle>
                   
-                  <div className="flex items-center text-gray-600 dark:text-gray-400 mt-2">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    <span className="text-sm">{project.location}</span>
+                  <div className="flex items-center text-gray-600 mt-2">
+                    <MapPin className="h-4 w-4 mr-1 text-green-600" />
+                    <span className="text-sm font-medium">{project.location}</span>
                   </div>
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <CardDescription className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
+                  <CardDescription className="text-gray-700 mb-4 leading-relaxed">
                     {project.shortDescription}
                   </CardDescription>
 
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Type:</span>
-                      <span className="text-sm text-gray-900 dark:text-white font-medium">{project.type}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Price Range:</span>
-                      <span className="text-sm text-green-600 dark:text-green-400 font-bold">{project.priceRange}</span>
+                  <div className="space-y-4 mb-6">
+                    <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-600 flex items-center gap-1">
+                          <Building className="h-4 w-4" />
+                          Type:
+                        </span>
+                        <span className="text-sm text-gray-900 font-semibold">{project.type}</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-600 flex items-center gap-1">
+                          <TrendingUp className="h-4 w-4" />
+                          Investment:
+                        </span>
+                        <span className="text-sm text-green-600 font-bold text-lg">{project.priceRange}</span>
+                      </div>
                     </div>
 
                     {project.features && project.features.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Key Features:</h4>
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-1">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          Key Highlights:
+                        </h4>
                         <div className="flex flex-wrap gap-1">
                           {project.features.slice(0, 3).map((feature, index) => (
                             <Badge 
                               key={index}
-                              variant="secondary" 
-                              className="text-xs bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                              className="text-xs bg-green-100 text-green-800 border-green-200"
                             >
-                              {feature}
+                              ✓ {feature}
                             </Badge>
                           ))}
                           {project.features.length > 3 && (
-                            <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                              +{project.features.length - 3} more
+                            <Badge className="text-xs bg-blue-100 text-blue-800 border-blue-200">
+                              +{project.features.length - 3} more benefits
                             </Badge>
                           )}
                         </div>
@@ -163,10 +250,10 @@ export default function CompanyPortfolio() {
                     className="block w-full"
                   >
                     <Button 
-                      className="w-full bg-green-600 hover:bg-green-700 text-white group-hover:bg-green-700 transition-colors"
+                      className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       data-testid={`view-project-${project.id}`}
                     >
-                      <span>View Project Details</span>
+                      <span>Explore This Investment</span>
                       <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
@@ -175,27 +262,62 @@ export default function CompanyPortfolio() {
             ))}
           </div>
         )}
+        </div>
       </div>
 
       {/* Company Stats Section */}
-      <div className="bg-white dark:bg-gray-900 py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold text-green-600 dark:text-green-400">{projects.length}+</h3>
-              <p className="text-gray-600 dark:text-gray-400">Active Projects</p>
+      <div className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 py-20 relative overflow-hidden">
+        {/* Background Animation */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-white/5 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-40 h-40 bg-white/5 rounded-full animate-bounce"></div>
+        </div>
+        
+        <div className="relative container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Trusted by Thousands
+            </h2>
+            <p className="text-xl text-green-100 max-w-2xl mx-auto">
+              Our track record speaks for itself - delivering exceptional results and building lasting relationships
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                <h3 className="text-4xl md:text-5xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
+                  {projects.length}+
+                </h3>
+                <p className="text-green-100 font-medium">Premium Projects</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold text-green-600 dark:text-green-400">500+</h3>
-              <p className="text-gray-600 dark:text-gray-400">Happy Customers</p>
+            
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                <h3 className="text-4xl md:text-5xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
+                  500+
+                </h3>
+                <p className="text-blue-100 font-medium">Happy Investors</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold text-green-600 dark:text-green-400">1000+</h3>
-              <p className="text-gray-600 dark:text-gray-400">Acres Developed</p>
+            
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                <h3 className="text-4xl md:text-5xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
+                  1000+
+                </h3>
+                <p className="text-purple-100 font-medium">Acres Developed</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-3xl font-bold text-green-600 dark:text-green-400">5+</h3>
-              <p className="text-gray-600 dark:text-gray-400">Years Experience</p>
+            
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                <h3 className="text-4xl md:text-5xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
+                  5+
+                </h3>
+                <p className="text-yellow-100 font-medium">Years Excellence</p>
+              </div>
             </div>
           </div>
         </div>
