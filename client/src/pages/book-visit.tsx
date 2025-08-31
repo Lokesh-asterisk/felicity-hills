@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarDays, MapPin, Phone, Mail, IndianRupee, Clock, ArrowLeft } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
-import Navigation from "../components/navigation";
+import KhushhalipurNavigation from "../components/khushalipur-navigation";
 import Footer from "../components/footer";
 
 // Enhanced validation schema with proper mobile and email validation
@@ -153,8 +153,10 @@ export default function BookVisit() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800">
+      <KhushhalipurNavigation />
+      <div className="py-8 px-4">
+        <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold text-green-700 dark:text-green-400">
@@ -323,6 +325,7 @@ export default function BookVisit() {
             </form>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

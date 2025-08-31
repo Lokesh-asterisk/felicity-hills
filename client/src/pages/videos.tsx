@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Clock, Loader2, Filter } from "lucide-react";
 import { Link } from "wouter";
-import Navigation from "../components/navigation";
+import KhushhalipurNavigation from "../components/khushalipur-navigation";
 import Footer from "../components/footer";
 import type { Video } from "@shared/schema";
 
@@ -65,7 +65,7 @@ export default function VideosPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <KhushhalipurNavigation />
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-50 to-teal-50 py-20">

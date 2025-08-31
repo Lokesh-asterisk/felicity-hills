@@ -13,7 +13,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import type { Brochure } from "@shared/schema";
-import Navigation from "../components/navigation";
+import KhushhalipurNavigation from "../components/khushalipur-navigation";
 import Footer from "../components/footer";
 
 const downloadFormSchema = z.object({
@@ -153,6 +153,8 @@ export default function BrochuresPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+      <KhushhalipurNavigation />
+      
       {/* Back to Home Button */}
       <div className="container mx-auto px-4 py-4">
         <Link href="/">
