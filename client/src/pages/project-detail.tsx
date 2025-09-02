@@ -63,17 +63,18 @@ export default function ProjectDetail() {
     );
   }
 
-  // Check if this is the Khushalipur project (current landing page)
-  const isKhushalipurProject = project.name.toLowerCase().includes('khushali') || 
-                              project.location.toLowerCase().includes('khushali') ||
-                              project.id === 'khushalipur' ||
-                              project.name.toLowerCase().includes('hills');
-
-  // Check if this is the Panchur project
+  // Check if this is the Panchur project first (more specific)
   const isPanchurProject = project.name.toLowerCase().includes('panchur') || 
                           project.location.toLowerCase().includes('pauri') ||
                           project.location.toLowerCase().includes('garhwal') ||
                           project.id === 'd645f151-b691-45f8-8b22-d1dfe3671a57';
+
+  // Check if this is the Khushalipur project (current landing page) - but exclude Panchur
+  const isKhushalipurProject = !isPanchurProject && (
+                              project.name.toLowerCase().includes('khushali') || 
+                              project.location.toLowerCase().includes('khushali') ||
+                              project.id === 'khushalipur'
+                              );
 
   // If it's Khushalipur, render the full landing page
   if (isKhushalipurProject) {
