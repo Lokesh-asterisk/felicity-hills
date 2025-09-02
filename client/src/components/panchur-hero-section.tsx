@@ -98,7 +98,7 @@ export default function PanchurHeroSection() {
               <img 
                 src={panchurHeroImage} 
                 alt="Panchur Hills - Premium mountain plots with stunning Himalayan views" 
-                className="rounded-2xl shadow-2xl w-full"
+                className="rounded-2xl shadow-2xl w-full h-96 object-cover"
               />
               {/* Image Caption */}
               <div className="absolute bottom-4 left-4 right-4 p-3">
