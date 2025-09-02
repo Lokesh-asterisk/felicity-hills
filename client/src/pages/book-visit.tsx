@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { insertSiteVisitSchema } from "@shared/schema";
-import type { InsertSiteVisit } from "@shared/schema";
+import type { InsertSiteVisit, Project } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ const bookingFormSchema = insertSiteVisitSchema.extend({
       },
       { message: "Please enter a valid Indian mobile number (10 digits starting with 6-9)" }
     ),
+  projectId: z.string().optional(),
 });
 
 type BookingFormData = z.infer<typeof bookingFormSchema>;
@@ -57,6 +58,11 @@ export default function BookVisit() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
+  // Fetch available projects
+  const { data: projects, isLoading: projectsLoading } = useQuery({
+    queryKey: ["/api/projects"],
+  });
+
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
@@ -66,6 +72,7 @@ export default function BookVisit() {
       preferredDate: "",
       plotSize: "",
       budget: "",
+      projectId: "",
     },
   });
 
@@ -228,6 +235,46 @@ export default function BookVisit() {
                   )}
                   <p className="text-sm text-gray-500">
                     📧 Provide email to receive detailed confirmation and directions
+                  </p>
+                </div>
+              </div>
+
+              {/* Project Selection Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-green-600" />
+                  Project Selection
+                </h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="projectId">Select Project *</Label>
+                  {projectsLoading ? (
+                    <div className="flex items-center gap-2 p-3 border rounded-md">
+                      <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm text-gray-500">Loading projects...</span>
+                    </div>
+                  ) : (
+                    <Select onValueChange={(value) => form.setValue("projectId", value)}>
+                      <SelectTrigger className={form.formState.errors.projectId ? "border-red-500" : ""}>
+                        <SelectValue placeholder="Choose the project you want to visit" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(projects as Project[])?.map((project: Project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{project.name}</span>
+                              <span className="text-sm text-gray-500">{project.location} • {project.type}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {form.formState.errors.projectId && (
+                    <p className="text-sm text-red-500">{form.formState.errors.projectId.message}</p>
+                  )}
+                  <p className="text-sm text-gray-500">
+                    Choose the specific project you're interested in visiting
                   </p>
                 </div>
               </div>

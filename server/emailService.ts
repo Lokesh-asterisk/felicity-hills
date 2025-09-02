@@ -22,6 +22,7 @@ export interface BookingDetails {
   preferredDate?: string | null;
   plotSize?: string | null;
   budget?: string | null;
+  project?: string | null;
 }
 
 export class EmailService {
@@ -137,6 +138,7 @@ export class EmailService {
               <p><strong>Name:</strong> ${booking.name}</p>
               <p><strong>Mobile:</strong> ${booking.mobile}</p>
               <p><strong>Email:</strong> ${booking.email}</p>
+              ${booking.project ? `<p><strong>Project:</strong> ${booking.project}</p>` : ''}
               ${booking.preferredDate ? `<p><strong>Preferred Date:</strong> ${booking.preferredDate}</p>` : ''}
               ${booking.plotSize ? `<p><strong>Interested Plot Size:</strong> ${booking.plotSize}</p>` : ''}
               ${booking.budget ? `<p><strong>Budget Range:</strong> ${booking.budget}</p>` : ''}
@@ -184,7 +186,7 @@ Your Booking Details:
 - Name: ${booking.name}
 - Mobile: ${booking.mobile}
 - Email: ${booking.email}
-${booking.preferredDate ? `- Preferred Date: ${booking.preferredDate}\n` : ''}${booking.plotSize ? `- Interested Plot Size: ${booking.plotSize}\n` : ''}${booking.budget ? `- Budget Range: ${booking.budget}\n` : ''}
+${booking.project ? `- Project: ${booking.project}\n` : ''}${booking.preferredDate ? `- Preferred Date: ${booking.preferredDate}\n` : ''}${booking.plotSize ? `- Interested Plot Size: ${booking.plotSize}\n` : ''}${booking.budget ? `- Budget Range: ${booking.budget}\n` : ''}
 
 Our team will contact you within 24 hours to confirm your visit date and provide directions.
 
@@ -246,6 +248,7 @@ Premium Agricultural Land Investment
                 <p><strong>Name:</strong> ${booking.name}</p>
                 <p><strong>Phone:</strong> <a href="tel:${booking.mobile}" class="contact-link">${booking.mobile}</a></p>
                 <p><strong>Email:</strong> <a href="mailto:${booking.email}" class="contact-link">${booking.email}</a></p>
+                ${booking.project ? `<p><strong>Project Interest:</strong> <span class="highlight">${booking.project}</span></p>` : ''}
                 ${booking.preferredDate ? `<p><strong>Preferred Visit Date:</strong> <span class="highlight">${booking.preferredDate}</span></p>` : ''}
                 ${booking.plotSize ? `<p><strong>Interested Plot Size:</strong> ${booking.plotSize} sq ft</p>` : ''}
                 ${booking.budget ? `<p><strong>Budget Range:</strong> ₹${booking.budget} lakhs</p>` : ''}
@@ -282,7 +285,7 @@ Customer Information:
 Name: ${booking.name}
 Phone: ${booking.mobile}
 Email: ${booking.email}
-${booking.preferredDate ? `Preferred Visit Date: ${booking.preferredDate}\n` : ''}${booking.plotSize ? `Interested Plot Size: ${booking.plotSize} sq ft\n` : ''}${booking.budget ? `Budget Range: ₹${booking.budget} lakhs\n` : ''}
+${booking.project ? `Project Interest: ${booking.project}\n` : ''}${booking.preferredDate ? `Preferred Visit Date: ${booking.preferredDate}\n` : ''}${booking.plotSize ? `Interested Plot Size: ${booking.plotSize} sq ft\n` : ''}${booking.budget ? `Budget Range: ₹${booking.budget} lakhs\n` : ''}
 Inquiry Received: ${new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
 
 PRIORITY ACTION REQUIRED:

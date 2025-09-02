@@ -29,6 +29,7 @@ export const siteVisits = pgTable("site_visits", {
   preferredDate: text("preferred_date"),
   plotSize: text("plot_size"),
   budget: text("budget"),
+  projectId: varchar("project_id"), // Selected project for the site visit
   createdAt: timestamp("created_at").default(sql`now()`),
 });
 

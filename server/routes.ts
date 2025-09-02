@@ -242,8 +242,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create site visit booking
   app.post("/api/site-visits", async (req, res) => {
     try {
-      const siteVisitData = insertSiteVisitSchema.parse(req.body);
+      // Extract projectId from request body before validation
+      const { projectId, ...siteVisitBody } = req.body;
+      
+      const siteVisitData = insertSiteVisitSchema.parse(siteVisitBody);
       const siteVisit = await storage.createSiteVisit(siteVisitData);
+      
+      // Fetch project details if projectId is provided
+      let projectInfo = null;
+      if (projectId) {
+        try {
+          projectInfo = await storage.getProject(projectId);
+        } catch (error) {
+          console.warn('Could not fetch project details:', error);
+        }
+      }
       
       // Send email notifications
       const emailService = EmailService.getInstance();
@@ -255,7 +268,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mobile: siteVisit.mobile,
         preferredDate: siteVisit.preferredDate,
         plotSize: siteVisit.plotSize,
-        budget: siteVisit.budget
+        budget: siteVisit.budget,
+        project: projectInfo ? `${projectInfo.name} (${projectInfo.location})` : 'General Inquiry'
       };
       
       // Send confirmation email to user (if email provided)
