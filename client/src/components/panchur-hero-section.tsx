@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Calendar, MapPin } from "lucide-react";
 import panchurBgImage from "@assets/panchur-media/panchur-image-2.jpg";
-import panchurHeroImage from "@assets/panchur-media/panchur-image-5.jpg";
+import panchurHeroImage from "@assets/panchur2_1756805446201.jpg";
 
 export default function PanchurHeroSection() {
   const scrollToSection = (sectionId: string) => {
