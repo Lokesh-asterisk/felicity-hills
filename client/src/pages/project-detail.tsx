@@ -14,9 +14,13 @@ import HeroSection from '../components/hero-section';
 import PanchurHeroSection from '../components/panchur-hero-section';
 import RecentActivitySection from '../components/recent-activity-section';
 import LocationAdvantages from '../components/location-advantages';
+import PanchurLocationAdvantages from '../components/panchur-location-advantages';
 import AmenitiesSection from '../components/amenities-section';
+import PanchurAmenitiesSection from '../components/panchur-amenities-section';
 import ComparisonTable from '../components/comparison-table';
+import PanchurComparisonTable from '../components/panchur-comparison-table';
 import InvestmentCalculator from '../components/investment-calculator';
+import PanchurInvestmentCalculator from '../components/panchur-investment-calculator';
 import TestimonialsSection from '../components/testimonials-section';
 import FAQSection from '../components/faq-section';
 import ContactSection from '../components/contact-section';
@@ -146,11 +150,10 @@ export default function ProjectDetail() {
 
         <PanchurNavigation />
         <PanchurHeroSection />
-        <RecentActivitySection />
-        <LocationAdvantages />
-        <AmenitiesSection />
-        <ComparisonTable />
-        <InvestmentCalculator />
+        <PanchurLocationAdvantages />
+        <PanchurAmenitiesSection />
+        <PanchurComparisonTable />
+        <PanchurInvestmentCalculator />
         <TestimonialsSection />
         <FAQSection />
         <ContactSection />
