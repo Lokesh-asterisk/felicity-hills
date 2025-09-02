@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Calendar, MapPin } from "lucide-react";
+import panchurBgImage from "@assets/panchur-media/panchur-image-2.jpg";
+import panchurHeroImage from "@assets/panchur-media/panchur-image-3.jpg";
 
 export default function PanchurHeroSection() {
   const scrollToSection = (sectionId: string) => {
@@ -17,7 +19,7 @@ export default function PanchurHeroSection() {
       <div className="absolute inset-0 opacity-15">
         <div 
           style={{
-            backgroundImage: `url('/public-objects/1756800584896.jpg')`,
+            backgroundImage: `url(${panchurBgImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
@@ -94,7 +96,7 @@ export default function PanchurHeroSection() {
           <div className="lg:pl-12 animate-fade-in">
             <div className="relative">
               <img 
-                src="/public-objects/1756800584883.jpg" 
+                src={panchurHeroImage} 
                 alt="Panchur Hills - Premium mountain plots with stunning Himalayan views" 
                 className="rounded-2xl shadow-2xl w-full"
               />

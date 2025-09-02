@@ -12,6 +12,12 @@ import {
   Lightbulb,
   Leaf
 } from "lucide-react";
+import panchurImage2 from "@assets/panchur-media/panchur-image-2.jpg";
+import panchurImage3 from "@assets/panchur-media/panchur-image-3.jpg";
+import panchurImage4 from "@assets/panchur-media/panchur-image-4.jpg";
+import panchurImage5 from "@assets/panchur-media/panchur-image-5.jpg";
+import panchurImage6 from "@assets/panchur-media/panchur-image-6.jpg";
+import panchurImage7 from "@assets/panchur-media/panchur-image-7.jpg";
 
 export default function PanchurAmenitiesSection() {
 
@@ -20,7 +26,7 @@ export default function PanchurAmenitiesSection() {
       icon: Mountain,
       title: "Himalayan Views",
       description: "Stunning mountain vistas at 1,115m elevation",
-      image: "/public-objects/1756800584896.jpg",
+      image: panchurImage4,
       bgColor: "from-blue-50 to-blue-100",
       altText: "Breathtaking Himalayan mountain views from Panchur Hills"
     },
@@ -28,7 +34,7 @@ export default function PanchurAmenitiesSection() {
       icon: TreePine,
       title: "Forest Environment",
       description: "Peaceful natural surroundings",
-      image: "/public-objects/1756800584883.jpg",
+      image: panchurImage5,
       bgColor: "from-green-50 to-green-100",
       altText: "Serene forest environment with lush greenery"
     },
@@ -36,7 +42,7 @@ export default function PanchurAmenitiesSection() {
       icon: Wind,
       title: "Fresh Air",
       description: "Pure mountain air quality",
-      image: "/public-objects/1756800584888.jpg",
+      image: panchurImage6,
       bgColor: "from-purple-50 to-purple-100",
       altText: "Clean mountain air and natural environment"
     },
@@ -44,7 +50,7 @@ export default function PanchurAmenitiesSection() {
       icon: Leaf,
       title: "Agricultural Land",
       description: "Fertile soil for farming",
-      image: "/public-objects/1756800584891.jpg",
+      image: panchurImage7,
       bgColor: "from-orange-50 to-orange-100",
       altText: "Rich agricultural land perfect for organic farming"
     }
@@ -115,7 +121,7 @@ export default function PanchurAmenitiesSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="relative overflow-hidden rounded-xl shadow-lg group">
               <img 
-                src="/public-objects/1756800584883.jpg" 
+                src={panchurImage2} 
                 alt="Panchur Hills mountain landscape view"
                 className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
               />
@@ -128,7 +134,7 @@ export default function PanchurAmenitiesSection() {
             
             <div className="relative overflow-hidden rounded-xl shadow-lg group">
               <img 
-                src="/public-objects/1756800584888.jpg" 
+                src={panchurImage3} 
                 alt="Panchur Hills natural environment"
                 className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
               />
@@ -141,7 +147,7 @@ export default function PanchurAmenitiesSection() {
             
             <div className="relative overflow-hidden rounded-xl shadow-lg group">
               <img 
-                src="/public-objects/1756800584891.jpg" 
+                src={panchurImage4} 
                 alt="Panchur Hills agricultural area"
                 className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
               />
