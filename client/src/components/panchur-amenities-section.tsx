@@ -107,6 +107,53 @@ export default function PanchurAmenitiesSection() {
           ))}
         </div>
 
+        {/* Property Gallery */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+            Property Gallery
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="relative overflow-hidden rounded-xl shadow-lg group">
+              <img 
+                src="/public-objects/1756800584883.jpg" 
+                alt="Panchur Hills mountain landscape view"
+                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h4 className="text-white font-semibold">Mountain Landscape</h4>
+                <p className="text-white/80 text-sm">Panoramic Himalayan views</p>
+              </div>
+            </div>
+            
+            <div className="relative overflow-hidden rounded-xl shadow-lg group">
+              <img 
+                src="/public-objects/1756800584888.jpg" 
+                alt="Panchur Hills natural environment"
+                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h4 className="text-white font-semibold">Natural Environment</h4>
+                <p className="text-white/80 text-sm">Pure mountain air and nature</p>
+              </div>
+            </div>
+            
+            <div className="relative overflow-hidden rounded-xl shadow-lg group">
+              <img 
+                src="/public-objects/1756800584891.jpg" 
+                alt="Panchur Hills agricultural area"
+                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h4 className="text-white font-semibold">Agricultural Land</h4>
+                <p className="text-white/80 text-sm">Fertile soil for farming</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Additional Amenities Grid */}
         <div className="bg-gray-50 rounded-2xl p-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">

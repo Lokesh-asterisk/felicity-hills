@@ -14,10 +14,10 @@ export default function PanchurHeroSection() {
   return (
     <section className="relative bg-gradient-to-br from-green-50 to-teal-50 overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-15">
         <div 
           style={{
-            backgroundImage: `url('/public-objects/1756800584883.jpg')`,
+            backgroundImage: `url('/public-objects/1756800584896.jpg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
