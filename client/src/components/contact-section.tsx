@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Phone, MessageSquare, Building, MapPin, CalendarCheck, Loader2 } from "lucide-react";
+import type { Project } from "@shared/schema";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -16,11 +17,17 @@ export default function ContactSection() {
     email: "",
     preferredDate: "",
     plotSize: "",
-    budget: ""
+    budget: "",
+    projectId: ""
   });
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch available projects
+  const { data: projects, isLoading: projectsLoading } = useQuery({
+    queryKey: ["/api/projects"],
+  });
 
   const createSiteVisit = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -38,7 +45,8 @@ export default function ContactSection() {
         email: "",
         preferredDate: "",
         plotSize: "",
-        budget: ""
+        budget: "",
+        projectId: ""
       });
       queryClient.invalidateQueries({ queryKey: ["/api/site-visits"] });
     },
@@ -208,6 +216,33 @@ export default function ContactSection() {
                     className="mt-1"
                   />
                   <p className="text-xs text-gray-500 mt-1">We'll send booking confirmation to this email</p>
+                </div>
+
+                <div>
+                  <Label>Select Project</Label>
+                  {projectsLoading ? (
+                    <div className="flex items-center gap-2 p-3 border rounded-md mt-1">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="text-sm text-gray-500">Loading projects...</span>
+                    </div>
+                  ) : (
+                    <Select value={formData.projectId} onValueChange={(value) => setFormData(prev => ({ ...prev, projectId: value }))}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Choose the project you want to visit" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(projects as Project[])?.map((project: Project) => (
+                          <SelectItem key={project.id} value={project.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{project.name}</span>
+                              <span className="text-sm text-gray-500">{project.location} • {project.type}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">Choose the specific project you're interested in visiting</p>
                 </div>
 
                 <div>
