@@ -72,7 +72,9 @@ export default function ProjectDetail() {
   // Check if this is the Panchur project
   const isPanchurProject = project.name.toLowerCase().includes('panchur') || 
                           project.location.toLowerCase().includes('pauri') ||
-                          project.name.toLowerCase().includes('पौड़ी');
+                          project.name.includes('पौड़ी') ||
+                          project.name.includes('गढ़वाल') ||
+                          project.location.toLowerCase().includes('garhwal');
 
   // If it's Khushalipur, render the full landing page
   if (isKhushalipurProject) {
