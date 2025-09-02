@@ -15,19 +15,11 @@ export default function PanchurInvestmentCalculator() {
   const [ratePerSqft, setRatePerSqft] = useState<string>("");
   const [investmentPeriod, setInvestmentPeriod] = useState<string>("");
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [showResults, setShowResults] = useState(false);
 
-  const calculateInvestment = async () => {
+  const calculateInvestment = () => {
     if (!plotSize || !ratePerSqft || !investmentPeriod) {
       return;
     }
-
-    setIsCalculating(true);
-    setShowResults(false);
-
-    // Simulate calculation time for better UX
-    await new Promise(resolve => setTimeout(resolve, 1500));
 
     const size = parseFloat(plotSize);
     const rate = parseFloat(ratePerSqft);
@@ -43,9 +35,6 @@ export default function PanchurInvestmentCalculator() {
       expectedValue,
       estimatedReturns
     });
-
-    setIsCalculating(false);
-    setShowResults(true);
   };
 
   const formatCurrency = (amount: number) => {
@@ -159,70 +148,37 @@ export default function PanchurInvestmentCalculator() {
 
                 <Button 
                   onClick={calculateInvestment}
-                  className="w-full bg-gradient-to-r from-green-600 via-green-500 to-blue-600 hover:from-green-700 hover:via-green-600 hover:to-blue-700 text-white font-semibold py-4 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 relative overflow-hidden group"
-                  disabled={!plotSize || !ratePerSqft || !investmentPeriod || isCalculating}
+                  className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  disabled={!plotSize || !ratePerSqft || !investmentPeriod}
                   data-testid="calculate-returns"
                 >
-                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  {isCalculating ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                      Calculating...
-                    </>
-                  ) : (
-                    <>
-                      <Calculator className="h-5 w-5 mr-3 group-hover:animate-bounce" />
-                      Calculate Investment Returns
-                    </>
-                  )}
+                  <Calculator className="h-5 w-5 mr-2" />
+                  Calculate Investment Returns
                 </Button>
               </div>
 
-              {/* Enhanced Results */}
-              {result && showResults && (
-                <div className="mt-8 space-y-4 animate-fade-in-up">
-                  <div className="bg-gradient-to-br from-white to-green-50 rounded-2xl border-2 border-green-200 p-6 shadow-xl">
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mr-4">
-                        <BarChart3 className="w-6 h-6 text-white" />
-                      </div>
-                      <h4 className="text-xl font-bold text-gray-900">Investment Results</h4>
+              {/* Results */}
+              {result && (
+                <div className="mt-8 p-6 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl border border-green-200 animate-fade-in-up">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Investment Results</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Total Investment:</span>
+                      <span className="font-bold text-gray-900">{formatCurrency(result.totalInvestment)}</span>
                     </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-                        <div className="flex items-center">
-                          <Target className="w-5 h-5 text-gray-500 mr-3" />
-                          <span className="text-gray-700 font-medium">Total Investment</span>
-                        </div>
-                        <span className="font-bold text-lg text-gray-900">{formatCurrency(result.totalInvestment)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between items-center p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-xl shadow-sm border border-green-200">
-                        <div className="flex items-center">
-                          <TrendingUp className="w-5 h-5 text-green-600 mr-3" />
-                          <span className="text-green-700 font-medium">Expected Value</span>
-                        </div>
-                        <span className="font-bold text-lg text-green-600">{formatCurrency(result.expectedValue)}</span>
-                      </div>
-                      
-                      <div className="flex justify-between items-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-sm border border-blue-200">
-                        <div className="flex items-center">
-                          <Sparkles className="w-5 h-5 text-blue-600 mr-3" />
-                          <span className="text-blue-700 font-medium">Estimated Returns</span>
-                        </div>
-                        <span className="font-bold text-lg text-blue-600">{formatCurrency(result.estimatedReturns)}</span>
-                      </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Expected Value:</span>
+                      <span className="font-bold text-green-600">{formatCurrency(result.expectedValue)}</span>
                     </div>
-
-                    {/* ROI Percentage */}
-                    <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600 mb-1">
-                          {((result.estimatedReturns / result.totalInvestment) * 100).toFixed(1)}%
-                        </div>
-                        <div className="text-purple-700 font-medium">Total ROI</div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Estimated Returns:</span>
+                      <span className="font-bold text-blue-600">{formatCurrency(result.estimatedReturns)}</span>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {((result.estimatedReturns / result.totalInvestment) * 100).toFixed(1)}%
                       </div>
+                      <div className="text-sm text-gray-600">Total ROI</div>
                     </div>
                   </div>
                 </div>
