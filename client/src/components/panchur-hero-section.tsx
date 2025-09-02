@@ -1,130 +1,113 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Sparkles, Play, Star } from "lucide-react";
-import { Link } from "wouter";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Flame, Calendar, MapPin } from "lucide-react";
 
 export default function PanchurHeroSection() {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <section 
-      id="hero" 
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
-      style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/public-objects/1756800584883.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      <div className="container mx-auto px-4 text-center z-10 relative">
-        <div className="max-w-5xl mx-auto">
-          {/* Premium Badge */}
-          <div className="mb-8 animate-fade-in-up">
-            <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 border border-white/30">
-              <Star className="h-5 w-5 text-yellow-400 mr-2" />
-              <span className="text-white font-medium text-lg">Premium Hill Station Investment</span>
-              <Star className="h-5 w-5 text-yellow-400 ml-2" />
-            </div>
-          </div>
-
-          {/* Main Heading */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight animate-fade-in-up">
-            <span className="block mb-2">Panchur Hills</span>
-            <span className="block bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+    <section className="relative bg-gradient-to-br from-green-50 to-teal-50 overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div 
+          style={{
+            backgroundImage: `url('/public-objects/1756800584883.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+          className="w-full h-full"
+        />
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="animate-fade-in-up">
+            <Badge variant="secondary" className="inline-flex items-center mb-6 bg-accent/10 text-accent hover:bg-accent/20">
+              <Flame className="w-4 h-4 mr-2" />
+              Premium Mountain Plots - Book Site Visit Today!
+            </Badge>
+            
+            <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+              <span className="text-primary">Panchur Hills</span><br />
               Premium Plots
-            </span>
-          </h1>
-          
-          {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-gray-200 mb-10 leading-relaxed animate-fade-in-up max-w-3xl mx-auto">
-            Experience tranquility at 1,115m elevation in the heart of Pauri Garhwal, Uttarakhand
-          </p>
+            </h1>
+            
+            <p className="text-xl text-gray-600 mb-8">
+              1,115m Elevation • Pauri Garhwal, Uttarakhand
+            </p>
 
-          {/* Key Features */}
-          <div className="flex flex-wrap justify-center gap-6 mb-12 animate-fade-in-up">
-            <div className="flex items-center text-white bg-white/15 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20 hover:bg-white/25 transition-all duration-300">
-              <MapPin className="h-5 w-5 mr-2 text-green-400" />
-              <span className="font-semibold">1,115m Elevation</span>
+            
+            <div className="grid sm:grid-cols-3 gap-6 mb-8">
+              <Card className="shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold text-primary mb-1">₹3,900</div>
+                  <div className="text-gray-600">Starting from per sq ft</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold text-primary mb-1">15-20%</div>
+                  <div className="text-gray-600">Expected Annual Returns</div>
+                </CardContent>
+              </Card>
+              
+              <Card className="shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold text-primary mb-1">1,115m</div>
+                  <div className="text-gray-600">Elevation Level</div>
+                </CardContent>
+              </Card>
             </div>
-            <div className="flex items-center text-white bg-white/15 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20 hover:bg-white/25 transition-all duration-300">
-              <Sparkles className="h-5 w-5 mr-2 text-blue-400" />
-              <span className="font-semibold">₹3,900-4,900/sq ft</span>
-            </div>
-            <div className="flex items-center text-white bg-white/15 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20 hover:bg-white/25 transition-all duration-300">
-              <Calendar className="h-5 w-5 mr-2 text-yellow-400" />
-              <span className="font-semibold">Ready to Move</span>
-            </div>
-          </div>
 
-          {/* Call to Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up">
-            <Link href="/book-visit" className="w-full sm:w-auto">
+
+            <div className="flex flex-col sm:flex-row gap-4">
               <Button 
-                size="lg" 
-                className="w-full sm:w-auto px-8 py-4 text-lg font-semibold bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                onClick={() => scrollToSection('contact')}
+                size="lg"
+                className="bg-primary hover:bg-secondary text-lg px-8 py-6"
                 data-testid="book-site-visit"
               >
-                <Calendar className="h-5 w-5 mr-2" />
+                <Calendar className="w-5 h-5 mr-2" />
                 Book Site Visit
               </Button>
-            </Link>
-            
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full sm:w-auto px-8 py-4 text-lg font-semibold bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300"
-              data-testid="get-info"
-            >
-              Get Information
-            </Button>
-
-            <Button 
-              size="lg" 
-              variant="ghost"
-              onClick={() => window.open('/public-objects/1756800585023.mp4', '_blank')}
-              className="w-full sm:w-auto px-6 py-4 text-lg font-semibold text-white hover:bg-white/10 transition-all duration-300"
-              data-testid="watch-video"
-            >
-              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mr-3">
-                <Play className="h-5 w-5 ml-1" />
-              </div>
-              Watch Video
-            </Button>
+              <Button 
+                onClick={() => scrollToSection('amenities')}
+                variant="outline"
+                size="lg"
+                className="border-primary text-primary hover:bg-primary hover:text-white text-lg px-8 py-6"
+                data-testid="view-amenities"
+              >
+                <MapPin className="w-5 h-5 mr-2" />
+                View Amenities
+              </Button>
+            </div>
           </div>
 
-          {/* Investment Highlight */}
-          <div className="mt-16 p-8 bg-white/15 backdrop-blur-sm rounded-2xl border border-white/20 shadow-xl animate-fade-in-up">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-2xl">
-                🏔️
-              </div>
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-3 text-center">
-              Himalayan Mountain Views
-            </h3>
-            <p className="text-gray-200 text-lg leading-relaxed text-center max-w-2xl mx-auto">
-              Premium agricultural plots with stunning mountain vistas, peaceful environment, and all infrastructure ready
-            </p>
-            <div className="mt-6 flex items-center justify-center space-x-8 text-sm text-gray-300">
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                Clear Titles
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
-                Ready Infrastructure
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
-                Mountain Air
+          
+          <div className="lg:pl-12 animate-fade-in">
+            <div className="relative">
+              <img 
+                src="/public-objects/1756800584883.jpg" 
+                alt="Panchur Hills - Premium mountain plots with stunning Himalayan views" 
+                className="rounded-2xl shadow-2xl w-full"
+              />
+              {/* Image Caption */}
+              <div className="absolute bottom-4 left-4 right-4 p-3">
+                <p className="text-base font-bold text-white text-center" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)'}}>
+                  Panchur Hills - Premium mountain plots with stunning Himalayan views
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-green-400/10 rounded-full blur-xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-blue-400/10 rounded-full blur-xl animate-pulse"></div>
     </section>
   );
 }
