@@ -533,8 +533,6 @@ export class DatabaseStorage implements IStorage {
   // Project showcase operations
   async getProjects(filters?: { status?: string; type?: string; featured?: boolean }): Promise<Project[]> {
     try {
-      let query = db.select().from(projects);
-      
       if (filters) {
         const conditions = [];
         if (filters.status) conditions.push(eq(projects.status, filters.status));
@@ -542,11 +540,18 @@ export class DatabaseStorage implements IStorage {
         if (filters.featured !== undefined) conditions.push(eq(projects.featured, filters.featured));
         
         if (conditions.length > 0) {
-          query = query.where(and(...conditions));
+          return await db
+            .select()
+            .from(projects)
+            .where(and(...conditions))
+            .orderBy(desc(projects.featured), projects.sortOrder, desc(projects.createdAt));
         }
       }
       
-      return await query.orderBy(desc(projects.featured), projects.sortOrder, desc(projects.createdAt));
+      return await db
+        .select()
+        .from(projects)
+        .orderBy(desc(projects.featured), projects.sortOrder, desc(projects.createdAt));
     } catch (error) {
       console.error("Error fetching projects:", error);
       return [];
