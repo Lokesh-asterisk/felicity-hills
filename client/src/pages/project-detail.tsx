@@ -63,6 +63,14 @@ export default function ProjectDetail() {
     );
   }
 
+  // Debug logging
+  console.log('Project Debug:', {
+    id: project.id,
+    name: project.name,
+    location: project.location,
+    paramId: params.id
+  });
+
   // Check if this is the Panchur project first (more specific)
   const isPanchurProject = project.name.toLowerCase().includes('panchur') || 
                           project.location.toLowerCase().includes('pauri') ||
@@ -75,6 +83,11 @@ export default function ProjectDetail() {
                               project.location.toLowerCase().includes('khushali') ||
                               project.id === 'khushalipur'
                               );
+
+  console.log('Project Detection:', {
+    isPanchurProject,
+    isKhushalipurProject
+  });
 
   // If it's Khushalipur, render the full landing page
   if (isKhushalipurProject) {
