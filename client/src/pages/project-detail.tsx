@@ -11,6 +11,7 @@ import Navigation from '../components/navigation';
 import KhushhalipurNavigation from '../components/khushalipur-navigation';
 import PanchurNavigation from '../components/panchur-navigation';
 import HeroSection from '../components/hero-section';
+import PanchurHeroSection from '../components/panchur-hero-section';
 import RecentActivitySection from '../components/recent-activity-section';
 import LocationAdvantages from '../components/location-advantages';
 import AmenitiesSection from '../components/amenities-section';
@@ -63,14 +64,6 @@ export default function ProjectDetail() {
     );
   }
 
-  // Debug logging
-  console.log('Project Debug:', {
-    id: project.id,
-    name: project.name,
-    location: project.location,
-    paramId: params.id
-  });
-
   // Check if this is the Panchur project first (more specific)
   const isPanchurProject = project.name.toLowerCase().includes('panchur') || 
                           project.location.toLowerCase().includes('pauri') ||
@@ -83,11 +76,6 @@ export default function ProjectDetail() {
                               project.location.toLowerCase().includes('khushali') ||
                               project.id === 'khushalipur'
                               );
-
-  console.log('Project Detection:', {
-    isPanchurProject,
-    isKhushalipurProject
-  });
 
   // If it's Khushalipur, render the full landing page
   if (isKhushalipurProject) {
@@ -157,7 +145,7 @@ export default function ProjectDetail() {
         </div>
 
         <PanchurNavigation />
-        <HeroSection />
+        <PanchurHeroSection />
         <RecentActivitySection />
         <LocationAdvantages />
         <AmenitiesSection />
