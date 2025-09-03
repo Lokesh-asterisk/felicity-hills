@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Calendar, MapPin } from "lucide-react";
 import khushhalipurBgImage from "@assets/front_1754569110815.jpg";
-import khushhalipurSiteImage from "@assets/Screenshot 2025-08-07 175516_1754572546276.jpg";
+import khushhalipurSiteImage from "@assets/Screenshot 2025-08-07 175516_1754569542863.jpg";
 
 
 export default function HeroSection() {
@@ -15,13 +15,14 @@ export default function HeroSection() {
   };
 
 
+
   return (
     <section className="relative bg-gradient-to-br from-green-50 to-teal-50 overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-15">
+      <div className="absolute inset-0 opacity-25">
         <div 
           style={{
-            backgroundImage: `url(${khushhalipurBgImage})`,
+            backgroundImage: khushhalipurBgImage ? `url(${khushhalipurBgImage})` : `url('/khushalipur-bg.jpg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
@@ -93,7 +94,7 @@ export default function HeroSection() {
           <div className="lg:pl-12 animate-fade-in">
             <div className="relative">
               <img 
-                src={khushhalipurSiteImage} 
+                src={khushhalipurSiteImage || '/khushalipur-hero.jpg'} 
                 alt="Khushalipur - Agricultural land with development infrastructure" 
                 className="rounded-2xl shadow-2xl w-full max-h-96 object-contain"
               />
