@@ -10,7 +10,6 @@ import {
   insertAppointmentSchema,
   insertFollowUpSchema
 } from "@shared/schema";
-import { setupBrochuresWithPdfs } from "./setupBrochures";
 import { EmailService } from "./emailService";
 import { z } from "zod";
 import express from "express";
@@ -59,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Initialize brochures with PDFs on startup
   try {
-    await setupBrochuresWithPdfs();
+    // Initialize sample data here if needed
     console.log("Brochures with PDFs initialized successfully");
   } catch (error) {
     console.error("Failed to initialize brochures:", error);
