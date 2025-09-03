@@ -1,0 +1,39 @@
+
+[Unit]
+Description=Felicity Hills Agricultural Investment Platform
+Documentation=https://github.com/yourusername/felicity-hills
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=felicity
+Group=felicity
+WorkingDirectory=/home/felicity/felicity-hills
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/home/felicity/felicity-hills/.env
+ExecStart=/usr/bin/node --loader tsx server/index.ts
+Restart=on-failure
+RestartSec=10
+KillMode=mixed
+KillSignal=SIGINT
+TimeoutStopSec=20
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=felicity-hills
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/felicity/felicity-hills/logs
+ReadWritePaths=/home/felicity/felicity-hills/uploads
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

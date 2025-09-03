@@ -65,9 +65,6 @@ apt-get install -y nodejs
 # Verify installation
 node --version  # Should show v20.x.x
 npm --version   # Should show 10.x.x
-
-# Install PM2 globally for process management
-npm install -g pm2
 ```
 
 #### 3. Install and Configure PostgreSQL
@@ -136,7 +133,7 @@ server {
     location / {
         root /home/felicity/felicity-hills/dist;
         try_files $uri $uri/ /index.html;
-        
+
         # Security headers
         add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-Content-Type-Options "nosniff" always;
@@ -223,54 +220,49 @@ npm run build
 # Set up database schema
 npm run db:push
 
-# Create PM2 ecosystem file
-nano ecosystem.config.js
+# Install tsx globally for running TypeScript
+sudo npm install -g tsx
+
+# Create systemd service
+sudo nano /etc/systemd/system/felicity-hills.service
 ```
 
-```javascript
-// PM2 Ecosystem Configuration
-module.exports = {
-  apps: [{
-    name: 'felicity-hills',
-    script: 'server/index.ts',
-    interpreter: 'node',
-    interpreter_args: '--loader tsx',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    },
-    env_production: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    },
-    instances: 2,
-    exec_mode: 'cluster',
-    max_memory_restart: '1G',
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true,
-    autorestart: true,
-    restart_delay: 1000,
-    max_restarts: 10,
-    min_uptime: '10s'
-  }]
-};
+Add the following content to `/etc/systemd/system/felicity-hills.service`:
+```ini
+[Unit]
+Description=Felicity Hills Node.js Application
+After=network.target
+
+[Service]
+User=felicity
+WorkingDirectory=/home/felicity/felicity-hills
+Environment="NODE_ENV=production"
+Environment="PORT=3000"
+EnvironmentFile=/home/felicity/felicity-hills/.env.production
+ExecStart=/usr/bin/tsx server/index.ts
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/felicity/felicity-hills/logs/out.log
+StandardError=append:/home/felicity/felicity-hills/logs/err.log
+
+[Install]
+Type=simple
+WantedBy=multi-user.target
 ```
 
 ```bash
 # Create logs directory
 mkdir logs
 
-# Start the application with PM2
-pm2 start ecosystem.config.js --env production
+# Set up the service
+sudo systemctl daemon-reload
+sudo systemctl enable felicity-hills
 
-# Save PM2 configuration
-pm2 save
+# Start the application service
+sudo systemctl start felicity-hills
 
-# Set up PM2 startup script
-pm2 startup
-# Run the command that PM2 provides
+# Check service status
+sudo systemctl status felicity-hills
 ```
 
 #### 7. Configure Firewall
@@ -305,7 +297,7 @@ nano /etc/logrotate.d/felicity-hills
     notifempty
     create 644 felicity felicity
     postrotate
-        pm2 reloadLogs
+        systemctl reload felicity-hills
     endscript
 }
 ```
@@ -361,7 +353,7 @@ crontab -e
 
 #### Deployment
 - [ ] Application built successfully
-- [ ] PM2 processes running
+- [ ] Application service running
 - [ ] Nginx serving files correctly
 - [ ] Database connections working
 - [ ] Email notifications functional
@@ -376,22 +368,26 @@ crontab -e
 
 ```bash
 # Application Management
-pm2 status                 # Check application status
-pm2 logs felicity-hills   # View application logs
-pm2 restart felicity-hills # Restart application
-pm2 reload felicity-hills  # Zero-downtime reload
+sudo systemctl status felicity-hills      # Check application status
+sudo journalctl -u felicity-hills -f      # View application logs
+sudo systemctl restart felicity-hills     # Restart application
+sudo systemctl reload felicity-hills      # Reload configuration
+```
 
+```bash
 # System Monitoring
 htop                       # System resource usage
 df -h                      # Disk usage
 free -m                    # Memory usage
 systemctl status nginx    # Nginx status
 systemctl status postgresql # Database status
+```
 
+```bash
 # Updates and Maintenance
 git pull origin main       # Update code
 npm run build             # Rebuild application
-pm2 reload felicity-hills # Apply updates
+sudo systemctl restart felicity-hills # Apply updates
 ```
 
 ### Troubleshooting
@@ -400,8 +396,8 @@ pm2 reload felicity-hills # Apply updates
 
 1. **Application won't start**
    ```bash
-   pm2 logs felicity-hills  # Check logs
-   npm run build           # Rebuild if needed
+   sudo journalctl -u felicity-hills -f  # Check logs
+   npm run build                       # Rebuild if needed
    ```
 
 2. **Database connection errors**
