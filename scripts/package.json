@@ -1,0 +1,16 @@
+
+{
+  "name": "felicity-hills-db-scripts",
+  "version": "1.0.0",
+  "description": "Database export and schema analysis scripts",
+  "main": "index.js",
+  "scripts": {
+    "export-db": "bash export-db.sh",
+    "schema-info": "node generate-schema-info.js",
+    "full-export": "npm run schema-info && npm run export-db"
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1"
+  }
+}
