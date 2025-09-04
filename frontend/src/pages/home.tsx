@@ -1,37 +1,107 @@
 import { useEffect } from "react";
-import KhushhalipurNavigation from "../components/khushalipur-navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MapPin, Building, Star, ArrowRight } from "lucide-react";
+import type { Project } from "@shared/schema";
+import Navigation from "../components/navigation";
 import HeroSection from "../components/hero-section";
-import RecentActivitySection from "../components/recent-activity-section";
-import LocationAdvantages from "../components/location-advantages";
-import ComparisonTable from "../components/comparison-table";
-import AmenitiesSection from "../components/amenities-section";
-import InvestmentCalculator from "../components/investment-calculator";
 import TestimonialsSection from "../components/testimonials-section";
-import FAQSection from "../components/faq-section";
 import ContactSection from "../components/contact-section";
 import Footer from "../components/footer";
 
 export default function Home() {
   // Set page title for SEO
   useEffect(() => {
-    document.title = "Khushalipur - Premium Agricultural Land Investment | Felicity Hills";
+    document.title = "Felicity Hills - Premium Real Estate Investment Opportunities";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Invest in premium agricultural land at Khushalipur near Dehradun. 15-20% annual returns, modern amenities, Delhi-Dehradun Expressway connectivity. Book site visit today!');
+      metaDescription.setAttribute('content', 'Discover premium real estate investment opportunities with Felicity Hills. From agricultural land to luxury plots, exceptional growth potential in prime locations.');
     }
   }, []);
 
+  const { data: projects = [], isLoading } = useQuery<Project[]>({
+    queryKey: ["/api/projects"]
+  });
+
   return (
     <div className="min-h-screen bg-background">
-      <KhushhalipurNavigation />
+      <Navigation />
       <HeroSection />
-      <RecentActivitySection />
-      <LocationAdvantages />
-      <AmenitiesSection />
-      <ComparisonTable />
-      <InvestmentCalculator />
+      
+      {/* Featured Projects Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Featured Projects</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Explore our carefully curated portfolio of premium real estate investments
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-80 bg-gray-200 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.slice(0, 3).map((project) => (
+                <Card key={project.id} className="overflow-hidden hover:shadow-xl transition-shadow">
+                  <CardHeader className="p-0">
+                    <div className="h-48 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center">
+                      <Building className="w-16 h-16 text-green-600" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="secondary">{project.type}</Badge>
+                      <div className="flex items-center">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="ml-1 text-sm text-gray-600">4.8</span>
+                      </div>
+                    </div>
+                    <CardTitle className="text-xl mb-2">{project.name}</CardTitle>
+                    <CardDescription className="flex items-center text-gray-600 mb-4">
+                      <MapPin className="w-4 h-4 mr-1" />
+                      {project.location}
+                    </CardDescription>
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <span className="text-2xl font-bold text-green-600">₹{project.pricePerSqYd.toLocaleString()}</span>
+                        <span className="text-gray-600 text-sm ml-1">per sq yd</span>
+                      </div>
+                      <Badge variant="outline" className="text-green-600">
+                        {project.expectedReturns}% Returns
+                      </Badge>
+                    </div>
+                    <Link href={`/project/${project.id}`}>
+                      <Button className="w-full bg-green-600 hover:bg-green-700">
+                        View Details
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          <div className="text-center mt-8">
+            <Link href="/portfolio">
+              <Button variant="outline" size="lg">
+                View All Projects
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <TestimonialsSection />
-      <FAQSection />
       <ContactSection />
       <Footer />
       

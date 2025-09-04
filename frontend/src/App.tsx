@@ -28,8 +28,8 @@ function Router() {
   
   return (
     <Switch>
-      <Route path="/" component={CompanyPortfolio} />
-      <Route path="/khushalipur" component={Home} />
+      <Route path="/" component={Home} />
+      <Route path="/portfolio" component={CompanyPortfolio} />
       <Route path="/project/:id" component={ProjectDetail} />
       <Route path="/about" component={About} />
       <Route path="/videos" component={Videos} />
