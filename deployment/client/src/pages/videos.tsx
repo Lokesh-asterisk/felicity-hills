@@ -1,0 +1,239 @@
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Play, Clock, Loader2, Filter } from "lucide-react";
+import { Link } from "wouter";
+import KhushhalipurNavigation from "../components/khushalipur-navigation";
+import Footer from "../components/footer";
+import type { Video } from "@shared/schema";
+
+export default function VideosPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  // Set page title for SEO
+  useEffect(() => {
+    document.title = "Project Videos - Khushalipur Agricultural Land Investment | Felicity Hills";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Watch comprehensive videos showcasing Khushalipur agricultural land project near Dehradun. See location advantages, amenities, and customer testimonials.');
+    }
+  }, []);
+
+  const { data: videos, isLoading } = useQuery<Video[]>({
+    queryKey: ["/api/videos"],
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache the data
+  });
+
+  const filteredVideos = videos?.filter(video => 
+    selectedCategory === "all" || video.category === selectedCategory
+  );
+
+  const categories = [
+    { value: "all", label: "All Videos", icon: "🎬" },
+    { value: "project", label: "Project Overview", icon: "🏗️" },
+    { value: "location", label: "Location & Connectivity", icon: "📍" },
+    { value: "testimonial", label: "Customer Stories", icon: "💬" }
+  ];
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "project": return "bg-blue-100 text-blue-800 border-blue-200";
+      case "location": return "bg-green-100 text-green-800 border-green-200";
+      case "testimonial": return "bg-purple-100 text-purple-800 border-purple-200";
+      default: return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "project": return "🏗️";
+      case "location": return "📍";
+      case "testimonial": return "💬";
+      default: return "🎥";
+    }
+  };
+
+  const playVideo = (video: Video) => {
+    // Open Google Drive video directly in new window
+    const viewUrl = video.videoUrl.replace('/preview', '/view');
+    window.open(viewUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+  };
+
+
+  return (
+    <div className="min-h-screen bg-background">
+      <KhushhalipurNavigation />
+      
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-green-50 to-teal-50 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center animate-fade-in-up">
+            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              Project Videos
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Watch comprehensive videos showcasing our Khushalipur agricultural land project, 
+              location advantages, amenities, and real customer experiences.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Category Filter */}
+      <section className="py-8 bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center space-x-2 overflow-x-auto pb-2">
+            <Filter className="w-5 h-5 text-gray-500 mr-2" />
+            {categories.map((category) => (
+              <Button
+                key={category.value}
+                onClick={() => setSelectedCategory(category.value)}
+                variant={selectedCategory === category.value ? "default" : "outline"}
+                className={`whitespace-nowrap ${
+                  selectedCategory === category.value 
+                    ? "bg-primary hover:bg-secondary" 
+                    : "border-gray-300 hover:border-primary hover:text-primary"
+                }`}
+              >
+                <span className="mr-2">{category.icon}</span>
+                {category.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Videos Grid */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <>
+              <div className="text-center mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  {selectedCategory === "all" 
+                    ? `All Videos (${filteredVideos?.length})` 
+                    : `${categories.find(c => c.value === selectedCategory)?.label} (${filteredVideos?.length})`
+                  }
+                </h2>
+                <p className="text-gray-600">
+                  High-quality videos to help you understand our project better
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredVideos?.map((video, index) => (
+                  <Card 
+                    key={video.id}
+                    className="shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up overflow-hidden group cursor-pointer"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => playVideo(video)}
+                  >
+                    <div className="relative">
+                      <img 
+                        src={video.thumbnailUrl} 
+                        alt={video.title}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition-colors">
+                        <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Play className="w-6 h-6 text-primary ml-1" />
+                        </div>
+                      </div>
+                      
+                      {/* Duration Badge */}
+                      <Badge className="absolute top-3 right-3 bg-black/70 text-white text-xs">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {video.duration}
+                      </Badge>
+                      
+                      {/* Category Badge */}
+                      <Badge className={`absolute top-3 left-3 text-xs ${getCategoryColor(video.category)}`}>
+                        {getCategoryIcon(video.category)} {video.category}
+                      </Badge>
+                    </div>
+                    
+                    <CardContent className="p-6">
+                      <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
+                        {video.title}
+                      </h3>
+                      
+                      <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+                        {video.description}
+                      </p>
+                      
+                      <Button 
+                        className="w-full mt-4 bg-primary hover:bg-secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playVideo(video);
+                        }}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Watch Video
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {filteredVideos?.length === 0 && (
+                <div className="text-center py-16">
+                  <div className="text-6xl mb-4">📹</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    No videos found
+                  </h3>
+                  <p className="text-gray-600">
+                    No videos available for the selected category.
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-primary to-secondary">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Ready to Invest?
+          </h2>
+          <p className="text-green-100 mb-8 text-lg">
+            After watching our videos, book a site visit to experience everything in person
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/">
+              <Button 
+                className="bg-white text-primary hover:bg-gray-100" 
+                size="lg"
+              >
+                Book Site Visit
+              </Button>
+            </Link>
+            <Button asChild className="bg-green-500 text-white hover:bg-green-600" size="lg">
+              <a 
+                href="https://wa.me/918588834221?text=Hello%2C%20I%20watched%20your%20videos%20and%20want%20to%20book%20a%20site%20visit" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                WhatsApp Us
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

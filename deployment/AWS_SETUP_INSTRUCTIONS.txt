@@ -1,0 +1,50 @@
+===============================================
+FELICITY HILLS - AWS EC2 DEPLOYMENT GUIDE
+===============================================
+
+📁 DEPLOYMENT FOLDER CONTENTS:
+- Complete frontend/backend application code
+- Database backup file (felicity_hills_backup.sql)
+- Environment configuration (.env.example)
+- Automated deployment script (deploy.sh)
+
+🗄️ DATABASE CONNECTION CONFIGURATION:
+
+1. MAIN CONFIG FILE: deployment/.env.example
+   - Copy to .env and update with your AWS PostgreSQL details
+   - Replace YOUR_PASSWORD with your actual database password
+
+2. ALTERNATIVE CONFIG LOCATIONS:
+   - deployment/server/db.ts (direct database connection)
+   - deployment/drizzle.config.ts (for database operations)
+
+🚀 DEPLOYMENT STEPS:
+
+1. Upload deployment folder to EC2:
+   scp -r deployment ubuntu@YOUR_EC2_IP:/home/ubuntu/
+
+2. SSH into EC2:
+   ssh ubuntu@YOUR_EC2_IP
+
+3. Navigate to deployment folder:
+   cd /home/ubuntu/deployment
+
+4. Setup environment:
+   cp .env.example .env
+   nano .env  # Edit database credentials
+
+5. Import database (if not done already):
+   psql -U felicity_user -d felicity_hills -h localhost < felicity_hills_backup.sql
+
+6. Run deployment script:
+   ./deploy.sh
+
+🌐 ACCESS YOUR APPLICATION:
+   http://YOUR_EC2_IP:5000
+
+⚙️ REQUIRED ENVIRONMENT VARIABLES:
+   DATABASE_URL="postgresql://felicity_user:YOUR_PASSWORD@localhost:5432/felicity_hills"
+   SESSION_SECRET="your-random-secret-key"
+   PORT=5000
+
+===============================================
