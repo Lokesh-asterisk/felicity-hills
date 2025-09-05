@@ -2,8 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Calendar, MapPin } from "lucide-react";
-import khushhalipurBgImage from "@assets/front_1754569110815.jpg";
-import khushhalipurSiteImage from "@assets/Screenshot 2025-08-07 175516_1754569542863.jpg";
 
 
 export default function HeroSection() {
@@ -15,14 +13,13 @@ export default function HeroSection() {
   };
 
 
-
   return (
     <section className="relative bg-gradient-to-br from-green-50 to-teal-50 overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-25">
+      <div className="absolute inset-0 opacity-10">
         <div 
           style={{
-            backgroundImage: khushhalipurBgImage ? `url(${khushhalipurBgImage})` : `url('/khushalipur-bg.jpg')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
@@ -94,14 +91,14 @@ export default function HeroSection() {
           <div className="lg:pl-12 animate-fade-in">
             <div className="relative">
               <img 
-                src={khushhalipurSiteImage || '/khushalipur-hero.jpg'} 
-                alt="Khushalipur - Agricultural land with development infrastructure" 
-                className="rounded-2xl shadow-2xl w-full max-h-96 object-contain"
+                src="/khushalipur-site.jpg" 
+                alt="Khushalipur - Real site showing entrance gates and development" 
+                className="rounded-2xl shadow-2xl w-full"
               />
               {/* Image Caption */}
               <div className="absolute bottom-4 left-4 right-4 p-3">
                 <p className="text-base font-bold text-white text-center" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)'}}>
-                  Khushalipur - Agricultural land with development infrastructure
+                  Khushalipur - Real site showing entrance gates and development
                 </p>
               </div>
             </div>
