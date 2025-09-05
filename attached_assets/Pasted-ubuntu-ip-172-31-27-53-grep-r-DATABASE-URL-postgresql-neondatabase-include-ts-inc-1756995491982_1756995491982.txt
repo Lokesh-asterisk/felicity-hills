@@ -1,0 +1,147 @@
+ubuntu@ip-172-31-27-53:~$ grep -r "DATABASE_URL\|postgresql\|@neondatabase" . --include="*.ts" --include="*.js" --include="*.env"
+./myweb/deployment/node_modules/pgpass/lib/helper.js:          path.join( env.APPDATA || './' , 'postgresql', 'pgpass.conf' ) :
+./myweb/deployment/node_modules/drizzle-kit/api.d.ts:    dialect: zod.ZodLiteral<"postgresql">;
+./myweb/deployment/node_modules/drizzle-kit/api.d.ts:    dialect: "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.d.ts:    dialect: "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.d.ts:    dialect: "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/utils.js:  dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/utils.js:  dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/utils.js:  dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/utils.js:  dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/utils.js:  dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/utils.js:  dialect: "postgresql",
+./myweb/deployment/node_modules/drizzle-kit/utils.js:    case "postgresql":
+./myweb/deployment/node_modules/drizzle-kit/api.js:      dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/api.js:      dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/api.js:      dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/api.js:      dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/api.js:      dialect: literalType("postgresql"),
+./myweb/deployment/node_modules/drizzle-kit/api.js:      dialect: "postgresql",
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_role" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_role" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "rename_role" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_role" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "rename_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_ind_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_ind_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "rename_ind_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_ind_policy" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "enable_rls" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "disable_rls" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_table" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_view" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_view" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "rename_view" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_view_alter_schema" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_view_add_with_option" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_view_drop_with_option" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_view_alter_tablespace" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_view_alter_using" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_set_identity" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_drop_identity" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_change_identity" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_unique_constraint" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "delete_unique_constraint" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_check_constraint" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "delete_check_constraint" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_sequence" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_sequence" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "rename_sequence" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "move_sequence" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_sequence" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_table" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "rename_table" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_rename_column" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_drop_column" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_add_column" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_set_type" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_set_default" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_drop_default" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_drop_generated" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_set_generated" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_alter_generated" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_composite_pk" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "delete_composite_pk" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_composite_pk" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_set_pk" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_drop_pk" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_set_notnull" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_alter_column_drop_notnull" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_reference" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_reference" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "delete_reference" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_index_pg" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_index" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "create_schema" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "rename_schema" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "drop_schema" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_set_schema" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_set_new_schema" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:        return statement.type === "alter_table_remove_from_schema" && dialect6 === "postgresql";
+./myweb/deployment/node_modules/drizzle-kit/api.js:      const sqlStatements = fromJson(filteredEnumsJsonStatements, "postgresql", action);
+./myweb/deployment/node_modules/drizzle-kit/api.js:    dialects = ["postgresql", "mysql", "sqlite", "turso", "singlestore", "gel"];
+./myweb/deployment/node_modules/drizzle-kit/api.js:var sqliteDriversLiterals, postgresqlDriversLiterals, prefixes, prefix, casingTypes, casingType, sqliteDriver, postgresDriver, driver, configMigrations, configCommonSchema, casing, introspectParams, configIntrospectCliSchema, configGenerateSchema, configPushSchema;
+./myweb/deployment/node_modules/drizzle-kit/api.js:    postgresqlDriversLiterals = [
+./myweb/deployment/node_modules/drizzle-kit/api.js:    postgresDriver = unionType(postgresqlDriversLiterals);
+./myweb/deployment/node_modules/drizzle-kit/api.js:       * https://www.postgresql.org/docs/current/sql-createindex.html
+./myweb/deployment/node_modules/drizzle-kit/api.js:       * https://www.postgresql.org/docs/current/indexes-opclass.html
+./myweb/deployment/node_modules/drizzle-kit/api.js:       * https://www.postgresql.org/docs/current/xindex.html
+./myweb/deployment/node_modules/drizzle-kit/api.js:       * {@link https://www.postgresql.org/docs/current/sql-select.html#SQL-FROM | Postgres from documentation}
+./myweb/deployment/node_modules/drizzle-kit/api.js:       * See docs: {@link https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE}
+./myweb/deployment/node_modules/drizzle-kit/api.js:       * {@link https://www.postgresql.org/docs/current/sql-prepare.html | Postgres prepare documentation}
+./myweb/deployment/node_modules/drizzle-kit/api.js:        dialect: "postgresql",
+./myweb/deployment/node_modules/drizzle-kit/api.js:        dialect: "postgresql",
+./myweb/deployment/node_modules/drizzle-kit/api.js:        if (extensionsFilters.includes("postgis") && dialect6 === "postgresql") {
+./myweb/deployment/node_modules/drizzle-kit/api.js:    const stmnt = fromJson([statement], "postgresql", "push");
+./myweb/deployment/node_modules/drizzle-kit/api.js:    dialect: "postgresql",
+./myweb/deployment/node_modules/drizzle-kit/api.js:    dialect: "postgresql",
+./myweb/deployment/node_modules/drizzle-kit/api.js:    getTablesFilterByExtensions({ extensionsFilters, dialect: "postgresql" })
+./myweb/deployment/node_modules/drizzle-kit/index-BAUrj6Ib.d.ts:declare const dialects: readonly ["postgresql", "mysql", "sqlite", "turso", "singlestore", "gel"];
+./myweb/deployment/node_modules/drizzle-kit/index-BAUrj6Ib.d.ts: * *Possible values*: `postgresql`, `mysql`, `sqlite`, `singlestore
+./myweb/deployment/node_modules/drizzle-kit/index-BAUrj6Ib.d.ts:    dialect: Verify<Dialect, 'postgresql'>;
+./myweb/deployment/node_modules/drizzle-kit/index-BAUrj6Ib.d.ts:    dialect: Verify<Dialect, 'postgresql'>;
+./myweb/deployment/node_modules/drizzle-kit/index-BAUrj6Ib.d.ts:    dialect: Verify<Dialect, 'postgresql'>;
+./myweb/deployment/node_modules/drizzle-kit/index-BAUrj6Ib.d.ts: * *Possible values*: `postgresql`, `mysql`, `sqlite`, `singlestore`, `gel`
+./myweb/deployment/node_modules/pg-protocol/src/testing/test-buffers.ts:// https://www.postgresql.org/docs/current/protocol-message-formats.html
+./myweb/deployment/node_modules/pg/lib/crypto/utils-webcrypto.js:// See AuthenticationMD5Password at https://www.postgresql.org/docs/current/static/protocol-flow.html
+./myweb/deployment/node_modules/pg/lib/crypto/cert-signatures.js:  // read this thread: https://www.postgresql.org/message-id/17760-b6c61e752ec07060%40postgresql.org
+./myweb/deployment/node_modules/pg/lib/crypto/utils-legacy.js:// See AuthenticationMD5Password at https://www.postgresql.org/docs/current/static/protocol-flow.html
+./myweb/deployment/node_modules/pg/lib/query.js:  // http://developer.postgresql.org/pgdocs/postgres/protocol-flow.html#PROTOCOL-FLOW-EXT-QUERY
+./myweb/deployment/node_modules/drizzle-orm/neon-serverless/session.d.ts:import { type Client, Pool, type PoolClient, type QueryResult, type QueryResultRow } from '@neondatabase/serverless';
+./myweb/deployment/node_modules/drizzle-orm/neon-serverless/driver.d.ts:import { Pool, type PoolConfig } from '@neondatabase/serverless';
+./myweb/deployment/node_modules/drizzle-orm/neon-serverless/driver.js:import { neonConfig, Pool } from "@neondatabase/serverless";
+./myweb/deployment/node_modules/drizzle-orm/neon-serverless/session.js:} from "@neondatabase/serverless";
+./myweb/deployment/node_modules/drizzle-orm/neon-http/session.d.ts:import type { FullQueryResults, NeonQueryFunction } from '@neondatabase/serverless';
+./myweb/deployment/node_modules/drizzle-orm/neon-http/driver.d.ts:import type { HTTPQueryOptions, HTTPTransactionOptions, NeonQueryFunction } from '@neondatabase/serverless';
+./myweb/deployment/node_modules/drizzle-orm/neon-http/driver.js:import { neon, types } from "@neondatabase/serverless";
+./myweb/deployment/node_modules/drizzle-orm/pg-core/query-builders/select.js:   * {@link https://www.postgresql.org/docs/current/sql-select.html#SQL-FROM | Postgres from documentation}
+./myweb/deployment/node_modules/drizzle-orm/pg-core/query-builders/select.js:   * See docs: {@link https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE}
+./myweb/deployment/node_modules/drizzle-orm/pg-core/query-builders/select.js:   * {@link https://www.postgresql.org/docs/current/sql-prepare.html | Postgres prepare documentation}
+./myweb/deployment/node_modules/drizzle-orm/pg-core/query-builders/select.d.ts:     * {@link https://www.postgresql.org/docs/current/sql-select.html#SQL-FROM | Postgres from documentation}
+./myweb/deployment/node_modules/drizzle-orm/pg-core/query-builders/select.d.ts:     * See docs: {@link https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE}
+./myweb/deployment/node_modules/drizzle-orm/pg-core/query-builders/select.d.ts:     * {@link https://www.postgresql.org/docs/current/sql-prepare.html | Postgres prepare documentation}
+./myweb/deployment/node_modules/drizzle-orm/pg-core/columns/common.d.ts:     * https://www.postgresql.org/docs/current/sql-createindex.html
+./myweb/deployment/node_modules/drizzle-orm/pg-core/columns/common.d.ts:     * https://www.postgresql.org/docs/current/indexes-opclass.html
+./myweb/deployment/node_modules/drizzle-orm/pg-core/columns/common.d.ts:     * https://www.postgresql.org/docs/current/xindex.html
+./myweb/deployment/node_modules/drizzle-orm/pg-core/columns/common.js:   * https://www.postgresql.org/docs/current/sql-createindex.html
+./myweb/deployment/node_modules/drizzle-orm/pg-core/columns/common.js:   * https://www.postgresql.org/docs/current/indexes-opclass.html
+./myweb/deployment/node_modules/drizzle-orm/pg-core/columns/common.js:   * https://www.postgresql.org/docs/current/xindex.html
+./myweb/deployment/node_modules/connect-pg-simple/index.js: * @see https://www.postgresql.org/docs/9.5/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
+./myweb/deployment/node_modules/connect-pg-simple/index.js:        const conString = options.conString || process.env['DATABASE_URL'];
+./myweb/deployment/server/routes.ts:      conString: process.env.DATABASE_URL,
+./myweb/deployment/server/db.ts:if (!process.env.DATABASE_URL) {
+./myweb/deployment/server/db.ts:    "DATABASE_URL must be set. Did you forget to provision a database?",
+./myweb/deployment/server/db.ts:  connectionString: process.env.DATABASE_URL
+./myweb/deployment/.env:DATABASE_URL="postgresql://felicity_user:BlackGrapes@1234#@localhost:5432/felicity_hills"
+./myweb/deployment/drizzle.config.ts:if (!process.env.DATABASE_URL) {
+./myweb/deployment/drizzle.config.ts:  throw new Error("DATABASE_URL, ensure the database is provisioned");
+./myweb/deployment/drizzle.config.ts:  dialect: "postgresql",
+./myweb/deployment/drizzle.config.ts:    url: process.env.DATABASE_URL,
+./myweb/deployment/dist/index.js:import { Pool, neonConfig } from "@neondatabase/serverless";
+./myweb/deployment/dist/index.js:if (!process.env.DATABASE_URL) {
+./myweb/deployment/dist/index.js:    "DATABASE_URL must be set. Did you forget to provision a database?"
+./myweb/deployment/dist/index.js:var pool = new Pool({ connectionString: process.env.DATABASE_URL });
+./myweb/deployment/dist/index.js:      conString: process.env.DATABASE_URL,
