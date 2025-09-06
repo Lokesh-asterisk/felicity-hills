@@ -1,0 +1,39 @@
+felicity@ip-172-31-26-3:/var/www/felicity-hills$ curl http://3.21.147.40:8080/api/health
+
+^C
+felicity@ip-172-31-26-3:/var/www/felicity-hills$ pm2 logs felicity-hills
+[TAILING] Tailing last 15 lines for [felicity-hills] process (change the value with --lines option)
+/var/www/felicity-hills/logs/out-0.log last 15 lines:
+0|felicity | 2025-09-06T18:31:13:     _url: 'wss://localhost/v2',
+0|felicity | 2025-09-06T18:31:13:     _req: null,
+0|felicity | 2025-09-06T18:31:13:     [Symbol(kCapture)]: false
+0|felicity | 2025-09-06T18:31:13:   },
+0|felicity | 2025-09-06T18:31:13:   [Symbol(kType)]: 'error',
+0|felicity | 2025-09-06T18:31:13:   [Symbol(kError)]: Error: connect ECONNREFUSED 127.0.0.1:443
+0|felicity | 2025-09-06T18:31:13:       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|felicity | 2025-09-06T18:31:13:     errno: -111,
+0|felicity | 2025-09-06T18:31:13:     code: 'ECONNREFUSED',
+0|felicity | 2025-09-06T18:31:13:     syscall: 'connect',
+0|felicity | 2025-09-06T18:31:13:     address: '127.0.0.1',
+0|felicity | 2025-09-06T18:31:13:     port: 443
+0|felicity | 2025-09-06T18:31:13:   },
+0|felicity | 2025-09-06T18:31:13:   [Symbol(kMessage)]: 'connect ECONNREFUSED 127.0.0.1:443'
+0|felicity | 2025-09-06T18:31:13: }
+
+/var/www/felicity-hills/logs/err-0.log last 15 lines:
+0|felicity | 2025-09-06T18:31:13:     _url: 'wss://localhost/v2',
+0|felicity | 2025-09-06T18:31:13:     _req: null,
+0|felicity | 2025-09-06T18:31:13:     [Symbol(kCapture)]: false
+0|felicity | 2025-09-06T18:31:13:   },
+0|felicity | 2025-09-06T18:31:13:   [Symbol(kType)]: 'error',
+0|felicity | 2025-09-06T18:31:13:   [Symbol(kError)]: Error: connect ECONNREFUSED 127.0.0.1:443
+0|felicity | 2025-09-06T18:31:13:       at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16) {
+0|felicity | 2025-09-06T18:31:13:     errno: -111,
+0|felicity | 2025-09-06T18:31:13:     code: 'ECONNREFUSED',
+0|felicity | 2025-09-06T18:31:13:     syscall: 'connect',
+0|felicity | 2025-09-06T18:31:13:     address: '127.0.0.1',
+0|felicity | 2025-09-06T18:31:13:     port: 443
+0|felicity | 2025-09-06T18:31:13:   },
+0|felicity | 2025-09-06T18:31:13:   [Symbol(kMessage)]: 'connect ECONNREFUSED 127.0.0.1:443'
+0|felicity | 2025-09-06T18:31:13: }
+
