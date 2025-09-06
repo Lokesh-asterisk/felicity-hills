@@ -4,6 +4,7 @@ module.exports = {
     script: 'dist/index.js',
     instances: 'max',
     exec_mode: 'cluster',
+    env_file: '.env.production',
     env: {
       NODE_ENV: 'production',
       PORT: 8080
