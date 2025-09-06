@@ -49,24 +49,29 @@ FRONTEND_URL=https://yourdomain.com
 API_URL=https://yourdomain.com/api
 ```
 
-**Create `ecosystem.config.js` for PM2:**
+**Create `ecosystem.config.cjs` for PM2:**
 ```javascript
 module.exports = {
   apps: [{
     name: 'felicity-hills',
-    script: 'dist/index.js',
-    instances: 'max',
-    exec_mode: 'cluster',
+    script: 'dist/production-server.js',
+    cwd: '/var/www/felicity-hills',
     env: {
       NODE_ENV: 'production',
       PORT: 8080
     },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true,
+    env_file: '.env.production',
+    instances: 1,
+    exec_mode: 'fork',
     max_memory_restart: '1G',
-    node_args: '--max_old_space_size=1024'
+    error_file: '/var/log/felicity-hills/error.log',
+    out_file: '/var/log/felicity-hills/out.log',
+    log_file: '/var/log/felicity-hills/combined.log',
+    time: true,
+    autorestart: true,
+    max_restarts: 10,
+    min_uptime: '10s',
+    watch: false
   }]
 };
 ```
