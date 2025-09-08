@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Calendar, Phone, Sparkles } from "lucide-react";
+import logoImage from "@assets/Felicity Hills Logo_1754587869215_1757362699085.png";
 
 export default function KhushhalipurNavigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,9 +25,11 @@ export default function KhushhalipurNavigation() {
               href="/" 
               className="cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <div className="text-2xl font-bold text-green-700 tracking-tight">
-                Felicity Hills
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Felicity Hills Logo" 
+                className="h-20 w-auto"
+              />
             </a>
           </div>
           
