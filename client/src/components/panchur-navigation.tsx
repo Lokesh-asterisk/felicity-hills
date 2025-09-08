@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Calendar, Phone, Sparkles } from "lucide-react";
-import logoImage from "@assets/Felicity Hills Logo_1754587869215.png";
 
 export default function PanchurNavigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,12 +21,10 @@ export default function PanchurNavigation() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/">
-              <img 
-                src={logoImage} 
-                alt="Felicity Hills" 
-                className="h-12 w-auto cursor-pointer"
-              />
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <div className="text-xl font-bold text-green-700 tracking-tight">
+                Felicity Hills
+              </div>
             </Link>
           </div>
 
