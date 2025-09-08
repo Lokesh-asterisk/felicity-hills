@@ -12,12 +12,6 @@ import {
   Lightbulb,
   Leaf
 } from "lucide-react";
-import panchurImage2 from "@assets/panchur-media/panchur-image-2.jpg";
-import panchurImage3 from "@assets/panchur-media/panchur-image-3.jpg";
-import panchurImage4 from "@assets/panchur-media/panchur-image-4.jpg";
-import panchurImage5 from "@assets/panchur-media/panchur-image-5.jpg";
-import panchurImage6 from "@assets/panchur-media/panchur-image-6.jpg";
-import panchurImage7 from "@assets/panchur-media/panchur-image-7.jpg";
 
 export default function PanchurAmenitiesSection() {
 
@@ -26,33 +20,29 @@ export default function PanchurAmenitiesSection() {
       icon: Mountain,
       title: "Himalayan Views",
       description: "Stunning mountain vistas at 1,115m elevation",
-      image: panchurImage4,
       bgColor: "from-blue-50 to-blue-100",
-      altText: "Breathtaking Himalayan mountain views from Panchur Hills"
+      iconColor: "text-blue-600"
     },
     {
       icon: TreePine,
       title: "Forest Environment",
       description: "Peaceful natural surroundings",
-      image: panchurImage5,
       bgColor: "from-green-50 to-green-100",
-      altText: "Serene forest environment with lush greenery"
+      iconColor: "text-green-600"
     },
     {
       icon: Wind,
       title: "Fresh Air",
       description: "Pure mountain air quality",
-      image: panchurImage6,
       bgColor: "from-purple-50 to-purple-100",
-      altText: "Clean mountain air and natural environment"
+      iconColor: "text-purple-600"
     },
     {
       icon: Leaf,
       title: "Agricultural Land",
       description: "Fertile soil for farming",
-      image: panchurImage7,
       bgColor: "from-orange-50 to-orange-100",
-      altText: "Rich agricultural land perfect for organic farming"
+      iconColor: "text-orange-600"
     }
   ];
 
@@ -91,18 +81,8 @@ export default function PanchurAmenitiesSection() {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <CardContent className="p-0">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={amenity.image} 
-                    alt={amenity.altText}
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute top-4 left-4">
-                    <div className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center">
-                      <amenity.icon className="w-6 h-6 text-gray-700" />
-                    </div>
-                  </div>
+                <div className="h-32 flex items-center justify-center">
+                  <amenity.icon className={`w-16 h-16 ${amenity.iconColor}`} />
                 </div>
                 <div className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{amenity.title}</h3>
@@ -113,52 +93,6 @@ export default function PanchurAmenitiesSection() {
           ))}
         </div>
 
-        {/* Property Gallery */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            Property Gallery
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="relative overflow-hidden rounded-xl shadow-lg group">
-              <img 
-                src={panchurImage2} 
-                alt="Panchur Hills mountain landscape view"
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h4 className="text-white font-semibold">Mountain Landscape</h4>
-                <p className="text-white/80 text-sm">Panoramic Himalayan views</p>
-              </div>
-            </div>
-            
-            <div className="relative overflow-hidden rounded-xl shadow-lg group">
-              <img 
-                src={panchurImage3} 
-                alt="Panchur Hills natural environment"
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h4 className="text-white font-semibold">Natural Environment</h4>
-                <p className="text-white/80 text-sm">Pure mountain air and nature</p>
-              </div>
-            </div>
-            
-            <div className="relative overflow-hidden rounded-xl shadow-lg group">
-              <img 
-                src={panchurImage4} 
-                alt="Panchur Hills agricultural area"
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h4 className="text-white font-semibold">Agricultural Land</h4>
-                <p className="text-white/80 text-sm">Fertile soil for farming</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Additional Amenities Grid */}
         <div className="bg-gray-50 rounded-2xl p-8">

@@ -11,7 +11,6 @@ import type { Project } from '@shared/schema';
 import Navigation from '../components/navigation';
 import ContactSection from '../components/contact-section';
 import Footer from '../components/footer';
-import backgroundImage from '@assets/image_1756640331916.png';
 
 // Add floating animation keyframes
 const floatingStyles = `
@@ -104,10 +103,9 @@ export default function CompanyPortfolio() {
         
         {/* Subtle texture overlay */}
         <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `
+          background: `linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%), 
             radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 1px, transparent 1px),
-            radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 1px, transparent 1px)
-          `,
+            radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 1px, transparent 1px)`,
           backgroundSize: '40px 40px, 60px 60px'
         }}></div>
         

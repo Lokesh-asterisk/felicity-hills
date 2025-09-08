@@ -2,8 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Calendar, MapPin } from "lucide-react";
-import panchurBgImage from "@assets/panchur-media/panchur-image-2.jpg";
-import panchurHeroImage from "@assets/panchur2_1756805446201.jpg";
 
 export default function PanchurHeroSection() {
   const scrollToSection = (sectionId: string) => {
@@ -16,15 +14,8 @@ export default function PanchurHeroSection() {
   return (
     <section className="relative bg-gradient-to-br from-green-50 to-teal-50 overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 opacity-15">
-        <div 
-          style={{
-            backgroundImage: `url(${panchurBgImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-          className="w-full h-full"
-        />
+      <div className="absolute inset-0 opacity-20">
+        <div className="w-full h-full bg-gradient-to-br from-green-100/30 to-teal-100/30"></div>
       </div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
@@ -94,18 +85,10 @@ export default function PanchurHeroSection() {
 
           
           <div className="lg:pl-12 animate-fade-in">
-            <div className="relative">
-              <img 
-                src={panchurHeroImage} 
-                alt="Panchur Hills - Premium mountain plots with stunning Himalayan views" 
-                className="rounded-2xl shadow-2xl w-full max-h-96 object-contain"
-              />
-              {/* Image Caption */}
-              <div className="absolute bottom-4 left-4 right-4 p-3">
-                <p className="text-base font-bold text-white text-center" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)'}}>
-                  Panchur Hills - Premium mountain plots with stunning Himalayan views
-                </p>
-              </div>
+            <div className="relative bg-gradient-to-br from-green-100 to-teal-100 rounded-2xl shadow-2xl p-12 text-center">
+              <div className="text-6xl mb-4">🏔️</div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Himalayan Views</h3>
+              <p className="text-gray-600">Premium mountain plots with stunning panoramic views</p>
             </div>
           </div>
         </div>
