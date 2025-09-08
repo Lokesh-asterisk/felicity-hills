@@ -1,0 +1,31 @@
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ ls -la /home/felicity/felicity_hills_*backup.sql
+-rw-rw-r-- 1 felicity felicity 45155 Sep  8 09:43 /home/felicity/felicity_hills_backup.sql
+felicity@ip-172-31-21-38:/var/www/felicity-hills$
+felicity@ip-172-31-21-38:/var/www/felicity-hills$
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ psql "$DATABASE_URL" -v ON_ERROR_STOP=0 -f /home/felicity/felicity_hills_backup.sql
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  role "felicity" does not exist
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ pwd
+/var/www/felicity-hills
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ ls -ltr
+total 588
+-rw-rw-r--   1 felicity felicity  20433 Sep  8 10:15 FRESH_DEPLOYMENT_GUIDE.md
+drwxrwxr-x   3 felicity felicity   4096 Sep  8 10:15 client
+-rw-rw-r--   1 felicity felicity    746 Sep  8 10:15 minimal-server.js
+-rw-rw-r--   1 felicity felicity  44963 Sep  8 10:15 felicity_hills_complete_backup.sql
+-rw-rw-r--   1 felicity felicity    433 Sep  8 10:15 ecosystem.config.cjs
+-rw-rw-r--   1 felicity felicity    325 Sep  8 10:15 drizzle.config.ts
+-rw-rw-r--   1 felicity felicity    459 Sep  8 10:15 components.json
+-rw-rw-r--   1 felicity felicity     80 Sep  8 10:15 postcss.config.js
+-rw-rw-r--   1 felicity felicity   6962 Sep  8 10:15 replit.md
+drwxrwxr-x   3 felicity felicity   4096 Sep  8 10:15 public
+-rw-rw-r--   1 felicity felicity    971 Sep  8 10:15 vite.config.ts
+-rw-rw-r--   1 felicity felicity    657 Sep  8 10:15 tsconfig.json
+-rw-rw-r--   1 felicity felicity   2627 Sep  8 10:15 tailwind.config.ts
+drwxrwxr-x   2 felicity felicity   4096 Sep  8 10:15 shared
+drwxrwxr-x   2 felicity felicity   4096 Sep  8 10:39 server
+-rw-rw-r--   1 felicity felicity   8583 Sep  8 11:19 deploy-aws-bulletproof.sh
+drwxrwxr-x 522 felicity felicity  20480 Sep  8 19:28 node_modules
+-rw-rw-r--   1 felicity felicity   4300 Sep  8 19:28 package.json
+-rw-rw-r--   1 felicity felicity 434216 Sep  8 19:28 package-lock.json
+felicity@ip-172-31-21-38:/var/www/felicity-hills$
+

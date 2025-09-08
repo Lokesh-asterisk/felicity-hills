@@ -1,0 +1,164 @@
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ psql -h localhost -U felicity_user -d felicity_hills_db -f /home/felicity/felicity_hills_backup.sql
+Password for user felicity_user:
+SET
+SET
+SET
+SET
+SET
+ set_config
+------------
+
+(1 row)
+
+SET
+SET
+SET
+SET
+DROP INDEX
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+SET
+SET
+psql:/home/felicity/felicity_hills_backup.sql:65: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.activities (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:77: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.admin_settings (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:98: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.appointments (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:114: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.brochure_downloads (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:128: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.brochures (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:148: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.follow_ups (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:172: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.leads (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:195: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.plots (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:241: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.projects (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:252: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.session (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:268: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.site_visits (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:284: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.testimonials (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:300: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.users (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:316: ERROR:  permission denied for schema public
+LINE 1: CREATE TABLE public.videos (
+                     ^
+psql:/home/felicity/felicity_hills_backup.sql:323: ERROR:  relation "public.activities" does not exist
+psql:/home/felicity/felicity_hills_backup.sql:347: error: invalid command \.
+psql:/home/felicity/felicity_hills_backup.sql:354: ERROR:  trailing junk after numeric literal at or near "941f703e"
+LINE 1: 941f703e-58b7-4291-9253-f07b0a5e8eaa Demo This is demo txt i...
+        ^
+psql:/home/felicity/felicity_hills_backup.sql:355: error: invalid command \.
+psql:/home/felicity/felicity_hills_backup.sql:362: ERROR:  relation "public.appointments" does not exist
+psql:/home/felicity/felicity_hills_backup.sql:363: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:364: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:365: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:366: error: invalid command \.
+psql:/home/felicity/felicity_hills_backup.sql:373: ERROR:  trailing junk after numeric literal at or near "1adc2fb7"
+LINE 1: 1adc2fb7-a8a0-49ba-a6fe-b3aa210a0e7a e6b8c930-013d-42b1-996e...
+        ^
+psql:/home/felicity/felicity_hills_backup.sql:374: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:375: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:376: error: invalid command \.
+psql:/home/felicity/felicity_hills_backup.sql:383: ERROR:  syntax error at or near "ffc5d3aa"
+LINE 1: ffc5d3aa-fc66-4e31-8b5c-2d76c048336a 9cf5edeb-bdf1-41fa-afaa...
+        ^
+psql:/home/felicity/felicity_hills_backup.sql:390: error: invalid command \.
+psql:/home/felicity/felicity_hills_backup.sql:397: ERROR:  trailing junk after numeric literal at or near "0e9caaf9"
+LINE 1: 0e9caaf9-5dd6-42c4-8e55-89e1170bd616 Price List & Payment Pl...
+        ^
+psql:/home/felicity/felicity_hills_backup.sql:398: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:399: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:400: error: invalid command \.
+psql:/home/felicity/felicity_hills_backup.sql:407: ERROR:  syntax error at or near "c1bc1e49"
+LINE 1: c1bc1e49-0123-4986-8330-126a330aa216 b356d3d6-56b8-4eb5-8927...
+        ^
+psql:/home/felicity/felicity_hills_backup.sql:408: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:409: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:410: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:411: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:412: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:413: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:414: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:415: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:416: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:417: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:418: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:419: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:420: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:421: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:422: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:423: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:424: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:425: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:426: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:427: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:428: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:429: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:430: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:431: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:432: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:433: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:434: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:435: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:436: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:437: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:438: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:439: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:440: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:441: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:442: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:443: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:444: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:445: error: invalid command \N
+psql:/home/felicity/felicity_hills_backup.sql:709: ERROR:  syntax error at or near "d077c4a2"
+LINE 1: d077c4a2-8f9b-489a-b2fa-f6752a12ffb1 Rahul Gym Trainer  9250...
+        ^
+felicity@ip-172-31-21-38:/var/www/felicity-hills$
