@@ -2,7 +2,7 @@
 
 ## Your Infrastructure Setup
 - **EC2 Instance**: Ubuntu 22.04 LTS, c7i-flex-large (4 vCPU, 8GB RAM)
-- **Elastic IP**: 3.21.147.40
+- **Elastic IP**: 18.119.78.204
 - **Private IP**: 172.31.26.3
 - **Storage**: 50GB SSD
 - **Security**: SSH, HTTP, HTTPS, Port 5000 configured
@@ -201,7 +201,7 @@ git push -u origin main
 
 ```bash
 # Connect using PuTTY with your private key
-# Host: 3.21.147.40
+# Host: 18.119.78.204
 # Username: ubuntu
 # Port: 22
 ```
@@ -694,7 +694,7 @@ sudo nano /etc/nginx/sites-available/felicity-hills
 ```nginx
 server {
     listen 80;
-    server_name yourdomain.com www.yourdomain.com 3.21.147.40;
+    server_name yourdomain.com www.yourdomain.com 18.119.78.204;
     
     # Redirect HTTP to HTTPS (will be enabled after SSL setup)
     # return 301 https://$server_name$request_uri;
@@ -837,10 +837,10 @@ pm2 startup
 curl http://localhost:8080/api/health
 
 # Test if Nginx is serving the application
-curl http://3.21.147.40/api/health
+curl http://18.119.78.204/api/health
 
 # Check if frontend is being served
-curl -I http://3.21.147.40/
+curl -I http://18.119.78.204/
 ```
 
 ---
@@ -853,12 +853,12 @@ Log into your GoDaddy account and update DNS records:
 
 1. **A Record**: 
    - Name: `@` (root domain)
-   - Value: `3.21.147.40`
+   - Value: `18.119.78.204`
    - TTL: `600`
 
 2. **A Record**: 
    - Name: `www`
-   - Value: `3.21.147.40`
+   - Value: `18.119.78.204`
    - TTL: `600`
 
 3. **CNAME Record** (optional for API subdomain):
@@ -919,7 +919,7 @@ sudo nano /etc/nginx/sites-available/felicity-hills
 # HTTP server block - redirect to HTTPS
 server {
     listen 80;
-    server_name yourdomain.com www.yourdomain.com 3.21.147.40;
+    server_name yourdomain.com www.yourdomain.com 18.119.78.204;
     return 301 https://$server_name$request_uri;
 }
 
@@ -1625,7 +1625,7 @@ sudo -u felicity pm2 restart felicity-hills
 - **Admin Dashboard**: https://yourdomain.com/admin-dashboard
 
 ### Next Steps
-1. **Update DNS**: Point your domain to 3.21.147.40 in GoDaddy
+1. **Update DNS**: Point your domain to 18.119.78.204 in GoDaddy
 2. **Configure SendGrid**: Add your SendGrid API key to environment variables
 3. **Test Email**: Verify site visit booking emails are working
 4. **Content Management**: Add your actual project content and brochures

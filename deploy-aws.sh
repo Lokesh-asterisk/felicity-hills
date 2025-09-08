@@ -55,7 +55,7 @@ echo "Updating Nginx configuration..."
 sudo tee /etc/nginx/sites-available/felicity-hills > /dev/null << 'EOF'
 server {
     listen 80;
-    server_name 3.21.147.40;
+    server_name 18.119.78.204;
 
     # Static file serving with caching
     location /assets/ {
@@ -170,8 +170,8 @@ else
 fi
 
 echo "🎉 Deployment completed successfully!"
-echo "Application is running at: http://3.21.147.40"
-echo "API endpoint: http://3.21.147.40/health"
+echo "Application is running at: http://18.119.78.204"
+echo "API endpoint: http://18.119.78.204/health"
 echo ""
 echo "To monitor the application:"
 echo "  pm2 status"

@@ -146,7 +146,7 @@ echo "Updating Nginx configuration..."
 sudo tee /etc/nginx/sites-available/felicity-hills > /dev/null << 'EOF'
 server {
     listen 80;
-    server_name 3.21.147.40;
+    server_name 18.119.78.204;
 
     # Static file serving with caching
     location /assets/ {
@@ -252,9 +252,9 @@ fi
 echo ""
 echo "🎉 DEPLOYMENT COMPLETED SUCCESSFULLY!"
 echo "=========================================="
-echo "Application is running at: http://3.21.147.40"
-echo "Health endpoint: http://3.21.147.40/health"
-echo "API endpoint: http://3.21.147.40/api/projects"
+echo "Application is running at: http://18.119.78.204"
+echo "Health endpoint: http://18.119.78.204/health"
+echo "API endpoint: http://18.119.78.204/api/projects"
 echo ""
 echo "Monitoring commands:"
 echo "  pm2 status"
@@ -265,6 +265,6 @@ echo "Troubleshooting commands:"
 echo "  sudo nginx -t"
 echo "  sudo systemctl status nginx" 
 echo "  curl http://localhost:8080/health"
-echo "  curl http://3.21.147.40/health"
+echo "  curl http://18.119.78.204/health"
 echo ""
 echo "All 10 deployment issues have been resolved!"

@@ -18,7 +18,7 @@ This guide addresses **ALL 10 CRITICAL ISSUES** encountered during deployment te
 
 ## Your Infrastructure Setup
 - **EC2 Instance**: Ubuntu 22.04 LTS, c7i-flex-large (4 vCPU, 8GB RAM)
-- **Elastic IP**: 3.21.147.40
+- **Elastic IP**: 18.119.78.204
 - **Private IP**: 172.31.26.3
 - **Storage**: 50GB SSD
 - **Security**: SSH, HTTP, HTTPS, Port 8080 configured
@@ -33,7 +33,7 @@ This guide addresses **ALL 10 CRITICAL ISSUES** encountered during deployment te
 
 ```bash
 # SSH to your AWS server first
-ssh felicity@3.21.147.40
+ssh felicity@18.119.78.204
 
 # ISSUE #5 FIX: Configure git identity (REQUIRED)
 git config --global user.email "lokesh.mvt@gmail.com"
@@ -408,7 +408,7 @@ echo "Updating Nginx configuration..."
 sudo tee /etc/nginx/sites-available/felicity-hills > /dev/null << 'EOF'
 server {
     listen 80;
-    server_name 3.21.147.40;
+    server_name 18.119.78.204;
 
     # Static file serving with caching
     location /assets/ {
@@ -514,9 +514,9 @@ fi
 echo ""
 echo "🎉 DEPLOYMENT COMPLETED SUCCESSFULLY!"
 echo "=========================================="
-echo "Application is running at: http://3.21.147.40"
-echo "Health endpoint: http://3.21.147.40/health"
-echo "API endpoint: http://3.21.147.40/api/projects"
+echo "Application is running at: http://18.119.78.204"
+echo "Health endpoint: http://18.119.78.204/health"
+echo "API endpoint: http://18.119.78.204/api/projects"
 echo ""
 echo "Monitoring commands:"
 echo "  pm2 status"
@@ -527,7 +527,7 @@ echo "Troubleshooting commands:"
 echo "  sudo nginx -t"
 echo "  sudo systemctl status nginx" 
 echo "  curl http://localhost:8080/health"
-echo "  curl http://3.21.147.40/health"
+echo "  curl http://18.119.78.204/health"
 echo ""
 echo "All 10 deployment issues have been resolved!"
 ```
@@ -557,8 +557,8 @@ ADMIN_EMAIL=admin@yourdomain.com
 SESSION_SECRET=your_very_secure_session_secret_at_least_32_characters
 
 # Application URLs
-FRONTEND_URL=http://3.21.147.40
-API_URL=http://3.21.147.40/api
+FRONTEND_URL=http://18.119.78.204
+API_URL=http://18.119.78.204/api
 ```
 
 ---
@@ -568,7 +568,7 @@ API_URL=http://3.21.147.40/api
 ### 7.1 Run the Bulletproof Deployment
 
 ```bash
-# On AWS server (3.21.147.40)
+# On AWS server (18.119.78.204)
 cd /var/www/felicity-hills
 
 # Make the script executable
@@ -676,11 +676,11 @@ After deployment, verify all these work:
 
 ```bash
 # 1. Application health
-curl http://3.21.147.40/health
+curl http://18.119.78.204/health
 # Expected: {"status":"healthy","timestamp":"...","env":"production"}
 
 # 2. API endpoints
-curl http://3.21.147.40/api/projects
+curl http://18.119.78.204/api/projects
 # Expected: JSON array of projects
 
 # 3. PM2 status
@@ -700,7 +700,7 @@ pm2 logs felicity-hills --lines 5
 # Expected: "Production server running on port 8080"
 
 # 7. Static files
-curl -I http://3.21.147.40/assets/
+curl -I http://18.119.78.204/assets/
 # Expected: 200 OK or 403 Forbidden (both indicate nginx is serving)
 ```
 
@@ -747,9 +747,9 @@ curl http://localhost:8080/health
 
 Your deployment is successful when ALL of these work:
 
-✅ Application accessible at http://3.21.147.40  
-✅ Health endpoint responds: http://3.21.147.40/health  
-✅ API endpoints working: http://3.21.147.40/api/projects  
+✅ Application accessible at http://18.119.78.204  
+✅ Health endpoint responds: http://18.119.78.204/health  
+✅ API endpoints working: http://18.119.78.204/api/projects  
 ✅ PM2 showing app as "online" with production-server.js  
 ✅ Nginx serving requests without errors  
 ✅ Database queries working  
