@@ -11,7 +11,6 @@ import {
   Lightbulb,
   Construction
 } from "lucide-react";
-import clubhouseImage from "@assets/clubhouse_1754987569542.jpg";
 
 export default function AmenitiesSection() {
   const mainAmenities = [
@@ -27,7 +26,7 @@ export default function AmenitiesSection() {
       icon: Home,
       title: "Club House",
       description: "For community activities",
-      image: clubhouseImage,
+      image: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
       bgColor: "from-green-50 to-green-100",
       altText: "Modern clubhouse with elegant seating and community gathering space"
     },

@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Phone, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
-import logoImage from "@assets/Felicity Hills Logo_1754587869215.png";
 
 export default function Footer() {
   const quickLinks = [
@@ -36,11 +35,9 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center mb-4">
-              <img 
-                src={logoImage} 
-                alt="Felicity Hills Logo" 
-                className="h-20 w-auto"
-              />
+              <div className="text-2xl font-bold text-white">
+                Felicity Hills
+              </div>
             </div>
             <p className="text-gray-400 leading-relaxed">
               Your trusted partner for agricultural land investment near Delhi-Dehradun Expressway.

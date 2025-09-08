@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Calendar, Phone, Sparkles } from "lucide-react";
-import logoImage from "@assets/Felicity Hills Logo_1754587869215.png";
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,11 +38,9 @@ export default function Navigation() {
               href="/" 
               className="cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <img 
-                src={logoImage} 
-                alt="Felicity Hills Logo" 
-                className="h-20 w-auto"
-              />
+              <div className="text-2xl font-bold text-green-600">
+                Felicity Hills
+              </div>
             </a>
           </div>
           
