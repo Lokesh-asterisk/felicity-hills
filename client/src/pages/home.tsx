@@ -45,7 +45,7 @@ export default function Home() {
         title="Chat with us on WhatsApp"
         data-testid="whatsapp-button"
       >
-        <span className="text-3xl">💬</span>
+        <span className="text-sm font-bold">WA</span>
       </a>
     </div>
   );
