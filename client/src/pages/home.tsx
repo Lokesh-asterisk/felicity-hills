@@ -43,6 +43,7 @@ export default function Home() {
         rel="noopener noreferrer"
         aria-label="Contact us on WhatsApp"
         title="Chat with us on WhatsApp"
+        data-testid="whatsapp-button"
       >
         <span className="text-3xl">💬</span>
       </a>
