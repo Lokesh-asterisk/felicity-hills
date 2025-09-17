@@ -1,0 +1,30 @@
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ pm2 logs felicity-hills
+[TAILING] Tailing last 15 lines for [felicity-hills] process (change the value with --lines option)
+/var/www/felicity-hills/logs/out-0.log last 15 lines:
+/var/www/felicity-hills/logs/err-0.log last 15 lines:
+0|felicity | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|felicity | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/felicity-hills/dist/index.js
+0|felicity |     at new NodeError (node:internal/errors:405:5)
+0|felicity |     at packageResolve (node:internal/modules/esm/resolve:916:9)
+0|felicity |     at moduleResolve (node:internal/modules/esm/resolve:973:20)
+0|felicity |     at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+0|felicity |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+0|felicity |     at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+0|felicity |     at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+0|felicity |     at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+0|felicity |     at link (node:internal/modules/esm/module_job:75:36)
+
+/var/www/felicity-hills/logs/out-1.log last 15 lines:
+/var/www/felicity-hills/logs/err-1.log last 15 lines:
+1|felicity | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+1|felicity | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/felicity-hills/dist/index.js
+1|felicity |     at new NodeError (node:internal/errors:405:5)
+1|felicity |     at packageResolve (node:internal/modules/esm/resolve:916:9)
+1|felicity |     at moduleResolve (node:internal/modules/esm/resolve:973:20)
+1|felicity |     at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+1|felicity |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:404:12)
+1|felicity |     at ModuleLoader.resolve (node:internal/modules/esm/loader:373:25)
+1|felicity |     at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:250:38)
+1|felicity |     at ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:76:39)
+1|felicity |     at link (node:internal/modules/esm/module_job:75:36)
+

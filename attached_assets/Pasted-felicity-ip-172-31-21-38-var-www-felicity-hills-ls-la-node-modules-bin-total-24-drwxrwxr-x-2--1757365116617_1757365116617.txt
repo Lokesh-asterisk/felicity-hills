@@ -1,0 +1,80 @@
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ ls -la node_modules/.bin/
+total 24
+drwxrwxr-x   2 felicity felicity  4096 Sep  8 20:43 .
+drwxrwxr-x 482 felicity felicity 20480 Sep  8 20:47 ..
+lrwxrwxrwx   1 felicity felicity    22 Sep  8 20:43 bcrypt -> ../bcryptjs/bin/bcrypt
+lrwxrwxrwx   1 felicity felicity    42 Sep  8 20:43 browsers -> ../@puppeteer/browsers/lib/cjs/main-cli.js
+lrwxrwxrwx   1 felicity felicity    23 Sep  8 20:43 crc32 -> ../crc-32/bin/crc32.njs
+lrwxrwxrwx   1 felicity felicity    20 Sep  8 20:43 cssesc -> ../cssesc/bin/cssesc
+lrwxrwxrwx   1 felicity felicity    28 Sep  8 20:43 csv-parser -> ../csv-parser/bin/csv-parser
+lrwxrwxrwx   1 felicity felicity    29 Sep  8 20:43 escodegen -> ../escodegen/bin/escodegen.js
+lrwxrwxrwx   1 felicity felicity    30 Sep  8 20:43 esgenerate -> ../escodegen/bin/esgenerate.js
+lrwxrwxrwx   1 felicity felicity    25 Sep  8 20:43 esparse -> ../esprima/bin/esparse.js
+lrwxrwxrwx   1 felicity felicity    28 Sep  8 20:43 esvalidate -> ../esprima/bin/esvalidate.js
+lrwxrwxrwx   1 felicity felicity    21 Sep  8 20:43 extract-zip -> ../extract-zip/cli.js
+lrwxrwxrwx   1 felicity felicity    33 Sep  8 20:43 fxparser -> ../fast-xml-parser/src/cli/cli.js
+lrwxrwxrwx   1 felicity felicity    24 Sep  8 20:43 glob -> ../glob/dist/esm/bin.mjs
+lrwxrwxrwx   1 felicity felicity    19 Sep  8 20:43 jiti -> ../jiti/bin/jiti.js
+lrwxrwxrwx   1 felicity felicity    25 Sep  8 20:43 js-yaml -> ../js-yaml/bin/js-yaml.js
+lrwxrwxrwx   1 felicity felicity    22 Sep  8 20:43 loose-envify -> ../loose-envify/cli.js
+lrwxrwxrwx   1 felicity felicity    22 Sep  8 20:43 mammoth -> ../mammoth/bin/mammoth
+lrwxrwxrwx   1 felicity felicity    14 Sep  8 20:43 mime -> ../mime/cli.js
+lrwxrwxrwx   1 felicity felicity    20 Sep  8 20:43 mkdirp -> ../mkdirp/bin/cmd.js
+lrwxrwxrwx   1 felicity felicity    24 Sep  8 20:43 nanoid -> ../nanoid/bin/nanoid.cjs
+lrwxrwxrwx   1 felicity felicity    24 Sep  8 20:43 node-gyp-build -> ../node-gyp-build/bin.js
+lrwxrwxrwx   1 felicity felicity    29 Sep  8 20:43 node-gyp-build-optional -> ../node-gyp-build/optional.js
+lrwxrwxrwx   1 felicity felicity    31 Sep  8 20:43 node-gyp-build-test -> ../node-gyp-build/build-test.js
+lrwxrwxrwx   1 felicity felicity    23 Sep  8 20:43 node-which -> ../which/bin/node-which
+lrwxrwxrwx   1 felicity felicity    17 Sep  8 20:43 openai -> ../openai/bin/cli
+lrwxrwxrwx   1 felicity felicity    42 Sep  8 20:43 puppeteer -> ../puppeteer/lib/cjs/puppeteer/node/cli.js
+lrwxrwxrwx   1 felicity felicity    22 Sep  8 20:43 resolve -> ../resolve/bin/resolve
+lrwxrwxrwx   1 felicity felicity    22 Sep  8 20:43 sucrase -> ../sucrase/bin/sucrase
+lrwxrwxrwx   1 felicity felicity    27 Sep  8 20:43 sucrase-node -> ../sucrase/bin/sucrase-node
+lrwxrwxrwx   1 felicity felicity    25 Sep  8 20:43 tailwind -> ../tailwindcss/lib/cli.js
+lrwxrwxrwx   1 felicity felicity    25 Sep  8 20:43 tailwindcss -> ../tailwindcss/lib/cli.js
+lrwxrwxrwx   1 felicity felicity    21 Sep  8 20:43 tsc -> ../typescript/bin/tsc
+lrwxrwxrwx   1 felicity felicity    26 Sep  8 20:43 tsserver -> ../typescript/bin/tsserver
+lrwxrwxrwx   1 felicity felicity    21 Sep  8 20:43 uuid -> ../uuid/dist/bin/uuid
+lrwxrwxrwx   1 felicity felicity    20 Sep  8 20:43 xlsx -> ../xlsx/bin/xlsx.njs
+lrwxrwxrwx   1 felicity felicity    15 Sep  8 20:43 yaml -> ../yaml/bin.mjs
+felicity@ip-172-31-21-38:/var/www/felicity-hills$  npm install
+
+up to date, audited 676 packages in 1s
+
+80 packages are looking for funding
+  run `npm fund` for details
+
+4 vulnerabilities (3 low, 1 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ npx tsx server/index.ts
+Need to install the following packages:
+tsx@4.20.5
+Ok to proceed? (y) y
+
+
+node:internal/process/esm_loader:40
+      internalBinding('errors').triggerUncaughtException(
+                                ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /var/www/felicity-hills/vite.config.ts
+    at new NodeError (node:internal/errors:405:5)
+    at packageResolve (node:internal/modules/esm/resolve:916:9)
+    at moduleResolve (node:internal/modules/esm/resolve:973:20)
+    at defaultResolve (node:internal/modules/esm/resolve:1206:11)
+    at nextResolve (node:internal/modules/esm/hooks:864:28)
+    at resolveBase (file:///home/felicity/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1757365087283:2:3744)
+    at resolveDirectory (file:///home/felicity/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1757365087283:2:4243)
+    at resolveTsPaths (file:///home/felicity/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1757365087283:2:4984)
+    at async resolve (file:///home/felicity/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1757365087283:2:5355)
+    at async nextResolve (node:internal/modules/esm/hooks:864:22) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v18.20.8
+felicity@ip-172-31-21-38:/var/www/felicity-hills$

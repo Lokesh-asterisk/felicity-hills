@@ -1,0 +1,63 @@
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ cd /var/www/felicity-hills && pm2 delete all && NODE_ENV=development PORT=8080 npm run dev > /dev/null 2>&1 & sleep 5 && curl -I http://localhost:8080
+[1] 22952
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0, 1 ])
+[PM2] [felicity-hills](0) ✓
+[PM2] [felicity-hills](1) ✓
+┌────┬───────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name      │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+└────┴───────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[1]+  Exit 127                cd /var/www/felicity-hills && pm2 delete all && NODE_ENV=development PORT=8080 npm run dev > /dev/null 2>&1
+curl: (7) Failed to connect to localhost port 8080 after 0 ms: Couldn't connect to server
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ sudo cat /etc/nginx/sites-available/felicity-hills
+[sudo] password for felicity:
+server {
+    listen 80;
+    server_name 18.119.78.204;
+
+    # Static file serving with caching
+    location /assets/ {
+        alias /var/www/felicity-hills/dist/public/assets/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # API routes
+    location /api/ {
+        proxy_pass http://localhost:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Health check
+    location /health {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # Serve frontend files
+    location / {
+        try_files $uri $uri/ @fallback;
+    }
+
+    # Fallback to Node.js for SPA routing
+    location @fallback {
+        proxy_pass http://localhost:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+felicity@ip-172-31-21-38:/var/www/felicity-hills$

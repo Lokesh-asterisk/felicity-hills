@@ -1,0 +1,73 @@
+felicity@ip-172-31-21-38:/var/www/felicity-hills$ ./deploy-aws-bulletproof.sh
+🚀 Starting Felicity Hills deployment to AWS EC2...
+📋 This script addresses all 10 deployment issues encountered during testing
+Stopping existing processes...
+[PM2][WARN] No process found
+[PM2][WARN] No process found
+Pulling latest code with proper git handling...
+From https://github.com/Lokesh-asterisk/felicity-hills
+ * branch            main       -> FETCH_HEAD
+⚠️  Local changes detected. Stashing them...
+Saved working directory and index state WIP on main: 8fc88d5 Add user authentication and profile management functionality
+Already up to date.
+✅ Git merge successful
+Fixing NPM configuration...
+Installing ALL dependencies (including dev tools for build)...
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+
+added 675 packages, and audited 676 packages in 8s
+
+80 packages are looking for funding
+  run `npm fund` for details
+
+4 vulnerabilities (3 low, 1 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+Verifying build tools...
+⚠️  vite not in .bin directory, checking scoped packages...
+✅ Found vite in scoped packages
+⚠️  esbuild not in .bin directory, checking scoped packages...
+✅ Found esbuild in scoped packages
+Building application using method: scoped
+Using alternative build methods with scoped packages...
+✅ Frontend build successful (scoped method)
+✅ Backend build successful (scoped method)
+Building production server...
+✅ Production server build successful
+✅ Environment variables loaded
+Syncing database schema...
+✅ Database connection verified
+Attempting database schema sync...
+
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/var/www/felicity-hills/drizzle.config.ts'
+⚠️  Database sync may have failed - checking if tables exist...
+✅ Database tables exist, continuing...
+Updating Nginx configuration...
+[sudo] password for felicity:
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Starting application with PM2...
+[PM2][WARN] Applications felicity-hills not running, starting...
+[PM2] App [felicity-hills] launched (2 instances)
+┌────┬───────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name              │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ felicity-hills    │ default     │ 1.0.0   │ cluster │ 22506    │ 0s     │ 0    │ online    │ 0%       │ 52.5mb   │ felicity │ disabled │
+│ 1  │ felicity-hills    │ default     │ 1.0.0   │ cluster │ 22513    │ 0s     │ 0    │ online    │ 0%       │ 43.3mb   │ felicity │ disabled │
+└────┴───────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in /home/felicity/.pm2/dump.pm2
+[PM2] Init System found: systemd
+[PM2] To setup the Startup Script, copy/paste the following command:
+sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u felicity --hp /home/felicity
+felicity@ip-172-31-21-38:/var/www/felicity-hills$
